@@ -1,5 +1,10 @@
+#Description
 this repository is for Compiler Design course at SUT
-lecturer: Dr.Bahrami
-members: sepehr safari(97108263), sara khosravi(97101586), parham saremi(97101959)
-group name: gcc
-
+#Lecturer:
+Dr.Bahrami
+#Members: 
+- Sepehr Safari(97108263) 
+- Sara Khosravi(97101586)
+- Parham Saremi(97101959)
+#group name: 
+- gcc
