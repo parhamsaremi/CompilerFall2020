@@ -17,10 +17,12 @@ integer {base10int}|{base16int}
 double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
 string \"[^\"\n]*\"
 op_punct_1char [+\-*\/%<>=!;,.\[\]\(\)]
+comment_inline \/\/[^\n]*
+comment_multiline \/\*[^(\*\/)]*\*\/
 
 %%
 
-{ws}+
+{ws}+ {}
 
 "void"|"int"|"double"|"bool"|"string"|"class"|"interface" {printf("%s\n",yytext);}
 "null"|"this"|"extends"|"implements"|"for"|"while"|"if" {printf("%s\n",yytext);}
@@ -37,6 +39,8 @@ op_punct_1char [+\-*\/%<>=!;,.\[\]\(\)]
 {string} {printf("T_STRINGLITERAL %s\n",yytext);}
 
 {op_punct_1char}|"<="|">="|"=="|"!="|"||" {printf("%s\n",yytext);}
+
+{comment_inline}|{comment_multiline} {}
 
 %%
 
