@@ -16,6 +16,7 @@ base16int 0[xX]{digit16}+
 integer {base10int}|{base16int}
 double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
 string \"[^\"\n]*\"
+op_punct_1char [+\-*\/%<>=!;,.\[\]\(\)]
 
 %%
 
@@ -34,6 +35,8 @@ string \"[^\"\n]*\"
 {double} {printf("T_DOUBLELITERAL %s\n",yytext);}
 
 {string} {printf("T_STRINGLITERAL %s\n",yytext);}
+
+{op_punct_1char}|"<="|">="|"=="|"!="|"||" {printf("%s\n",yytext);}
 
 %%
 
