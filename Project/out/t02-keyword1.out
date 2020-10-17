@@ -1,10 +1,22 @@
-class
-T_ID Program
-{
 void
-T_ID main
-(
-)
-{
-}
-}
+int
+double
+bool
+string
+class
+interface
+null
+this
+extends
+implements
+for
+while
+if
+else
+return
+break
+new
+NewArray
+Print
+ReadInteger
+ReadLine

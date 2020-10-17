@@ -45,6 +45,5 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 %%
 
 int main(){
-    printf("start my friend :)\n");
     yylex();
 }

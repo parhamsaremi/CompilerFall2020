@@ -16,13 +16,13 @@ do
     output_filename="$filename.out"
     report_filename="$filename.report.txt"
     echo "Running Test $filename -------------------------------------"
-    flex scanner.l
-    g++ main.cpp -std=c++14 -o main
+    flex lex.l
+    g++ lex.yy.c -std=c++14 -o main
     if [ $? -eq 1 ]; then
-        echo "Code did not Compiler"
+        echo "Code did not Compile"
     else
         echo "Core compiled successfuly"
-        ./main -i $filelist -o $output_filename
+        ./main < $TEST_DIRECTORY$filelist > $OUTPUT_DIRECTORY$output_filename
         if [ $? -eq 0 ]; then
             echo "Code Executed Successfuly!"
             if command -v python3; then
@@ -39,13 +39,16 @@ do
             echo
             fi 
         else
-            echo "Code did not execute successfuly!"
+            echo "Code did not execute successfully!"
             ((NUMBER_OF_FAILED++))
         fi
     fi
 
 
 done
+
+rm lex.yy.c
+rm main
 
 echo "Passed : $NUMBER_OF_PASSED"
 echo "Failed : $NUMBER_OF_FAILED"

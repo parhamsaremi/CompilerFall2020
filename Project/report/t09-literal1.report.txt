@@ -1,1 +1,2 @@
-different line count in these files! : file out/t09-literal1.out : #10 , file tests/t09-literal1.out : #5 
+difference in line #4: file: out/t09-literal1.out -----> content: true <> file: tests/t09-literal1.out -----> content: T_BOOLEANLITERAL true 
+difference in line #5: file: out/t09-literal1.out -----> content: false <> file: tests/t09-literal1.out -----> content: T_BOOLEANLITERAL false 
