@@ -15,6 +15,7 @@ base10int {digit}+
 base16int 0[xX]{digit16}+
 integer {base10int}|{base16int}
 double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
+string \"[^\"\n]*\"
 
 %%
 
@@ -32,7 +33,7 @@ double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
 
 {double} {printf("T_DOUBLELITERAL %s\n",yytext);}
 
-
+{string} {printf("T_STRINGLITERAL %s\n",yytext);}
 
 %%
 
