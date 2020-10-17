@@ -14,7 +14,7 @@ id {char}({char}|{digit}|_)*
 base10int {digit}+
 base16int 0[xX]{digit16}+
 integer {base10int}|{base16int}
-double {digit}+.({digit}+)?
+double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
 
 %%
 
@@ -31,6 +31,7 @@ double {digit}+.({digit}+)?
 {integer} {printf("T_INTLITERAL %s\n",yytext);}
 
 {double} {printf("T_DOUBLELITERAL %s\n",yytext);}
+
 
 
 %%
