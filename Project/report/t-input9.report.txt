@@ -1,0 +1,1 @@
+difference in line #10: file: out/t-input9.out -----> content: T_INTLITERAL 0x22222 <> file: tests/t-input9.out -----> content: T_DOUBLELITERAL 0x22222 
