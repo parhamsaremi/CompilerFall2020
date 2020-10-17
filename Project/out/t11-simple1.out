@@ -17,7 +17,8 @@ T_ID id3a
 !=
 (
 )
-&&]
+&&
+]
 <
 >
 <=
@@ -34,7 +35,7 @@ T_ID n
 !=
 if
 ;
-false
+T_BOOLEANLITERAL false
 ,
 -
 if

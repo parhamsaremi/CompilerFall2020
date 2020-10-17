@@ -28,7 +28,9 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 "null"|"this"|"extends"|"implements"|"for"|"while"|"if" {printf("%s\n",yytext);}
 "else"|"return"|"break"|"continue"|"new"|"NewArray"|"Print" {printf("%s\n",yytext);}
 "ReadInteger"|"ReadLine"|"dtoi"|"itod"|"btoi"|"itob"|"private" {printf("%s\n",yytext);}
-"protected"|"public"|"true"|"false" {printf("%s\n",yytext);}
+"protected"|"public" {printf("%s\n",yytext);}
+
+"true"|"false" {printf("T_BOOLEANLITERAL %s\n",yytext);}
 
 {id} {printf("T_ID %s\n",yytext);}
 
@@ -38,9 +40,11 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {string} {printf("T_STRINGLITERAL %s\n",yytext);}
 
-{op_punct_1char}|"<="|">="|"=="|"!="|"||" {printf("%s\n",yytext);}
+{op_punct_1char}|"<="|">="|"=="|"!="|"||"|"&&" {printf("%s\n",yytext);}
 
 {comment_inline}|{comment_multiline} {}
+
+
 
 %%
 
