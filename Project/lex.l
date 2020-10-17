@@ -10,10 +10,11 @@ digit16 [0-9a-fA-F]
 delim [ \t\n]
 ws {delim}+
 char [A-Za-z]
-id {char}({char}|{digit}|_)+
+id {char}({char}|{digit}|_)*
 base10int {digit}+
 base16int 0[xX]{digit16}+
 integer {base10int}|{base16int}
+double {digit}+.({digit}+)?
 
 %%
 
@@ -29,6 +30,7 @@ integer {base10int}|{base16int}
 
 {integer} {printf("T_INTLITERAL %s\n",yytext);}
 
+{double} {printf("T_DOUBLELITERAL %s\n",yytext);}
 
 
 %%
