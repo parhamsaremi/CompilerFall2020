@@ -16,7 +16,7 @@ base16int 0[xX]{digit16}+
 integer {base10int}|{base16int}
 double {digit}+\.({digit}+)?([Ee][-+]?{digit}+)?
 string \"[^\"\n]*\"
-op_punct_1char [+\-*\/%<>=!;,.\[\]\(\)]
+op_punct_1char [+\-*\/%<>=!;,.\[\]\(\)\{\}]
 comment_inline \/\/[^\n]*
 comment_multiline \/\*[^(\*\/)]*\*\/
 
@@ -46,7 +46,5 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 int main(){
     printf("start my friend :)\n");
-    while(1){
-        yylex();
-    }
+    yylex();
 }
