@@ -1,5 +1,6 @@
 #!/bin/bash
 mkdir -p out
+mkdir -p report
 cd ./tests
 prefix="t" ;
 dirlist=(`ls ${prefix}*.in`) ;
@@ -18,7 +19,7 @@ do
     flex lex.l
     g++ main.cpp -std=c++14 -o main
     if [ $? -eq 1 ]; then
-        echo "Code did not Compiler"
+        echo "Code did not Compile"
     else
         echo "Core compiled successfuly"
         ./main -i $filelist -o $output_filename
@@ -38,7 +39,7 @@ do
             echo
             fi 
         else
-            echo "Code did not execute successfuly!"
+            echo "Code did not execute successfully!"
             ((NUMBER_OF_FAILED++))
         fi
     fi
