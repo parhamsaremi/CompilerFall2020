@@ -24,7 +24,7 @@ do
         echo "Core compiled successfuly"
         ./main < $TEST_DIRECTORY$filelist > $OUTPUT_DIRECTORY$output_filename
         if [ $? -eq 0 ]; then
-            echo "Code Executed Successfuly!"
+            echo "Code Executed Successfully!"
             if command -v python3; then
                 python3 comp.py -a "$OUTPUT_DIRECTORY$output_filename" -b "$TEST_DIRECTORY$output_filename" -o "$REPORT_DIRECTORY$report_filename"
             else
