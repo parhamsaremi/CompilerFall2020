@@ -1,0 +1,223 @@
+% Course Assignment Style (v0.3)
+% By: Hamid Zarrabi-Zadeh
+% Licensed Under GPL
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[usenames,dvipsnames]{pstricks} 
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+
+\usepackage{graphicx,comment,framed}
+\usepackage{amsthm,amssymb,amsmath}
+\usepackage{bussproofs}
+\usepackage[usenames,dvipsnames]{pstricks}
+\usepackage{xifthen,xparse}
+
+
+\usepackage[margin=1in]{geometry}
+\pagestyle{empty}
+
+\usepackage[extrafootnotefeatures,localise=on]{xepersian}
+\usepackage[noend]{algpseudocode}
+
+
+%--------------------- Font settings ----------------------
+
+\settextfont[Scale=1.0, Path = commons/]{XB Niloofar Sharif}
+\setdigitfont[Scale=1.0, Path = commons/]{XB Niloofar Sharif}
+\defpersianfont\sayeh[Scale=1.0, Path = commons/]{XB Niloofar Sharif}
+
+
+%--------------------- page settings ----------------------
+
+
+\parindent=0em
+\setlength{\parskip}{.5em} 
+
+\renewcommand{\labelitemi}{$\small\bullet$}
+\renewcommand{\arraystretch}{1.3}
+
+\g@addto@macro\normalsize{%
+  \setlength\abovedisplayskip{.8em}
+  \setlength\abovedisplayshortskip{.55em}
+%  \setlength\belowdisplayskip{.8em}
+%  \setlength\belowdisplayshortskip{.69em}
+}
+
+%------------------------ Environments ------------------------------------
+
+\newtheorem{لم}{لم}
+\newtheorem{قضیه}{قضیه‌ی}
+\newtheorem{مشاهده}{مشاهده‌ی}
+\newtheorem{تعریف}{تعریف}
+
+
+%-------------------------- Notations ------------------------------------
+
+\newcommand{\IN}{\ensuremath{\mathbb{N}}} 
+\newcommand{\IZ}{\ensuremath{\mathbb{Z}}} 
+\newcommand{\IQ}{\ensuremath{\mathbb{Q}}} 
+\newcommand{\IR}{\ensuremath{\mathbb{R}}} 
+\newcommand{\IC}{\ensuremath{\mathbb{C}}} 
+
+
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\seq}[1]{\left< #1 \right>}
+\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
+\newcommand{\card}[1]{\left|{#1}\right|}
+\newcommand{\prob}[1]{\ensuremath{\mathop{\mathrm{Pr}}\left\{#1\right\}}}
+\newcommand{\setcomp}[1]{\overline{#1}}
+\newcommand{\provided}{\mid}
+\newcommand{\divs}{\mid}
+\newcommand{\ndivs}{\nmid}
+\newcommand{\divides}{\divs}
+\newcommand{\iequiv}[1]{\,\overset{#1}{\equiv}\,}
+\newcommand{\inotequiv}[1]{\,\overset{#1}{\not\equiv}\,}
+\newcommand{\imod}[1]{\allowbreak\mkern5mu(#1\,\,\text{به پیمانه‌ی})}
+\newcommand{\emod}[1]{\allowbreak\mkern5mu({\operator@font mod}\,\,#1)}
+
+\newcommand{\poly}{\mathop{\mathrm{poly}}}
+\newcommand{\polylog}{\mathop{\mathrm{polylog}}}
+
+\newcommand{\lee}{\leqslant}
+\newcommand{\gee}{\geqslant}
+\renewcommand{\leq}{\lee}
+\renewcommand{\le}{\lee}
+\renewcommand{\geq}{\gee}
+\renewcommand{\ge}{\gee}
+
+\newcommand{\REM}[1]{}
+\renewcommand{\حذف}{\REM}
+\newcommand{\mrbox}[1]{\mbox{\lr{#1}}}
+\newcommand{\لر}{\lr}
+\newcommand{\کد}[1]{\lr{\tt #1}}
+
+
+\newcounter{probcnt}
+\NewDocumentCommand{\مسئله}{s m o}
+	{\stepcounter{probcnt}\bigskip\medskip{
+ 	\large \bf مسئله‌ی $\IfBooleanTF#1{^\star}{}\arabic{probcnt}$. \ #2} \ \IfValueTF{#3}{[#3]}{}
+ 	\nopagebreak\par\medskip}
+
+\newcommand{\fqed}[1]{\leavevmode\unskip\nobreak\quad\hspace*{\fill}{\ensuremath{#1}}}
+
+\newenvironment{اثبات}
+	{\begin{trivlist}\item[\hskip\labelsep{\em اثبات.}]}
+	{\fqed{\square}\end{trivlist}}
+
+\newcommand{\حل}[1]
+	{\medskip\noindent{\bf حل.}\ #1 \fqed{\triangleright}}
+\newcommand{\پاسخ}[1]
+	{\par{\medskip\noindent{\bf پاسخ.}\ #1}}
+
+\newcommand{\hidesolutions}{\renewcommand{\حل}[1]{}}
+\newcommand{\hideanswers}{\renewcommand{\پاسخ}[1]{}}
+
+
+%------------------------- Header -----------------------------
+
+\newcommand{\heading}[4]{
+\parindent=0em
+
+\rightline{
+\makebox[6em][c]{
+\includegraphics[height=1.6cm]{commons/sharif.png}
+}}
+\vspace{-.5em}
+{\scriptsize\bf دانشکده‌ی مهندسی کامپیوتر}
+\hfill {\small
+نام و نام خانوادگی:  \AuthorName \ 
+}\\[-5.3em]
+\leftline{\hfill\Large\bf 
+طراحی کامپایلرها
+}\\[.8em]
+\leftline{\hfill\bf 
+نیم‌سال دوم 99-98
+}\\[1.5em]
+\hrule height .12em
+\normalsize
+\vspace{-.2em} 
+\makebox[5cm][r]{#1}
+\hfill 
+\makebox[5cm][c]{\sayeh\large #2} 
+\hfill
+\makebox[5cm][l]{\small #3 #4}
+\vspace{1mm} 
+\hrule height .1em
+}
+
+\newcommand{\سربرگ}[3]{
+	\heading
+	{#1}
+	{#2}
+	{موعد تحویل:}{#3}}
+\newcommand{\سربرگ‌آزمونک}[3]{\heading{#1}{#2}{زمان:}{#3}}
+\newcommand{\سربرگ‌تمرین}[3]{\heading{#1}{#2}{}{#3}}
+
+
+%---------------------------- General Style ------------------------------------
+
+\renewcommand{\labelitemi}{$\small\bullet$}
+\renewcommand{\usefont}[4]{}  % fix Persian font in pstricks
+
+
+% --------------------------- Persian Enumerations --------------------------
+
+\def\harfi#1{\expandafter\@harfi\csname c@#1\endcsname}  			% alef, b, p, t, c, j, ...
+\def\abjad#1{\expandafter\@abjad\csname c@#1\endcsname}		% alef, b, j, d, h, ...
+\def\adadi#1{\expandafter\@adadi\csname c@#1\endcsname}			%	yek, dow, se, chahar, ...
+
+\def\@harfi#1{\beginR\@@harfi#1\endR}
+\def\@@harfi#1{%
+\ifcase#1\or الف\or ب\or پ\or ت\or ث\or ج\or چ\or ح\or خ\or د\or ذ\or ر\or ز\or ژ\else\@ctrerr\fi}
+
+\def\@abjad#1{\beginR\@@abjad#1\endR}
+\def\@@abjad#1{%
+\ifcase#1\or الف\or ب\or ج\or د\or ه\or و\or ز\or ح\or ط\or ی\or ک\or ل\or م\or ن\else\@ctrerr\fi}
+
+\def\@adadi#1{\beginR\@@adadi#1\endR}
+\def\@@adadi#1{%
+   \ifcase#1 یک\or دو\or سه\or چهاد\or پنج\or شش\or هفت\or هشت\or نه\or ده\else\@ctrerr\fi}
+
+\newcounter{alef}
+\newenvironment{ابجد}{
+	\setcounter{alef}{0}
+	\begin{list} {\abjad{alef})}
+	{\usecounter{alef}}}
+	{\end{list}}
+
+\newenvironment{الفبا}{
+	\setcounter{alef}{0}
+	\begin{list} {\harfi{alef})}
+	{\usecounter{alef}}}
+	{\end{list}}
+
+
+% ------------------------------ sample input/output --------------------------
+
+\def\s@tm@cr@s{%
+\def\widthin##1{\exmpwidinf=##1\relax}\def\widthout##1{\exmpwidouf=##1\relax}%
+\def\stretchin##1{\advance\exmpwidinf by ##1\relax}%
+\def\stretchout##1{\advance\exmpwidouf by ##1\relax}%
+%\def\testst@r{\@ifstar{{\tt [*] is deprected, you need not use it any more}}{}}%
+}%
+
+\newenvironment{example}[1][]{%
+\s@tm@cr@s\ttfamily\obeylines\obeyspaces\frenchspacing%\testst@r#1%
+\newcommand{\exmp}[2]{%
+\begin{minipage}[t]{7.4cm}\rightskip=0pt plus 1fill\relax##1\medskip\end{minipage}&%
+\begin{minipage}[t]{7.4cm}\rightskip=0pt plus 1fill\relax##2\medskip\end{minipage}\\%
+\hline}%
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\bf\rl{ورودی نمونه }}&%
+\multicolumn{1}{|c|}{\bf\rl{خروجی نمونه}}\\%
+\hline
+}
+{\end{tabular}}
+
+

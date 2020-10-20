@@ -1,3 +1,7 @@
 ./Project/lex.yy.c
 ./Project/a.out
 ./CMakeLists.txt
+*.aux
+*.log
+*.gz
+*zip
