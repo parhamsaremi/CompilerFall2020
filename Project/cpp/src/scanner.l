@@ -8,7 +8,7 @@
 
 digit [0-9]
 digit16 [0-9a-fA-F]
-delim [ \t\n]
+delim [ \r\t\n\f]
 ws {delim}+
 char [A-Za-z]
 id {char}({char}|{digit}|_)*
@@ -45,6 +45,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {comment_inline}|{comment_multiline} {}
 
-
+. {fprintf(yyout, "UNDEFINED_TOKEN\n");}
 
 %%
