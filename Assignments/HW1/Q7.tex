@@ -2,4 +2,29 @@
 %شماره دانشجویی: 
 \مسئله{\lr{DFA} به \lr{NFA}}
 
-\پاسخ{}
+\پاسخ{
+
+\usetikzlibrary{automata, positioning, arrows}
+\tikzset{
+	->, % makes the edges directed
+	>=stealth, % makes the arrow heads bold
+	node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+	every state/.style={thick, fill=white!10}, % sets the properties for each ’state’ node
+	initial text=$ $, % sets the text that appears on the start arrow
+}
+\begin{latin}
+\begin{center}
+	\begin{tikzpicture}
+		\node[state, initial] (q1) {$q_1$};
+		\node[state, right of=q1] (q2) {$q_2$};
+		\node[state, right of=q2] (q3) {$q_3$};
+		\node[state, accepting, right of=q3] (q4) {$q_4$};
+		\draw 
+		(q1) edge[loop above] node{0,1} (q1)
+		(q1) edge[above] node{1} (q2)
+		(q2) edge[above] node{0,1} (q3)
+		(q3) edge[above] node{0,1} (q4);
+	\end{tikzpicture}
+\end{center}
+\end{latin}
+}
