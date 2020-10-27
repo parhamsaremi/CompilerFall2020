@@ -2,4 +2,119 @@
 %شماره دانشجویی: 
 \مسئله{طراحی \lr{DFA} }
 
-\پاسخ{}
+\پاسخ{
+برای دو قسمت اول بجز حالت شروع ۴ حالت تعریف شده که هر کدام نشان دهنده یکی از چهار حالت زوج-زوج، فرد-زوج، زوج-فرد، فرد-فرد می‌باشند و با تغییر حالت دادن بین این استیت‌ها با دریافت ۰ یا ۱ می‌توان فهمید که در حالت فعلی وضعیت زوج یا فرد بودن ۰ و ۱ ها به چه شکل می‌باشد.
+\begin{enumerate}
+	\item
+	 همانند توضیحات آمده در بالا عمل می‌کنیم و همانطور که در شکل زیر مشخص می‌باشد $q_0$ که همان حالت شروع می‌باشد حال به ترتیب داریم.
+	\begin{itemize}
+		\item $q_1$ = 
+		این حالت برای حالت‌هایی است که تعداد فرد ۰ دارند و تعداد زوج یک
+		\item $q_2$ = 
+		این حالت نشان‌دهنده‌ی زوج بودن ۰ و فرد بودن ۱ می‌باشد.
+		\item $q_3$ = 
+		این حالت نشان‌دهنده‌ی فرد بودن ۰ و ۱ می‌باشد
+		\item $q_4$ = 
+		این حالت نشان‌دهنده‌ی زوج بودن ۰ و ۱ می‌باشد که حالت پایانی نیز می‌باشد. 
+	\end{itemize}
+	حال با توجه به تعریف‌های بالا $DFA$ زیر گویا می‌باشد.
+
+	\begin{latin}
+		\begin{center}
+			\begin{tikzpicture}[->,
+				>=stealth,
+				node distance=3cm,
+				every state/.style={thick, fill=white!10},
+				initial text=$ $,
+				]
+				\node[state, initial] (q0) {$q_0$};
+				\node[state, above right of=q0](q1) {$q_1$};
+				\node[state, below right of= q0] (q2) {$q_2$};
+				\node[state, below right of=q1] (q3) {$q_3$};
+				\node[state, accepting, right of=q3] (q4) {$q_4$};
+				\draw 
+				(q0) edge[above] node{0} (q1)
+				(q0) edge[below] node{1} (q2)
+				(q1) edge[above, bend left= 0.5cm] node{1} (q3)
+				(q3) edge[below, bend left = 0.5cm] node{1} (q1)
+				(q2) edge[below, bend right=0.5cm] node{0} (q3)
+				(q3) edge[above, bend right=0.5cm] node{0} (q2)
+				(q1) edge[above, bend left = 0.25cm] node{0} (q4)
+				(q4) edge[above, bend right = 1cm] node{0} (q1)
+				(q2) edge[below, bend right = 0.25cm] node{1} (q4)
+				(q4) edge[below, bend left = 1cm] node{1} (q2)
+				;
+			\end{tikzpicture}
+		\end{center}
+	\end{latin}
+	\item
+	مانند قسمت قبل می‌باشد فقط حالت‌های نهایی آن متفاوت با اولی می‌باشد و  با توجه به تعاریف حالت‌ها در بخش قبلی باید $q_1$ و $q_2$ حالت‌های پایانی باشند. داریم:
+	\begin{latin}
+		\begin{center}
+			\begin{tikzpicture}[->,
+				>=stealth,
+				node distance=3cm,
+				every state/.style={thick, fill=white!10},
+				initial text=$ $,
+				]
+				\node[state, initial] (q0) {$q_0$};
+				\node[state, accepting, above right of=q0](q1) {$q_1$};
+				\node[state, accepting, below right of= q0] (q2) {$q_2$};
+				\node[state, below right of=q1] (q3) {$q_3$};
+				\node[state, right of=q3] (q4) {$q_4$};
+				\draw 
+				(q0) edge[above] node{0} (q1)
+				(q0) edge[below] node{1} (q2)
+				(q1) edge[above, bend left= 0.5cm] node{1} (q3)
+				(q3) edge[below, bend left = 0.5cm] node{1} (q1)
+				(q2) edge[below, bend right=0.5cm] node{0} (q3)
+				(q3) edge[above, bend right=0.5cm] node{0} (q2)
+				(q1) edge[above, bend left = 0.25cm] node{0} (q4)
+				(q4) edge[above, bend right = 1cm] node{0} (q1)
+				(q2) edge[below, bend right = 0.25cm] node{1} (q4)
+				(q4) edge[below, bend left = 1cm] node{1} (q2)
+				;
+			\end{tikzpicture}
+		\end{center}
+	\end{latin}
+	\item
+	این قسمت با استفاده از یک حالت $Garbage$ که با $G$ مشخص شده و هفت حالت اصلی از $q_0$ تا $q_6$ حل شده که $DFA$ آن در زیر آمده است:
+	\begin{latin}
+		\begin{center}
+			\begin{tikzpicture}[->,
+				>=stealth,
+				node distance=2cm,
+				every state/.style={thick, fill=white!10},
+				initial text=$ $,
+				]
+				\node[state, initial] (q0) {$q_0$};
+				\node[state, right of=q0](q1) {$q_1$};
+				\node[state, right of= q1] (q2) {$q_2$};
+				\node[state, above right of=q2] (q3) {$q_3$};
+				\node[state, accepting,below right of=q2] (q4) {$q_4$};
+				\node[state, right of=q3] (q5) {$q_5$};
+				\node[state, accepting, right of=q5] (q6) {$q_6$};
+				\node[state, below of= q4] (G) {$G$}; 
+				\draw 
+				(q0) edge[above] node{0} (q1)
+				(q1) edge[below] node{1} (q2)
+				(q1) edge[above, bend left = 0.5cm] node{0} (q3)
+				(q2) edge[above] node{0} (q3)
+				(q2) edge[below] node{1} (q4)
+				(q3) edge[above] node{1} (q5)
+				(q4) edge[right] node{0} (q3)
+				(q5) edge[above] node{1} (q6)
+				
+				(q4) edge[left] node{1} (G)
+				(q0) edge[below] node{1} (G)
+				(q3) edge[right, bend left = 1.1cm] node{0} (G)
+				(q5) edge[right, bend left=0.5cm] node{0} (G)
+				(q6) edge[right, bend left = 0.125cm] node{0,1} (G)
+				(G) edge[below, loop below] node{0,1} (G)
+				;
+			\end{tikzpicture}
+		\end{center}
+	\end{latin}
+\end{enumerate}
+
+}
