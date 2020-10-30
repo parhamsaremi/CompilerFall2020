@@ -1,5 +1,133 @@
 %نام و نام خانوادگی:
 %شماره دانشجویی: 
-\مسئله{\lr{NFA} به \lr{DFA}}
+\مسئله{محاسبه‌ی اعداد}
 
-\پاسخ{}
+\پاسخ
+\\
+{برای هر استیت مجموعه حالات متناظر با آن در NFA را مینویسیم.
+\\1.
+\begin{center}
+    {{$q_1$} , {$q_0$} }A:
+    \\
+    { {$q_1$} }B:
+    \\
+    { {$q_2$} }C:
+    \\
+\end{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+\node[state,initial,accepting]   (A)                    {$A$};
+\node[state,accepting] (B)  [above right of=A]    {$B$};
+\node[state]           (C)  [below right of=B]    {$C$};
+\path[->]
+(A) edge [bend left]  node {a}    (B)
+(B) edge [bend left]  node {b}    (C)
+ edge [loop above] node {a}    (   )
+(C) edge [bend left]  node {c}  (A)
+	edge [loop right] node {b}    (   );
+
+\end{tikzpicture}
+
+2.
+\\
+\\
+\\
+\begin{center}
+    { {$q_0$} }A:
+    \\
+    { {$q_1$} }B:
+    \\
+    { {$q_2$} }C:
+    \\
+    { {$q_3$} }D:
+    \\
+
+\end{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+\node[state,initial]   (A)                    {$A$};
+\node[state] (B)  [above right of=A]    {$B$};
+\node[state]           (C)  [below right of=B]    {$C$};
+\node[state,accepting]           (D)  [below right of=A]    {$D$};
+\path[->]
+(A) edge [bend left]  node {a}    (B)
+(B) edge [bend left]  node {b}    (C)
+	edge []  node {a}    (A)
+(C) edge []  node {b}  (B)
+ 	edge [bend left]  node {c}  (D)
+(D) edge   node {a}  (B)
+	edge [bend left]  node {c}  (C);
+\end{tikzpicture}
+
+3.
+\begin{center}
+    { {$s_0$} }A:
+    \\
+    { {$s_3$} , {$s_2$} , {$s_1$}}B:
+    \\
+    { {$q_3$} }C:
+    \\
+\end{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+\node[state,initial]   (A)                    {$A$};
+\node[state,accepting] (B)  [above right of=A]    {$B$};
+\node[state,accepting]           (C)  [below right of=B]    {$C$};
+\path[->]
+(A) edge [bend left]  node {a}    (B)
+(B) edge [loop above]  node {a}    ()
+ 	edge [bend left]  node {b,c}    (C)
+(C) edge [loop right] node {c}    (   );
+
+\end{tikzpicture}
+
+4.
+\begin{center}
+    { {$q_0$} }A:
+    \\
+    { {$q_1$} , {$s_0$} }B:
+    \\
+    { {$q_1$} , {$q_0$} }C:
+    \\
+     { {$q_2$},{$q_1$},{$q_0$} }D:
+    \\
+    { {$q_3$}, {$q_2$},{$q_1$},{$q_0$} }D:
+    \\
+    { {$q_3$},{$q_2$},{$q_1$} }E:
+    \\
+     { {$q_3$} , {$q_2$} }G:
+    \\
+    { {$q_3$}}B:
+    \\
+
+\end{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+\node[state,initial]   (A)                    {$A$};
+\node[state] (B)  [right of=A]    {$B$};
+\node[state]           (C)  [right of=B]    {$C$};
+\node[state]   (D)         [right of=C]           {$D$};
+\node[state,accepting] (E)  [ below of = C]    {$E$};
+\node[state,accepting]           (F)  [right of=D]    {$F$};
+\node[state,accepting]   (G)        [right of=F]            {$G$};
+\node[state,accepting] (H)  [right of=G]    {$H$};
+\path[->]
+(A) edge   node {a}    (B)
+    edge [bend left]  node {b}    (C)
+(B) edge [bend right]  node {b}    (E)
+ 	edge [bend left]  node {a}    (D)
+(C) edge [bend left]  node {a}    (E)
+    edge [bend left]  node {b}    (G)
+(D) edge [bend left]  node {a}    (F)
+    edge [bend left]  node {b}    (E)
+(E) edge [bend right]  node {b}    (G)
+    edge [loop below]  node {a}    ()
+(F) edge [bend left]  node {b}    (E)
+    edge [loop above]  node {a}    ()
+(G) edge [bend left]  node {b}    (H)
+    edge [loop below]  node {a}    ()
+(H) edge [loop below]  node {a}    ();
+ 
+\end{tikzpicture}
