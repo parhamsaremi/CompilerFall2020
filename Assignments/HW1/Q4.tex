@@ -17,7 +17,7 @@
 \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
 \node[state,initial]   (s1)                    {$s_1$};
 \node[state]   (...)      [right of=s1]               {$...$};
-\node[state]  (sm) [right of=...]              {$s_(_m_-_1_)$};
+\node[state]  (sm) [right of=...]              {$s_{m-1}$};
 \node[state,accepting]   [right of=sm]   (m)                    {$m$};
 \node[state,accepting] (n)  [right of=m]    {$n$};
 \node[state]           (aftern)  [right of=n]    {$after n$};
