@@ -23,10 +23,10 @@ m تاRمتوالی به عنوان استیت‌هایمان داریم   و ا
 (s) edge []  node {{$\epsilon$}}    (R0)
 (R0) edge []  node {{$\epsilon$}}    (R1)
 (R1) edge []  node {{$\epsilon$}}    (R2)
-    edge [bend left]  node {{$\epsilon$}}    (final)
+    edge [bend left=1.5cm]  node {{$\epsilon$}}    (final)
 (R2) edge []  node {{$\epsilon$}}    (R3)
     edge [bend left]  node {{$\epsilon$}}    (final)
-(R3) edge []  node {{$\epsilon$}}    (final)
+(R3) edge []  node {{$\epsilon$}}    (final);
 \end{tikzpicture}
 \end{center}
 
@@ -62,17 +62,12 @@ m تاRمتوالی به عنوان استیت‌هایمان داریم   و ا
     edge [loop below] node {a,b}    (   )
 (1) 	edge []  node {a}    (2)
     edge [loop below] node {a,b}    (   )
-(2) edge [bend right]  node {{$\epsilon$}}  (0)
+(2) edge [above,bend right]  node {{$\epsilon$}}  (0)
  	edge []  node {b}  (3)
- 	edge [loop below] node {a,b}    (  )
+ 	edge [loop below] node {a,b}    (  );
 \end{tikzpicture}
 \end{center}
-\\
-\\
-\\
-\\
 نمونه‌ی یک مسیر قابل قبول :
-\\
 \begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
 \node[state,initial]   (0)                    {$0$};
@@ -83,19 +78,15 @@ m تاRمتوالی به عنوان استیت‌هایمان داریم   و ا
 (0) edge []  node {a}    (1)
 (1) 	edge []  node {a}    (2)
 (2) edge []  node {b}  (3)
- 	edge [loop below] node {b}    (  )
+ 	edge [loop below] node {b}    (  );
 \end{tikzpicture}
 \end{center}
-\\
-\\
+
 3.
-\\
 در هر یک از استیتها که باشیم، 2 حالت قابل قبول برای رسیدن به رشته مورد نظر وجود دارد لذا 2 به توان 4 و یا 16 حالت وجود دارد.
 که از بین آنها مسیر 10123 در استیت نهایی رشته را تمام میکند و لذا رشته قابل تشخیص است. لازم به ذکر است که به ازای حروف الفبای اصلی 16 حالت داریم اما در کل به دلیل وجود {{$\epsilon$}}ها ، بی‌نهایت حالت اکسپت میشوند.
 \\
-\\
 حالت کلی :
-\\
 \\
 \begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
@@ -111,13 +102,11 @@ m تاRمتوالی به عنوان استیت‌هایمان داریم   و ا
 (2) edge [bend left]  node {{$\epsilon$}}  (1)
  	edge []  node {b}  (3)
 (3) edge [bend left]  node {{$\epsilon$}}  (2)
-	edge [bend left]  node {a}  (0);
+	edge [bend left=2cm]  node {a}  (0);
 \end{tikzpicture}
 \end{center}
-\\
+
 نمونه‌ی یک مسیر قابل قبول:
-\\
-\\
 \begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
 \node[state,initial]   (0)                    {$0$};
@@ -133,4 +122,3 @@ m تاRمتوالی به عنوان استیت‌هایمان داریم   و ا
  	edge []  node {b}  (3);
 \end{tikzpicture}
 \end{center}
-\\
