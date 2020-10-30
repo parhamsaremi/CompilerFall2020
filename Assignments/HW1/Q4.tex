@@ -6,33 +6,34 @@
 \\
 1.
 \\
-در کل m+n+1 استیت در نظر میگیریم. از استیت m به بعد، با اپسیلون تمام حالات موجود را به حالت نهایی برده و اکسپت میکینم،  سپس برای حالاتی هم که از n تا بیشتر بودند، یک استیت دیگر داریم که ازین به بعد تمام حروف الفبایی که میگیریم را در آن استیت میبریم که قابل قبول نباشد.
-تا پیش از استیت m را نیز هر 
-بار با دریافت هر حرف الفبایی به استیت بعدی میرویم.
-استیتهای میانی با ... مشخص شده اند.
+m تاRمتوالی به عنوان استیت‌هایمان داریم   و از nامین تا m امین آنها به حالت نهایی بایدtransition {{$\epsilon$}} داشته باشیم. این طراحی بیشتر از mتا R را نیز نمیتواند بپذیرد .
+برای مثال حالت n=2 , m=4 را در نظر بگیرید:
+\\
 \\
 \newpage
-
+\begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
-\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
-\node[state,initial]   (s1)                    {$s_1$};
-\node[state]   (...)      [right of=s1]               {$...$};
-\node[state]  (sm) [right of=...]              {$s_(_m_-_1_)$};
-\node[state,accepting]   [right of=sm]   (m)                    {$m$};
-\node[state,accepting] (n)  [right of=m]    {$n$};
-\node[state]           (aftern)  [right of=n]    {$after n$};
+\node[state,initial]   (s)                    {$s$};
+\node[state]   (R0)      [right of=s]               {$R$};
+\node[state]  (R1) [right of=R0]              {$R$};
+\node[state]  (R2) [right of=R1]              {$R$};
+\node[state]  (R3) [right of=R2]              {$R$};
+\node[state,accepting]  (final)  [right of=R3]    {$final$};
 \path[->]
-(s1) edge [bend left]  node {{$\Sigma$}}    (sm)
-(sm) edge []  node {{$\Sigma$}}    (m)
-(m) edge []  node {{$\epsilon$}}    (n)
-(n) edge []  node {{$\Sigma$}}    (aftern)
-(aftern)	edge [loop right] node {{$\Sigma$}}    (   );
+(s) edge []  node {{$\epsilon$}}    (R0)
+(R0) edge []  node {{$\epsilon$}}    (R1)
+(R1) edge []  node {{$\epsilon$}}    (R2)
+    edge [bend left]  node {{$\epsilon$}}    (final)
+(R2) edge []  node {{$\epsilon$}}    (R3)
+    edge [bend left]  node {{$\epsilon$}}    (final)
+(R3) edge []  node {{$\epsilon$}}    (final)
 \end{tikzpicture}
-
+\end{center}
 
 2.
 \\
 در کل 6 مسیر aabb را مشخص میکنند:
+(همواره در استیت صفر هستیم و از بعد آن استیت ها را به ترتیب ذکر کرده شده‌اند.)
 \\
 1223
 \\
@@ -45,7 +46,91 @@
 0112
 \\
 0122\\
-که از بین آنها مسیر زیر 1223 در استیت نهایی رشته را تمام میکند و لذا رشته قابل تشخیص است.
+که از بین آنها مسیر  1223 در استیت نهایی رشته را تمام میکند و لذا رشته قابل تشخیص است.
+\\
+\\
+حالت کلی :
+\\
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node[state,initial]   (0)                    {$0$};
+\node[state] (1)  [right of=0]    {$1$};
+\node[state]           (2)  [right of=1]    {$2$};
+\node[state,accepting]           (3)  [right of=2]    {$3$};
+\path[->]
+(0) edge []  node {a}    (1)
+    edge [loop below] node {a,b}    (   )
+(1) 	edge []  node {a}    (2)
+    edge [loop below] node {a,b}    (   )
+(2) edge [bend right]  node {{$\epsilon$}}  (0)
+ 	edge []  node {b}  (3)
+ 	edge [loop below] node {a,b}    (  )
+\end{tikzpicture}
+\end{center}
+\\
+\\
+\\
+\\
+نمونه‌ی یک مسیر قابل قبول :
+\\
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node[state,initial]   (0)                    {$0$};
+\node[state] (1)  [right of=0]    {$1$};
+\node[state]           (2)  [right of=1]    {$2$};
+\node[state,accepting]           (3)  [right of=2]    {$3$};
+\path[->]
+(0) edge []  node {a}    (1)
+(1) 	edge []  node {a}    (2)
+(2) edge []  node {b}  (3)
+ 	edge [loop below] node {b}    (  )
+\end{tikzpicture}
+\end{center}
+\\
 \\
 3.
+\\
 در هر یک از استیتها که باشیم، 2 حالت قابل قبول برای رسیدن به رشته مورد نظر وجود دارد لذا 2 به توان 4 و یا 16 حالت وجود دارد.
+که از بین آنها مسیر 10123 در استیت نهایی رشته را تمام میکند و لذا رشته قابل تشخیص است. لازم به ذکر است که به ازای حروف الفبای اصلی 16 حالت داریم اما در کل به دلیل وجود {{$\epsilon$}}ها ، بی‌نهایت حالت اکسپت میشوند.
+\\
+\\
+حالت کلی :
+\\
+\\
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node[state,initial]   (0)                    {$0$};
+\node[state] (1)  [right of=0]    {$1$};
+\node[state]           (2)  [right of=1]    {$2$};
+\node[state,accepting]           (3)  [right of=2]    {$3$};
+\path[->]
+(0) edge []  node {a}    (1)
+    edge [bend left]  node {{$\epsilon$}}  (3)
+(1) edge [bend left]  node {{$\epsilon$}}    (0)
+	edge []  node {b}    (2)
+(2) edge [bend left]  node {{$\epsilon$}}  (1)
+ 	edge []  node {b}  (3)
+(3) edge [bend left]  node {{$\epsilon$}}  (2)
+	edge [bend left]  node {a}  (0);
+\end{tikzpicture}
+\end{center}
+\\
+نمونه‌ی یک مسیر قابل قبول:
+\\
+\\
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node[state,initial]   (0)                    {$0$};
+\node[state] (1)  [right of=0]    {$1$};
+\node[state]           (2)  [right of=1]    {$2$};
+\node[state,accepting]           (3)  [right of=2]    {$3$};
+\path[->]
+(0) edge []  node {a}    (1)
+    edge []  node {a}    (1)
+(1) edge [bend left]  node {{$\epsilon$}}  (0)
+	edge []  node {b}    (2)
+(2)
+ 	edge []  node {b}  (3);
+\end{tikzpicture}
+\end{center}
+\\

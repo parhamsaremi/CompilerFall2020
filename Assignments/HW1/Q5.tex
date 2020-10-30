@@ -4,19 +4,21 @@
 
 \پاسخ
 \\
+\\
 {برای هر استیت مجموعه حالات متناظر با آن در NFA را مینویسیم.
+همچنین حالاتی که در DFAهر بیان نشده‌اند، حالت اضافی هستند که اکسپت نیز نخواهند شد و از آوردن آن‌ها برای جلوگیری از شلوغی شکل پرهیز شده است. برای این موارد فرض شده است که استیت خالی‌ای  موجود است و حالات نامطلوب به آن استیت میروند و در آن نیز می‌مانند.
+\\
 \\1.
-\begin{center}
+
     {{$q_1$} , {$q_0$} }A:
-    \\
+    \\K
     { {$q_1$} }B:
     \\
     { {$q_2$} }C:
     \\
-\end{center}
-\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
-\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
 
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
 \node[state,initial,accepting]   (A)                    {$A$};
 \node[state,accepting] (B)  [above right of=A]    {$B$};
 \node[state]           (C)  [below right of=B]    {$C$};
@@ -26,26 +28,24 @@
  edge [loop above] node {a}    (   )
 (C) edge [bend left]  node {c}  (A)
 	edge [loop right] node {b}    (   );
-
 \end{tikzpicture}
+\end{center}
 
 2.
 \\
 \\
-\\
-\begin{center}
-    { {$q_0$} }A:
+
+ { {$q_0$} }A:
     \\
     { {$q_1$} }B:
     \\
     { {$q_2$} }C:
     \\
     { {$q_3$} }D:
-    \\
+\\
 
-\end{center}
+\begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
-\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
 \node[state,initial]   (A)                    {$A$};
 \node[state] (B)  [above right of=A]    {$B$};
 \node[state]           (C)  [below right of=B]    {$C$};
@@ -59,18 +59,17 @@
 (D) edge   node {a}  (B)
 	edge [bend left]  node {c}  (C);
 \end{tikzpicture}
-
+\end{center}
 3.
-\begin{center}
+
     { {$s_0$} }A:
     \\
     { {$s_3$} , {$s_2$} , {$s_1$}}B:
     \\
     { {$q_3$} }C:
     \\
-\end{center}
+\begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
-\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
 
 \node[state,initial]   (A)                    {$A$};
 \node[state,accepting] (B)  [above right of=A]    {$B$};
@@ -82,29 +81,31 @@
 (C) edge [loop right] node {c}    (   );
 
 \end{tikzpicture}
-
+\end{center}
+\\
+\\
 4.
-\begin{center}
+
     { {$q_0$} }A:
     \\
-    { {$q_1$} , {$s_0$} }B:
+    { {$q_1$} , {$q_0$} }B:
     \\
     { {$q_1$} , {$q_0$} }C:
     \\
      { {$q_2$},{$q_1$},{$q_0$} }D:
     \\
-    { {$q_3$}, {$q_2$},{$q_1$},{$q_0$} }D:
-    \\
     { {$q_3$},{$q_2$},{$q_1$} }E:
+    \\
+    { {$q_3$}, {$q_2$},{$q_1$},{$q_0$} }F:
     \\
      { {$q_3$} , {$q_2$} }G:
     \\
-    { {$q_3$}}B:
+    { {$q_3$}}H:
     \\
 
-\end{center}
+
+\begin{center}
 \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
-\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
 \node[state,initial]   (A)                    {$A$};
 \node[state] (B)  [right of=A]    {$B$};
 \node[state]           (C)  [right of=B]    {$C$};
@@ -129,5 +130,6 @@
 (G) edge [bend left]  node {b}    (H)
     edge [loop below]  node {a}    ()
 (H) edge [loop below]  node {a}    ();
- 
+
 \end{tikzpicture}
+\end{center}
