@@ -1,0 +1,51 @@
+%نام و نام خانوادگی:
+%شماره دانشجویی: 
+\مسئله{تبدیل \lr{NFA}  به \lr{DFA} }
+
+\پاسخ{}
+\\
+1.
+\\
+در کل m+n+1 استیت در نظر میگیریم. از استیت m به بعد، با اپسیلون تمام حالات موجود را به حالت نهایی برده و اکسپت میکینم،  سپس برای حالاتی هم که از n تا بیشتر بودند، یک استیت دیگر داریم که ازین به بعد تمام حروف الفبایی که میگیریم را در آن استیت میبریم که قابل قبول نباشد.
+تا پیش از استیت m را نیز هر 
+بار با دریافت هر حرف الفبایی به استیت بعدی میرویم.
+استیتهای میانی با ... مشخص شده اند.
+\\
+\newpage
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+\node[state,initial]   (s1)                    {$s_1$};
+\node[state]   (...)      [right of=s1]               {$...$};
+\node[state]  (sm) [right of=...]              {$s_(_m_-_1_)$};
+\node[state,accepting]   [right of=sm]   (m)                    {$m$};
+\node[state,accepting] (n)  [right of=m]    {$n$};
+\node[state]           (aftern)  [right of=n]    {$after n$};
+\path[->]
+(s1) edge [bend left]  node {{$\Sigma$}}    (sm)
+(sm) edge []  node {{$\Sigma$}}    (m)
+(m) edge []  node {{$\epsilon$}}    (n)
+(n) edge []  node {{$\Sigma$}}    (aftern)
+(aftern)	edge [loop right] node {{$\Sigma$}}    (   );
+\end{tikzpicture}
+
+
+2.
+\\
+در کل 6 مسیر aabb را مشخص میکنند:
+\\
+1223
+\\
+1100
+\\
+0111
+\\
+0110
+\\
+0112
+\\
+0122\\
+که از بین آنها مسیر زیر 1223 در استیت نهایی رشته را تمام میکند و لذا رشته قابل تشخیص است.
+\\
+3.
+در هر یک از استیتها که باشیم، 2 حالت قابل قبول برای رسیدن به رشته مورد نظر وجود دارد لذا 2 به توان 4 و یا 16 حالت وجود دارد.
