@@ -21,7 +21,46 @@
 	\textcolor{red}{C} \rightarrow \textcolor{blue}{1}|\textcolor{blue}{0}
 \end{align*}
 حال الگوریتم به صورت \lr{LL(1)} تبدیل شده است بنابراین شبه‌‌کدهای پایتون زیر را برای این گرامر‌ها استفاده می‌کنیم:
-\begin{latin}
-	code here
-\end{latin} 
 }
+\begin{latin}
+	\begin{verbatim}
+		def parseE():
+		   parseT()
+		   parseEp()
+		   if tokern == "\$":
+		      return "success"
+		   else:
+		      return "error"
+		
+		
+		def parseEp():
+		   if token == "+":
+		      token = nextToken()
+		      parseE()
+		   elif token == "-":
+		      token = nextToken()
+		      parseE()
+		   elif token == "\$":
+		      return
+		   else:
+		      return "error"
+		
+		def pareT():
+		   parseB()
+		   parseT()
+		
+		def parseB():
+		   if token == "1":
+		      token = nextToken()
+		      parseC()
+		   else:
+		      return "error"
+		
+		def parseC():
+		   if token == "1" or token == "0":
+		      token = nextToken()
+		      return
+		   else:
+		      return "error"
+	\end{verbatim}
+\end{latin}

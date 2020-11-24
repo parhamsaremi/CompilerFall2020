@@ -18,15 +18,18 @@ def parseEp():
         return
     else:
         return "error"
+
 def pareT():
     parseB()
     parseT()
+
 def parseB():
     if token == "1":
         token = nextToken()
         parseC()
     else:
         return "error"
+
 def parseC():
     if token == "1" or token == "0":
         token = nextToken()
