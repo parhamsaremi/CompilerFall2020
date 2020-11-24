@@ -1,4 +1,38 @@
 %نام و نام خانوادگی:
 %شماره دانشجویی:
 \مسئله{پرانتزگذاری معتبر}
-\پاسخ{}
+\پاسخ{
+\begin{enumerate}
+	\item 
+	گرامر با توجه به نداشتن برخورد‌های first/first یا first/follow یک گرامر \lr{LL(1)} می‌باشد حال جدول پارس را می‌کشیم و با توجه به اینکه در آن تداخلی وجود ندارد از این امر مطمئن می‌شویم ابتدا جدول first و foloow را می‌کشیم:
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{ |c|c|c| } 
+				\hline
+				& first & follow \\ 
+				\hline
+				P & $($ & $(,\$$ \\ 
+				\hline
+				S & $\epsilon,($ & $),\$$ \\ 
+				\hline
+			\end{tabular}
+		\end{center} 
+	\end{latin}
+	که با توجه به جدول بالا، جدول پارس به صورت زیر بدست می‌آید:
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{ |c|c|c|c| } 
+				\hline
+				& $($ & $)$ & $\$$\\ 
+				\hline
+				P & $P\rightarrow (S)$ & &\\ 
+				\hline
+				S & $S\rightarrow PS$ & $S\rightarrow\epsilon$&$S\rightarrow\epsilon$ \\ 
+				\hline
+			\end{tabular}
+		\end{center} 
+	\end{latin}
+	\item 
+	
+\end{enumerate}
+}
