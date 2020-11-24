@@ -1,4 +1,27 @@
 %نام و نام خانوادگی:
 %شماره دانشجویی: 
 \مسئله{\lr{Recursive Descent}}
-\پاسخ{}
+\پاسخ{
+در این گرامر عبارت E دارد یک جمله شامل جمع و یا تفریق چند عبارت T می‌باشد (یا یک T تنها) بنابراین ابتدا برای حذف \lr{left recursion} گرامر را به صورت زیر تغییر می‌دهیم:
+\begin{align*}
+	\textcolor{red}{E} \rightarrow \textcolor{red}{T}\textcolor{blue}{+} \textcolor{red}{E}|\textcolor{red}{T}\textcolor{blue}{-}\textcolor{red}{E}|\textcolor{red}{T}
+\end{align*}
+حال با توجه به اینکه سه عبارت داریم که با T شروع می‌شوند با استفاده از \lr{factoring} گرامر به صورت زیر تبدیل می‌شود:
+
+\begin{align*}
+	\textcolor{red}{E} \rightarrow \textcolor{red}{T}\textcolor{red}{E'}\\
+	\textcolor{red}{E'} \rightarrow \textcolor{blue}{+}\textcolor{red}{E}|\\
+	\textcolor{blue}{-}\textcolor{red}{E}|\\
+	\textcolor{blue}{\epsilon}
+\end{align*}
+حال به رفع مشکل عبارت T می‌پردازیم از آنجایی که نشان دهنده‌ی دنباله‌‌ای از دو عبارت \lr{10} یا \lr{11} می‌باشد،‌ گرامر زیر را جایگزین T می‌کنیم که نشان دهنده‌ی این نوع عبارات می‌باشد:
+\begin{align*}
+	\textcolor{red}{T} \rightarrow \textcolor{red}{B}\textcolor{red}{T}\\
+	\textcolor{red}{B} \rightarrow \textcolor{blue}{1}\textcolor{red}{C}\\
+	\textcolor{red}{C} \rightarrow \textcolor{blue}{1}|\textcolor{blue}{0}
+\end{align*}
+حال الگوریتم به صورت \lr{LL(1)} تبدیل شده است بنابراین شبه‌‌کدهای پایتون زیر را برای این گرامر‌ها استفاده می‌کنیم:
+\begin{latin}
+	code here
+\end{latin} 
+}
