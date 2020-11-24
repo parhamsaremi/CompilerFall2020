@@ -27,7 +27,7 @@
 		def parseE():
 		   parseT()
 		   parseEp()
-		   if tokern == "\$":
+		   if tokern == "$":
 		      return "success"
 		   else:
 		      return "error"
@@ -40,7 +40,7 @@
 		   elif token == "-":
 		      token = nextToken()
 		      parseE()
-		   elif token == "\$":
+		   elif token == "$":
 		      return
 		   else:
 		      return "error"
