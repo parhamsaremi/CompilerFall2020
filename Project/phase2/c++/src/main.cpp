@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "lex.yy.h"
+#include "parser.tab.h"
 
 using namespace std ;
 extern FILE* yyout;
@@ -15,11 +16,13 @@ int main(int argc, char* argv[]){
 
     char* input_file_path = argv[2];
     char* output_file_path = argv[4];
+
     printf("input: %s\noutput: %s\n",input_file_path, output_file_path);
+
     yyin= fopen(input_file_path, "r");
     yyout = fopen(output_file_path, "w");
 
-    yylex();
+    yyparse();
     fclose(yyin);
     fclose(yyout);
 }
