@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "parser.tab.h"
 #define YY_DECL int yylex()
+int linenumber=1;
 %}
 
 digit [0-9]
@@ -28,275 +29,334 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 "void" {
     
+    linenumber++;
     return VOID;
 }
 
 "int" {
     
+    linenumber++;
     return INT;
 }
 
 "double" {
     
+    linenumber++;
     return DOUBLE;
 }
 
 "bool" {
     
+    linenumber++;
     return BOOL;
 }
 
 "string" {
     
+    linenumber++;
     return STRING;
 }
 
 "class" {
     
+    linenumber++;
     return CLASS;
 }
 
 "interface" {
      
-     return INTERFACE;
+     linenumber++;
+    return INTERFACE;
 }
 
 "null" {
     
+    linenumber++;
     return NULL1;
 }
 
 "this" {
     
+    linenumber++;
     return THIS;
 }
 
 "extends" {
     
+    linenumber++;
     return EXTENDS;
 }
 
 "implements" {
     
+    linenumber++;
     return IMPLEMENTS;
 }
 
 "for" {
     
+    linenumber++;
     return FOR;
 }
 
 "while" {
     
+    linenumber++;
     return WHILE;
 }
 
 "if" {
     
+    linenumber++;
     return IF;
 }
 
 "else" {
     
+    linenumber++;
     return ELSE;
 }
 
 "return" {
      
+    linenumber++;
     return RETURN;
 }
 
 "break" {
       
+    linenumber++;
     return BREAK;
 }
 
 "continue" {
+    linenumber++;
     return CONTINUE;
 }
 
 "new" {
     
+    linenumber++;
     return NEW;
 }
 
 "NewArray" {
     
+    linenumber++;
     return NEWARRAY;
 }
 
 "print" {
     
+    linenumber++;
     return PRINT;
 }
 
 "ReadInteger" {
     
+    linenumber++;
     return READINTEGER;
 }
 
 "ReadLine" {
     
+    linenumber++;
     return READLINE;
 }
 
 "dtoi" {
      
-     return DTOI;
+     linenumber++;
+    return DTOI;
 }
 
 "itod" {
       
-      return ITOD;
+      linenumber++;
+    return ITOD;
 }
 
 "btoi" {
        
-       return BTOI;
+       linenumber++;
+    return BTOI;
 }
 
 "itob" {
     
+    linenumber++;
     return ITOB;
 }
 
 "private" {
      
-     return PRIVATE;
+     linenumber++;
+    return PRIVATE;
 }
 
 "protected" {
     
+    linenumber++;
     return PROTECTED;
 }
 
 "public" {
      
-     return PUBLIC;
+     linenumber++;
+    return PUBLIC;
 }
 
 
 "true"|"false" {
+    linenumber++;
     return T_BOOLEANLITERAL;
 }
 
 {id} {
+    linenumber++;
     return T_ID;
 }
 
 {integer} {
+    linenumber++;
     return T_INTLITERAL;
 }
 
 {double} {
+    linenumber++;
     return T_DOUBLELITERAL;
 }
 
 {string} {
+    linenumber++;
     return  T_STRINGLITERAL;
 }
 
 ">=" {
     
+    linenumber++;
     return GEQ;
 }
 
 "<=" {
+    linenumber++;
     return LEQ;
 }
 
 ">" {
     
+    linenumber++;
     return GR;
 }
 
 "<" {
 
+    linenumber++;
     return LE;
 }
 
 "/" {
 
+    linenumber++;
     return SLASH;
 }
 
 "+" {
 
+    linenumber++;
     return PLUS;
 }
 
 "-" {
 
+    linenumber++;
     return MINUS;
 }
 
 "*" {
 
+    linenumber++;
     return MUL;
 }
 
 "%" {
 
+    linenumber++;
     return PERCENT;
 }
 "=" {
 
+    linenumber++;
     return EQ;
 }
 "==" {
 
+    linenumber++;
     return CHECKEQ;
 }
 "!=" {
 
+    linenumber++;
     return CHECKNOTEQ;
 }
 "||" {
 
+    linenumber++;
     return OR;
 }
 "&&" {
 
+    linenumber++;
     return AND;
 }
 "!" {
 
+    linenumber++;
     return EXCLAMATION;
 }
 ";" {
 
+    linenumber++;
     return SEMICOLON;
 }
 "," {
 
+    linenumber++;
     return COLON;
 }
 "." {
 
+    linenumber++;
     return DOT;
 }
 "[" {
 
-    return OPENBRACE;
+    linenumber++;
+    return OPENBRACK;
 }
 "]" {
 
-    return CLOSEBRACE;
+    linenumber++;
+    return CLOSEBRACK;
 }
 "(" {
 
+    linenumber++;
     return OPENPAR;
 }
 ")" {
 
+    linenumber++;
     return CLOSEPAR;
 }
 "{" {
 
+    linenumber++;
     return OPENBRACE;
 }
 "}" {
 
+    linenumber++;
     return CLOSEBRACE;
 }
 
