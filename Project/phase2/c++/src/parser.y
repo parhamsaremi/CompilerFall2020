@@ -128,7 +128,12 @@ functionDecl:
 	;
 
 formals:
-	formals variable
+	variable1ToInfColon
+	| %empty
+	;
+
+variable1ToInfColon:
+	variable1ToInfColon COLON variable
 	| variable
 	;
 
