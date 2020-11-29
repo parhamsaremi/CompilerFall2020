@@ -19,29 +19,273 @@
 // we can return ints or floats or strings cleanly.  Bison implements this
 // mechanism with the %union directive:
 %union {
-//   int ival;
-//   float fval;
+  int ival;
+  float fval;
   char *sval;
+  char *bval;
 }
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the %union:
-// %token <ival> INT
-// %token <fval> FLOAT
-%token <sval> HI
-%token <sval> NAME
+%token VOID
+%token INT
+%token DOUBLE
+%token BOOL
+%token STRING
+%token CLASS
+%token INTERFACE
+%token NULL
+%token THIS
+%token EXTENDS
+%token IMPLEMENTS
+%token FOR
+%token WHILE
+%token IF
+%token ELSE
+%token RETURN
+%token BREAK
+%token CONTINUE
+%token NEW
+%token NEWARRAY
+%token PRINT
+%token READINTEGER
+%token READLINE
+%token DTOI
+%token ITOD
+%token BTOI
+%token ITOB
+%token PRIVATE
+%token PROTECTED
+%token PUBLIC
+%token GEQ
+%token LEQ
+%token GR
+%token LE
+%token SLASH
+%token PLUS
+%token MINUS
+%token MUL
+%token PERCENT
+%token EQ
+%token CHECKEQ
+%token CHECKNOTEQ
+%token OR
+%token AND
+%token EXCLAMATION
+%token SEMICOLON
+%token COLON
+%token DOT
+%token OPENBRACK
+%token CLOSEBRACK
+%token OPENPAR
+%token CLOSEPAR
+%token OPENBRACE
+%token CLOSEBRACE
+%token <ival> T_INTLITERAL
+%token <fval> T_DOUBLELITERAL
+%token <sval> T_STRINGLITERAL
+%token <bval> T_BOOLEANLITERAL
+%token <sval> T_ID
 
 %%
-msg:
-    HI NAME {fprintf(yyout, "OK1 %s\n",$1);}
-    ;
-names:
-    names NAME{
-        fprintf(yyout, "OK2 %s\n",$2);}
-    | NAME{
-        fprintf(yyout, "OK3 %s\n",$1);
-    }
-    ;
+
+start:
+	program {fprintf("OK");}
+	;
+
+program:
+	program decl
+	| decl
+	;
+
+decl:
+	variableDecl
+	| functionDecl
+	| classDecl 
+	| interfaceDecl
+	;
+
+variableDecl:
+	variable SEMICOLON
+	;
+
+variable:
+	type T_ID
+	;
+
+type:
+	INT
+	| DOUBLE
+	| BOOL
+	| STRING
+	| T_ID
+	| type OPENBRACK CLOSEBRACK
+	;
+
+functionDecl:
+	type T_ID OPENPAR formals CLOSEPAR stmtBlock
+	| VOID T_ID OPENPAR formals CLOSEPAR stmtBlock
+	;
+
+formals:
+	formals variable
+	| variable
+	;
+
+classDecl:
+	CLASS T_ID LE EXTENDS T_ID GR LE IMPLEMENTS ids1ToInfColon GR OPENBRACE fields0ToInf CLOSEBRACE
+	;
+
+fields0ToInf:
+	fields0ToInf field
+	| %empty
+	;
+
+field:
+	accessMode variableDecl
+	| accessMode functionDecl
+	;
+
+ids1ToInfColon:
+	ids1ToInfColon COLON T_ID
+	| T_ID
+	;
+
+accessMode:
+	PRIVATE
+	| PROTECTED
+	| PUBLIC
+	| %empty
+	;
+
+interfaceDecl:
+	INTERFACE T_ID OPENBRACE prototype0ToInf CLOSEBRACE
+	;
+
+prototype0ToInf:
+	prototype0ToInf prototype 
+	| %empty
+	;
+
+prototype:
+	type T_ID OPENPAR formals CLOSEPAR SEMICOLON
+	| VOID T_ID OPENPAR formals CLOSEPAR SEMICOLON
+	;
+
+stmtBlock:
+	OPENBRACE variableDecl0ToInf stmt0ToInf CLOSEBRACE
+	;
+
+variableDecl0ToInf:
+	variableDecl0ToInf variableDecl
+	| %empty
+	;
+
+stmt0ToInf:
+	stmt0ToInf stmt
+	| %empty
+	;
+
+stmt:
+	LE expr GR SEMICOLON 
+	| ifStmt
+	| whileStmt
+	| forStmt
+	| breakStmt
+	| continueStmt
+	| returnStmt
+	| printStmt
+	| stmtBlock
+	;
+
+ifStmt:
+	IF OPENPAR expr CLOSEPAR stmt LE ELSE stmt GR
+	;
+
+whileStmt:
+	WHILE OPENPAR expr CLOSEPAR stmt
+	;
+
+forStmt:
+	FOR OPENPAR LE expr CLOSEPAR SEMICOLON expr SEMICOLON LE expr GR CLOSEPAR stmt
+	;
+
+returnStmt:
+	RETURN LE expr GR SEMICOLON
+	;
+
+breakStmt:
+	BREAK SEMICOLON
+	;
+
+continueStmt:
+	CONTINUE SEMICOLON
+	;
+
+printStmt:
+	PRINT OPENPAR expr1ToInfColon CLOSEPAR SEMICOLON
+	;
+
+expr1ToInfColon:
+	expr1ToInfColon COLON expr
+	| expr
+	;
+
+expr:
+	lValue EQ expr
+	| constant
+	| lValue
+	| THIS
+	| call
+	| OPENPAR expr CLOSEPAR
+	| expr PLUS expr
+	| expr MINUS expr
+	| expr MUL expr
+	| expr SLASH expr
+	| expr PERCENT expr
+	| MINUS expr
+	| expr LE expr
+	| expr LEQ expr
+	| expr GR expr
+	| expr GEQ expr
+	| expr CHECKEQ expr
+	| expr CHECKNOTEQ expr
+	| expr AND expr
+	| expr OR expr
+	| EXCLAMATION expr
+	| READINTEGER OPENPAR CLOSEPAR
+	| READLINE OPENPAR CLOSEPAR
+	| NEW T_ID 
+	| NEWARRAY OPENPAR expr COLON type CLOSEPAR
+	| ITOD OPENPAR expr CLOSEPAR
+	| DTOI OPENPAR expr CLOSEPAR
+	| ITOB OPENPAR expr CLOSEPAR
+	| BTOI OPENPAR expr CLOSEPAR
+	;
+
+lValue:
+	T_ID
+	| expr DOT T_ID
+	| expr OPENBRACK expr CLOSEBRACK
+	;
+
+call:
+	T_ID OPENPAR actuals CLOSEPAR
+	| expr DOT T_ID OPENPAR actuals CLOSEPAR
+	;
+
+actuals:
+	expr1ToInfColon
+	| %empty
+	;
+
+constant:
+	T_INTLITERAL
+	| T_DOUBLELITERAL
+	| T_BOOLEANLITERAL
+	| T_STRINGLITERAL
+	| NULL
+	;
 
 %%
 
@@ -54,5 +298,5 @@ int main() {
 }
 
 void yyerror(const char *s) {
-  fprintf(yyout, "NO");
+  fprintf(yyout, "Syntax Error");
 }
