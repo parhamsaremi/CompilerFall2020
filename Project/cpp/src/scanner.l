@@ -43,6 +43,115 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {op_punct_1char}|"<="|">="|"=="|"!="|"||"|"&&" {fprintf(yyout,"%s\n",yytext);}
 
+">="{
+    yyval.sval = yytext;
+    return GEQ;
+}
+
+"<=" {
+    yyval.sval= yytext;
+    return LEQ;
+}
+
+">"{
+    yyval.sval = yytext;
+    return GR;
+}
+
+"<"{
+    yyval.sval=yytext;
+    return LE;
+}
+
+"/"{
+    yyval.sval=yytext;
+    return SLASH;
+}
+
+"+"{
+    yyval.sval=yytext;
+    return PLUS;
+}
+
+"-"{
+    yyval.sval=yytext;
+    return MINUS;
+}
+
+"*"{
+    yyval.sval=yytext;
+    return MUL;
+}
+
+"%"{
+    yyval.sval=yytext;
+    return PERCENT;
+}
+"="{
+    yyval.sval=yytext;
+    return EQ;
+}
+"=="{
+    yyval.sval=yytext;
+    return CHECKEQ;
+}
+"!="{
+    yyval.sval=yytext;
+    return CHECKNOTEQ;
+}
+"||"{
+    yyval.sval=yytext;
+    return OR;
+}
+"&&"{
+    yyval.sval=yytext;
+    return AND;
+}
+"!"{
+    yyval.sval=yytext;
+    return EXCLAMATION;
+}
+";"{
+    yyval.sval=yytext;
+    return SEMICOLON;
+}
+","{
+    yyval.sval=yytext;
+    return COLON;
+}
+"."{
+    yyval.sval=yytext;
+    return DOT;
+}
+"["{
+    yyval.sval=yytext;
+    return OPENBRACE;
+}
+"]"{
+    yyval.sval=yytext;
+    return CLOSEBRACE;
+}
+"("{
+    yyval.sval=yytext;
+    return OPENPAR;
+}
+")"{
+    yyval.sval=yytext;
+    return CLOSEPAR;
+}
+"{"{
+    yyval.sval=yytext;
+    return OPENBRACE;
+}
+"}"{
+    yyval.sval=yytext;
+    return CLOSEBRACE;
+}
+
+
+
+
+
 {comment_inline}|{comment_multiline} {}
 
 . {fprintf(yyout, "UNDEFINED_TOKEN\n"); return 0;}
