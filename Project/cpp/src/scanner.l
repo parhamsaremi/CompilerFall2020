@@ -26,12 +26,176 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 {ws}+ {}
 
 "void"|"int"|"double"|"bool"|"string"|"class"|"interface" {fprintf(yyout, "%s\n",yytext);}
+
+"void" {
+    yyval.sval = yytext;
+    return VOID;
+}
+
+"int" {
+    yyval.sval = yytext;
+    return INT;
+}
+
+"double" {
+    yyval.sval = yytext;
+    return DOUBLE;
+}
+
+"bool" {
+    yyval.sval = yytext;
+    return BOOL;
+}
+
+"string" {
+    yyval.sval = yytext;
+    return STRING;
+}
+
+"class" {
+    yyval.sval = yytext;
+    return CLASS;
+}
+
+"interface" {
+     yyval.sval = yytext;
+     return INTERFACE;
+}
+
 "null"|"this"|"extends"|"implements"|"for"|"while"|"if" {fprintf(yyout,"%s\n",yytext);}
+
+"null" {
+    yyval.sval = yytext;
+    return NULL;
+}
+
+"this" {
+    yyval.sval = yytext;
+    return THIS;
+}
+
+"extends" {
+    yyval.sval = yytext;
+    return EXTENDS;
+}
+
+"implements" {
+    yyval.sval = yytext;
+    return IMPLEMENTS;
+}
+
+"for" {
+    yyval.sval = yytext;
+    return FOR;
+}
+
+"while" {
+    yyval.sval = yytext;
+    return WHILE;
+}
+
+"if" {
+    yyval.sval = yytext;
+    return IF;
+}
+
+
 "else"|"return"|"break"|"continue"|"new"|"NewArray"|"Print" {fprintf(yyout, "%s\n",yytext);}
+"else" {
+    yyval.sval = yytext;
+    return ELSE;
+}
+
+"return" {
+     yyval.sval = yytext;
+     return RETURN;
+}
+
+"break" {
+      yyval.sval = yytext;
+      return BREAK;
+}
+
+"continue" {
+       yyval.sval = yytext;
+       return CONTINUE;
+}
+
+"new" {
+    yyval.sval = yytext;
+    return NEW;
+}
+
+"NewArray" {
+    yyval.sval = yytext;
+    return NEWARRAY;
+}
+
+"print" {
+    yyval.sval = yytext;
+    return PRINT;
+}
+
 "ReadInteger"|"ReadLine"|"dtoi"|"itod"|"btoi"|"itob"|"private" {fprintf(yyout,"%s\n",yytext);}
+
+"ReadInteger" {
+    yyval.sval = yytext;
+    return READINTEGER;
+}
+
+"ReadLine" {
+    yyval.sval = yytext;
+    return READLINE;
+}
+
+"dtoi" {
+     yyval.sval = yytext;
+     return DTOI;
+}
+
+"itod" {
+      yyval.sval = yytext;
+      return ITOD;
+}
+
+"btoi" {
+       yyval.sval = yytext;
+       return BTOI;
+}
+
+"itob" {
+    yyval.sval = yytext;
+    return ITOB;
+}
+
+"private" {
+     yyval.sval = yytext;
+     return PRIVATE;
+}
+
 "protected"|"public" {fprintf(yyout,"%s\n",yytext);}
 
+"protected" {
+    yyval.sval = yytext;
+    return PROTECTED;
+}
+
+"public" {
+     yyval.sval = yytext;
+     return PUBLIC;
+}
+
 "true"|"false" {fprintf(yyout, "T_BOOLEANLITERAL %s\n",yytext);}
+
+"true" {
+    yyval.sval = yytext;
+    return TRUE;
+}
+
+"false" {
+     yyval.sval = yytext;
+     return FALSE;
+}
 
 {id} {fprintf(yyout,"T_ID %s\n",yytext);}
 
@@ -43,114 +207,110 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {op_punct_1char}|"<="|">="|"=="|"!="|"||"|"&&" {fprintf(yyout,"%s\n",yytext);}
 
-">="{
+">=" {
     yyval.sval = yytext;
     return GEQ;
 }
 
 "<=" {
     yyval.sval= yytext;
-    return LEQ;
+    return LEQ;s
 }
 
-">"{
+">" {
     yyval.sval = yytext;
     return GR;
 }
 
-"<"{
+"<" {
     yyval.sval=yytext;
     return LE;
 }
 
-"/"{
+"/" {
     yyval.sval=yytext;
     return SLASH;
 }
 
-"+"{
+"+" {
     yyval.sval=yytext;
     return PLUS;
 }
 
-"-"{
+"-" {
     yyval.sval=yytext;
     return MINUS;
 }
 
-"*"{
+"*" {
     yyval.sval=yytext;
     return MUL;
 }
 
-"%"{
+"%" {
     yyval.sval=yytext;
     return PERCENT;
 }
-"="{
+"=" {
     yyval.sval=yytext;
     return EQ;
 }
-"=="{
+"==" {
     yyval.sval=yytext;
     return CHECKEQ;
 }
-"!="{
+"!=" {
     yyval.sval=yytext;
     return CHECKNOTEQ;
 }
-"||"{
+"||" {
     yyval.sval=yytext;
     return OR;
 }
-"&&"{
+"&&" {
     yyval.sval=yytext;
     return AND;
 }
-"!"{
+"!" {
     yyval.sval=yytext;
     return EXCLAMATION;
 }
-";"{
+";" {
     yyval.sval=yytext;
     return SEMICOLON;
 }
-","{
+"," {
     yyval.sval=yytext;
     return COLON;
 }
-"."{
+"." {
     yyval.sval=yytext;
     return DOT;
 }
-"["{
+"[" {
     yyval.sval=yytext;
     return OPENBRACE;
 }
-"]"{
+"]" {
     yyval.sval=yytext;
     return CLOSEBRACE;
 }
-"("{
+"(" {
     yyval.sval=yytext;
     return OPENPAR;
 }
-")"{
+")" {
     yyval.sval=yytext;
     return CLOSEPAR;
 }
-"{"{
+"{" {
     yyval.sval=yytext;
     return OPENBRACE;
 }
-"}"{
+"}" {
     yyval.sval=yytext;
     return CLOSEBRACE;
 }
-
-
-
-
 
 {comment_inline}|{comment_multiline} {}
 
