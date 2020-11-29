@@ -25,8 +25,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {ws}+ {}
 
-"void"|"int"|"double"|"bool"|"string"|"class"|"interface" {fprintf(yyout, "%s\n",yytext);}
-
 "void" {
     yyval.sval = yytext;
     return VOID;
@@ -61,8 +59,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
      yyval.sval = yytext;
      return INTERFACE;
 }
-
-"null"|"this"|"extends"|"implements"|"for"|"while"|"if" {fprintf(yyout,"%s\n",yytext);}
 
 "null" {
     yyval.sval = yytext;
@@ -99,8 +95,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
     return IF;
 }
 
-
-"else"|"return"|"break"|"continue"|"new"|"NewArray"|"Print" {fprintf(yyout, "%s\n",yytext);}
 "else" {
     yyval.sval = yytext;
     return ELSE;
@@ -135,8 +129,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
     yyval.sval = yytext;
     return PRINT;
 }
-
-"ReadInteger"|"ReadLine"|"dtoi"|"itod"|"btoi"|"itob"|"private" {fprintf(yyout,"%s\n",yytext);}
 
 "ReadInteger" {
     yyval.sval = yytext;
@@ -173,8 +165,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
      return PRIVATE;
 }
 
-"protected"|"public" {fprintf(yyout,"%s\n",yytext);}
-
 "protected" {
     yyval.sval = yytext;
     return PROTECTED;
@@ -184,8 +174,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
      yyval.sval = yytext;
      return PUBLIC;
 }
-
-"true"|"false" {fprintf(yyout, "T_BOOLEANLITERAL %s\n",yytext);}
 
 "true" {
     yyval.sval = yytext;
@@ -197,15 +185,21 @@ comment_multiline \/\*[^(\*\/)]*\*\/
      return FALSE;
 }
 
-{id} {fprintf(yyout,"T_ID %s\n",yytext);}
+{id} {
+    return T_ID;
+}
 
-{integer} {fprintf(yyout,"T_INTLITERAL %s\n",yytext);}
+{integer} {
+    return T_INTLITERAL;
+}
 
-{double} {fprintf(yyout,"T_DOUBLELITERAL %s\n",yytext);}
+{double} {
+    return T_DOUBLELITERAL;
+}
 
-{string} {fprintf(yyout,"T_STRINGLITERAL %s\n",yytext);}
-
-{op_punct_1char}|"<="|">="|"=="|"!="|"||"|"&&" {fprintf(yyout,"%s\n",yytext);}
+{string} {
+    return  T_STRINGLITERAL;
+}
 
 ">=" {
     yyval.sval = yytext;
@@ -315,5 +309,6 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 {comment_inline}|{comment_multiline} {}
 
 . {fprintf(yyout, "UNDEFINED_TOKEN\n"); return 0;}
+
 
 %%
