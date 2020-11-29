@@ -133,7 +133,17 @@ formals:
 	;
 
 classDecl:
-	CLASS T_ID LE EXTENDS T_ID GR LE IMPLEMENTS ids1ToInfColon GR OPENBRACE fields0ToInf CLOSEBRACE
+	CLASS T_ID extendsIdent0Or1 implementsIdentPlusColon0Or1 OPENBRACE fields0ToInf CLOSEBRACE
+	;
+
+extendsIdent0Or1:
+	%empty
+	| EXTENDS T_ID
+	;
+
+implementsIdentPlusColon0Or1:
+	%empty
+	| IMPLEMENTS ids1ToInfColon
 	;
 
 fields0ToInf:
@@ -187,7 +197,7 @@ stmt0ToInf:
 	;
 
 stmt:
-	LE expr GR SEMICOLON 
+	expr0Or1 SEMICOLON
 	| ifStmt
 	| whileStmt
 	| forStmt
@@ -198,8 +208,18 @@ stmt:
 	| stmtBlock
 	;
 
+expr0Or1:
+	%empty
+	| expr
+	;
+
 ifStmt:
-	IF OPENPAR expr CLOSEPAR stmt LE ELSE stmt GR
+	IF OPENPAR expr CLOSEPAR stmt elseStmt0Or1
+	;
+
+elseStmt0Or1:
+	%empty
+	| ELSE stmt
 	;
 
 whileStmt:
@@ -207,11 +227,11 @@ whileStmt:
 	;
 
 forStmt:
-	FOR OPENPAR LE expr CLOSEPAR SEMICOLON expr SEMICOLON LE expr GR CLOSEPAR stmt
+	FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR stmt
 	;
 
 returnStmt:
-	RETURN LE expr GR SEMICOLON
+	RETURN expr0Or1
 	;
 
 breakStmt:
