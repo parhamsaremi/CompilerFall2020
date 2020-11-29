@@ -1,1 +1,1 @@
-OK 
+difference in line #1: file: out/t09.out -----> content: Syntax Error in token 8, expr <> file: tests/t09.out -----> content: Syntax Error 
