@@ -44,15 +44,6 @@ names:
     ;
 
 %%
-
-
-int main() {
-  while(1){
-      yyparse();
-  };
-  
-}
-
 void yyerror(const char *s) {
   fprintf(yyout, "NO");
 }
