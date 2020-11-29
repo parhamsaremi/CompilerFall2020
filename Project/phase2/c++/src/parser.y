@@ -8,6 +8,7 @@
   extern FILE *yyin;
   extern FILE *yyout;
   void yyerror(const char *s);
+  extern int linenumber;
 %}
 
 // Bison fundamentally works by asking flex to get the next token, which it
@@ -314,5 +315,6 @@ constant:
 
 %%
 void yyerror(const char *s) {
+//   fprintf(yyout, "Syntax Error in token %d",linenumber);
   fprintf(yyout, "Syntax Error");
 }
