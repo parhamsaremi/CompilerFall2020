@@ -2,8 +2,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "lex.yy.h"
-#include "parser.tab.h"
+#include "./lex.yy.h"
+#include "./parser.tab.h"
 
 using namespace std ;
 extern FILE* yyout;

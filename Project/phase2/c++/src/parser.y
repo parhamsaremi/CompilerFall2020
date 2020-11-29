@@ -19,10 +19,10 @@
 // we can return ints or floats or strings cleanly.  Bison implements this
 // mechanism with the %union directive:
 %union {
-  int ival;
-  float fval;
-  char *sval;
-  char *bval;
+  // int ival;
+  // float fval;
+  // char *sval;
+  // char *bval;
 }
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
@@ -34,7 +34,7 @@
 %token STRING
 %token CLASS
 %token INTERFACE
-%token NULL
+%token NULL1
 %token THIS
 %token EXTENDS
 %token IMPLEMENTS
@@ -81,21 +81,21 @@
 %token CLOSEPAR
 %token OPENBRACE
 %token CLOSEBRACE
-%token <ival> T_INTLITERAL
-%token <fval> T_DOUBLELITERAL
-%token <sval> T_STRINGLITERAL
-%token <bval> T_BOOLEANLITERAL
-%token <sval> T_ID
+%token T_INTLITERAL
+%token T_DOUBLELITERAL
+%token T_STRINGLITERAL
+%token T_BOOLEANLITERAL
+%token T_ID
 
 %%
 
 start:
-	program {fprintf("OK");}
+	program {fprintf(yyout,"OK");}
 	;
 
 program:
-	program decl
-	| decl
+	program decl {}
+	| decl {}
 	;
 
 decl:
@@ -304,8 +304,8 @@ constant:
 	| T_DOUBLELITERAL
 	| T_BOOLEANLITERAL
 	| T_STRINGLITERAL
-	| NULL
-	;
+	| NULL1
+  ;
 
 %%
 void yyerror(const char *s) {

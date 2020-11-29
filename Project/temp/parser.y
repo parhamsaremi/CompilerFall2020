@@ -36,11 +36,8 @@ msg:
     HI NAME {fprintf(yyout, "OK1 %s\n",$1);}
     ;
 names:
-    names NAME{
-        fprintf(yyout, "OK2 %s\n",$2);}
-    | NAME{
-        fprintf(yyout, "OK3 %s\n",$1);
-    }
+    names NAME
+    | NAME
     ;
 
 %%
