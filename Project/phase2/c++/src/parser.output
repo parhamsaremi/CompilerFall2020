@@ -1891,14 +1891,11 @@ State 133
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 81 (expr)
 
@@ -1922,6 +1919,9 @@ State 134
   100 lValue: expr . DOT T_ID
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
+
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 90 (expr)
 
@@ -2861,14 +2861,18 @@ State 174
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
+
+    GEQ  error (nonassociative)
+    LEQ  error (nonassociative)
+    GR   error (nonassociative)
+    LE   error (nonassociative)
 
     $default  reduce using rule 85 (expr)
 
@@ -2893,14 +2897,18 @@ State 175
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
+
+    GEQ  error (nonassociative)
+    LEQ  error (nonassociative)
+    GR   error (nonassociative)
+    LE   error (nonassociative)
 
     $default  reduce using rule 83 (expr)
 
@@ -2925,14 +2933,18 @@ State 176
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
+
+    GEQ  error (nonassociative)
+    LEQ  error (nonassociative)
+    GR   error (nonassociative)
+    LE   error (nonassociative)
 
     $default  reduce using rule 84 (expr)
 
@@ -2957,14 +2969,18 @@ State 177
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
+
+    GEQ  error (nonassociative)
+    LEQ  error (nonassociative)
+    GR   error (nonassociative)
+    LE   error (nonassociative)
 
     $default  reduce using rule 82 (expr)
 
@@ -2989,14 +3005,8 @@ State 178
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 79 (expr)
 
@@ -3021,14 +3031,12 @@ State 179
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 76 (expr)
 
@@ -3053,14 +3061,11 @@ State 180
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 77 (expr)
 
@@ -3085,14 +3090,9 @@ State 181
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 78 (expr)
 
@@ -3117,14 +3117,9 @@ State 182
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    SLASH      shift, and go to state 144
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 80 (expr)
 
@@ -3149,14 +3144,17 @@ State 183
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    GEQ        shift, and go to state 140
+    LEQ        shift, and go to state 141
+    GR         shift, and go to state 142
+    LE         shift, and go to state 143
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 86 (expr)
 
@@ -3181,14 +3179,17 @@ State 184
   101       | expr . OPENBRACK expr CLOSEBRACK
   103 call: expr . DOT T_ID OPENPAR actuals CLOSEPAR
 
-    GEQ         shift, and go to state 140
-    LEQ         shift, and go to state 141
-    GR          shift, and go to state 142
-    LE          shift, and go to state 143
-    CHECKEQ     shift, and go to state 149
-    CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    GEQ        shift, and go to state 140
+    LEQ        shift, and go to state 141
+    GR         shift, and go to state 142
+    LE         shift, and go to state 143
+    SLASH      shift, and go to state 144
+    PLUS       shift, and go to state 145
+    MINUS      shift, and go to state 146
+    MUL        shift, and go to state 147
+    PERCENT    shift, and go to state 148
+    DOT        shift, and go to state 153
+    OPENBRACK  shift, and go to state 154
 
     $default  reduce using rule 87 (expr)
 
@@ -3217,10 +3218,16 @@ State 185
     LEQ         shift, and go to state 141
     GR          shift, and go to state 142
     LE          shift, and go to state 143
+    SLASH       shift, and go to state 144
+    PLUS        shift, and go to state 145
+    MINUS       shift, and go to state 146
+    MUL         shift, and go to state 147
+    PERCENT     shift, and go to state 148
     CHECKEQ     shift, and go to state 149
     CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
     AND         shift, and go to state 152
+    DOT         shift, and go to state 153
+    OPENBRACK   shift, and go to state 154
 
     $default  reduce using rule 89 (expr)
 
@@ -3249,10 +3256,15 @@ State 186
     LEQ         shift, and go to state 141
     GR          shift, and go to state 142
     LE          shift, and go to state 143
+    SLASH       shift, and go to state 144
+    PLUS        shift, and go to state 145
+    MINUS       shift, and go to state 146
+    MUL         shift, and go to state 147
+    PERCENT     shift, and go to state 148
     CHECKEQ     shift, and go to state 149
     CHECKNOTEQ  shift, and go to state 150
-    OR          shift, and go to state 151
-    AND         shift, and go to state 152
+    DOT         shift, and go to state 153
+    OPENBRACK   shift, and go to state 154
 
     $default  reduce using rule 88 (expr)
 
@@ -3329,10 +3341,17 @@ State 189
     LEQ         shift, and go to state 141
     GR          shift, and go to state 142
     LE          shift, and go to state 143
+    SLASH       shift, and go to state 144
+    PLUS        shift, and go to state 145
+    MINUS       shift, and go to state 146
+    MUL         shift, and go to state 147
+    PERCENT     shift, and go to state 148
     CHECKEQ     shift, and go to state 149
     CHECKNOTEQ  shift, and go to state 150
     OR          shift, and go to state 151
     AND         shift, and go to state 152
+    DOT         shift, and go to state 153
+    OPENBRACK   shift, and go to state 154
 
     $default  reduce using rule 72 (expr)
 
