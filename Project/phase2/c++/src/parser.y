@@ -320,6 +320,6 @@ constant:
 
 %%
 void yyerror(const char *s) {
-//   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
-  fprintf(yyout, "Syntax Error");
+  fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
+//   fprintf(yyout, "Syntax Error");
 }
