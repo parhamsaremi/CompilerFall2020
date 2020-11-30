@@ -90,28 +90,12 @@
 %token T_ID
 %token UNDEFINED
 
-%nonassoc NoSHIT
 %nonassoc NoELSE
 %nonassoc ELSE
 %nonassoc NoEQ
-
-%right EQ
-%left OR
-%left AND
-%left CHECKEQ CHECKNOTEQ
-%nonassoc LE GR LEQ GEQ
-%left PLUS 
-%left MINUS
-%left MUL PERCENT
-%left SLASH 
+%left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
+%right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID
 %nonassoc EXCLAMATION
-%left DOT
-
-/* -------- */
-
-/* %left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE */
-/* %right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID */
-/* %nonassoc EXCLAMATION */
 
 %%
 
@@ -120,12 +104,8 @@ start:
 	;
 
 program:
-	decl1ToInf
-	;
-
-decl1ToInf:
-	decl1ToInf decl
-	| decl
+	program decl {}
+	| decl {}
 	;
 
 decl:
@@ -141,6 +121,7 @@ variableDecl:
 
 variable:
 	type T_ID
+	| new_type T_ID
 	;
 
 type:
@@ -148,10 +129,11 @@ type:
 	| DOUBLE
 	| BOOL
 	| STRING
-	| T_ID
 	| type OPENBRACK CLOSEBRACK
 	;
-
+new_type:
+	T_ID
+	;
 functionDecl:
 	type T_ID OPENPAR formals CLOSEPAR stmtBlock
 	| VOID T_ID OPENPAR formals CLOSEPAR stmtBlock
@@ -227,8 +209,8 @@ variableDecl0ToInf:
 	;
 
 stmt0ToInf:
-	stmt0ToInf stmt
-	| %empty %prec NoSHIT
+	stmt stmt0ToInf
+	| %empty
 	;
 
 stmt:
@@ -340,10 +322,10 @@ constant:
 	| T_BOOLEANLITERAL
 	| T_STRINGLITERAL
 	| NULL1
-	;
+  ;
 
 %%
 void yyerror(const char *s) {
-   /* fprintf(yyout, "Syntax Error in token %d",linenumber); */
+//   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
   fprintf(yyout, "Syntax Error");
 }
