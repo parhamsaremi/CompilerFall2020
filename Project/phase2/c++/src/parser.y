@@ -133,7 +133,7 @@ variableDecl:
 
 variable:
 	type T_ID
-	| new_type T_ID
+	| T_ID T_ID
 	;
 
 type:
@@ -142,13 +142,12 @@ type:
 	| BOOL
 	| STRING
 	| type OPENBRACK CLOSEBRACK
-	;
-new_type:
-	T_ID
+	| T_ID OPENBRACK CLOSEBRACK
 	;
 functionDecl:
 	type T_ID OPENPAR formals CLOSEPAR stmtBlock
 	| VOID T_ID OPENPAR formals CLOSEPAR stmtBlock
+	| T_ID T_ID OPENPAR formals CLOSEPAR stmtBlock
 	;
 
 formals:
@@ -209,6 +208,7 @@ prototype0ToInf:
 prototype:
 	type T_ID OPENPAR formals CLOSEPAR SEMICOLON
 	| VOID T_ID OPENPAR formals CLOSEPAR SEMICOLON
+	| T_ID T_ID OPENPAR formals CLOSEPAR SEMICOLON
 	;
 
 stmtBlock:
@@ -282,8 +282,10 @@ expr1ToInfColon:
 
 expr:
 	lValue %prec NoEQ
+	| T_ID %prec NoEQ
 	| constant
 	| lValue EQ expr
+	| T_ID EQ expr
 	| THIS
 	| call
 	| OPENPAR expr CLOSEPAR
@@ -306,6 +308,7 @@ expr:
 	| READLINE OPENPAR CLOSEPAR
 	| NEW T_ID 
 	| NEWARRAY OPENPAR expr COLON type CLOSEPAR
+	| NEWARRAY OPENPAR expr COLON T_ID CLOSEPAR
 	| ITOD OPENPAR expr CLOSEPAR
 	| DTOI OPENPAR expr CLOSEPAR
 	| ITOB OPENPAR expr CLOSEPAR
@@ -313,8 +316,7 @@ expr:
 	;
 
 lValue:
-	T_ID
-	| expr DOT T_ID
+	expr DOT T_ID
 	| expr OPENBRACK expr CLOSEBRACK
 	;
 
