@@ -88,7 +88,11 @@
 %token T_STRINGLITERAL
 %token T_BOOLEANLITERAL
 %token T_ID
+%token UNDEFINED
 
+%left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
+%right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID
+%nonassoc EXCLAMATION ELSE
 %%
 
 start:
@@ -238,7 +242,7 @@ forStmt:
 	;
 
 returnStmt:
-	RETURN expr0Or1
+	RETURN expr0Or1 SEMICOLON
 	;
 
 breakStmt:
@@ -259,9 +263,9 @@ expr1ToInfColon:
 	;
 
 expr:
-	lValue EQ expr
+	lValue
 	| constant
-	| lValue
+	| lValue EQ expr
 	| THIS
 	| call
 	| OPENPAR expr CLOSEPAR
@@ -316,6 +320,6 @@ constant:
 
 %%
 void yyerror(const char *s) {
-  fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
-//   fprintf(yyout, "Syntax Error");
+//   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
+  fprintf(yyout, "Syntax Error");
 }

@@ -1,4 +1,3 @@
-
 int getSomeValue() {
     return something;
 }

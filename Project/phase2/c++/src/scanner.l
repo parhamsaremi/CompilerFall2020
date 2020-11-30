@@ -362,7 +362,7 @@ comment_multiline \/\*[^(\*\/)]*\*\/
 
 {comment_inline}|{comment_multiline} {}
 
-. {fprintf(yyout, "UNDEFINED_TOKEN\n"); return 0;}
+. {return UNDEFINED;}
 
 
 %%

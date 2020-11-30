@@ -1,1 +1,1 @@
-difference in line #1: file: out/t01.out -----> content: Syntax Error in token 29, = <> file: tests/t01.out -----> content: OK 
+difference in line #1: file: out/t01.out -----> content: Syntax Error <> file: tests/t01.out -----> content: OK 

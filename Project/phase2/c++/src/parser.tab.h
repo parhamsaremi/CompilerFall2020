@@ -107,7 +107,8 @@ extern int yydebug;
     T_DOUBLELITERAL = 313,
     T_STRINGLITERAL = 314,
     T_BOOLEANLITERAL = 315,
-    T_ID = 316
+    T_ID = 316,
+    UNDEFINED = 317
   };
 #endif
 
@@ -122,7 +123,7 @@ union YYSTYPE
   // char *sval;
   // char *bval;
 
-#line 126 "parser.tab.h"
+#line 127 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
