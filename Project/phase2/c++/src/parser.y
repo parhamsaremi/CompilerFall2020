@@ -90,9 +90,14 @@
 %token T_ID
 %token UNDEFINED
 
+%nonassoc NoELSE
+%nonassoc ELSE
+%nonassoc NoEQ
+
 %left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
 %right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID
-%nonassoc EXCLAMATION ELSE
+%nonassoc EXCLAMATION
+
 %%
 
 start:
@@ -229,7 +234,7 @@ ifStmt:
 	;
 
 elseStmt0Or1:
-	%empty
+	%empty %prec NoELSE
 	| ELSE stmt
 	;
 
@@ -263,7 +268,7 @@ expr1ToInfColon:
 	;
 
 expr:
-	lValue
+	lValue %prec NoEQ
 	| constant
 	| lValue EQ expr
 	| THIS
@@ -320,6 +325,6 @@ constant:
 
 %%
 void yyerror(const char *s) {
-  fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
-//   fprintf(yyout, "Syntax Error");
+//   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
+  fprintf(yyout, "Syntax Error");
 }
