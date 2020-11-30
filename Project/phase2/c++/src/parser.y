@@ -90,11 +90,9 @@
 %token T_ID
 %token UNDEFINED
 
-%nonassoc NoSHIT
 %nonassoc NoELSE
 %nonassoc ELSE
 %nonassoc NoEQ
-
 %left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
 %right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID
 %nonassoc EXCLAMATION
@@ -209,8 +207,8 @@ variableDecl0ToInf:
 	;
 
 stmt0ToInf:
-	stmt0ToInf stmt
-	| %empty %prec NoSHIT
+	stmt stmt0ToInf
+	| %empty
 	;
 
 stmt:

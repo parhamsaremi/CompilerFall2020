@@ -3,6 +3,9 @@ Terminals unused in grammar
     UNDEFINED
 
 
+State 94 conflicts: 1 reduce/reduce
+
+
 Grammar
 
     0 $accept: start $end
@@ -72,7 +75,7 @@ Grammar
    43 variableDecl0ToInf: variableDecl0ToInf variableDecl
    44                   | %empty
 
-   45 stmt0ToInf: stmt0ToInf stmt
+   45 stmt0ToInf: stmt stmt0ToInf
    46           | %empty
 
    47 stmt: expr0Or1 SEMICOLON
@@ -219,127 +222,126 @@ Terminals, with rules where they appear
     T_BOOLEANLITERAL (315) 107
     T_ID (316) 9 14 16 17 22 24 31 32 37 40 41 92 98 99 101 102
     UNDEFINED (317)
-    NoSHIT (318)
-    NoELSE (319)
-    NoEQ (320)
+    NoELSE (318)
+    NoEQ (319)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (66)
+    $accept (65)
         on left: 0
-    start (67)
+    start (66)
         on left: 1
         on right: 0
-    program (68)
+    program (67)
         on left: 2 3
         on right: 1 2
-    decl (69)
+    decl (68)
         on left: 4 5 6 7
         on right: 2 3
-    variableDecl (70)
+    variableDecl (69)
         on left: 8
         on right: 4 29 43
-    variable (71)
+    variable (70)
         on left: 9
         on right: 8 20 21
-    type (72)
+    type (71)
         on left: 10 11 12 13 14 15
         on right: 9 15 16 40 93
-    functionDecl (73)
+    functionDecl (72)
         on left: 16 17
         on right: 5 30
-    formals (74)
+    formals (73)
         on left: 18 19
         on right: 16 17 40 41
-    variable1ToInfColon (75)
+    variable1ToInfColon (74)
         on left: 20 21
         on right: 18 20
-    classDecl (76)
+    classDecl (75)
         on left: 22
         on right: 6
-    extendsIdent0Or1 (77)
+    extendsIdent0Or1 (76)
         on left: 23 24
         on right: 22
-    implementsIdentPlusColon0Or1 (78)
+    implementsIdentPlusColon0Or1 (77)
         on left: 25 26
         on right: 22
-    fields0ToInf (79)
+    fields0ToInf (78)
         on left: 27 28
         on right: 22 27
-    field (80)
+    field (79)
         on left: 29 30
         on right: 27
-    ids1ToInfColon (81)
+    ids1ToInfColon (80)
         on left: 31 32
         on right: 26 31
-    accessMode (82)
+    accessMode (81)
         on left: 33 34 35 36
         on right: 29 30
-    interfaceDecl (83)
+    interfaceDecl (82)
         on left: 37
         on right: 7
-    prototype0ToInf (84)
+    prototype0ToInf (83)
         on left: 38 39
         on right: 37 38
-    prototype (85)
+    prototype (84)
         on left: 40 41
         on right: 38
-    stmtBlock (86)
+    stmtBlock (85)
         on left: 42
         on right: 16 17 55
-    variableDecl0ToInf (87)
+    variableDecl0ToInf (86)
         on left: 43 44
         on right: 42 43
-    stmt0ToInf (88)
+    stmt0ToInf (87)
         on left: 45 46
         on right: 42 45
-    stmt (89)
+    stmt (88)
         on left: 47 48 49 50 51 52 53 54 55
         on right: 45 58 60 61 62
-    expr0Or1 (90)
+    expr0Or1 (89)
         on left: 56 57
         on right: 47 62 63
-    ifStmt (91)
+    ifStmt (90)
         on left: 58
         on right: 48
-    elseStmt0Or1 (92)
+    elseStmt0Or1 (91)
         on left: 59 60
         on right: 58
-    whileStmt (93)
+    whileStmt (92)
         on left: 61
         on right: 49
-    forStmt (94)
+    forStmt (93)
         on left: 62
         on right: 50
-    returnStmt (95)
+    returnStmt (94)
         on left: 63
         on right: 53
-    breakStmt (96)
+    breakStmt (95)
         on left: 64
         on right: 51
-    continueStmt (97)
+    continueStmt (96)
         on left: 65
         on right: 52
-    printStmt (98)
+    printStmt (97)
         on left: 66
         on right: 54
-    expr1ToInfColon (99)
+    expr1ToInfColon (98)
         on left: 67 68
         on right: 66 67 103
-    expr (100)
+    expr (99)
         on left: 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97
         on right: 57 58 61 62 67 68 71 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 93 94 95 96 97 99 100 102
-    lValue (101)
+    lValue (100)
         on left: 98 99 100
         on right: 69 71
-    call (102)
+    call (101)
         on left: 101 102
         on right: 73
-    actuals (103)
+    actuals (102)
         on left: 103 104
         on right: 101 102
-    constant (104)
+    constant (103)
         on left: 105 106 107 108 109
         on right: 70
 
@@ -888,18 +890,58 @@ State 60
    42 stmtBlock: OPENBRACE variableDecl0ToInf . stmt0ToInf CLOSEBRACE
    43 variableDecl0ToInf: variableDecl0ToInf . variableDecl
 
-    INT     shift, and go to state 2
-    DOUBLE  shift, and go to state 3
-    BOOL    shift, and go to state 4
-    STRING  shift, and go to state 5
-    T_ID    shift, and go to state 8
+    INT               shift, and go to state 2
+    DOUBLE            shift, and go to state 3
+    BOOL              shift, and go to state 4
+    STRING            shift, and go to state 5
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    OPENBRACE         shift, and go to state 52
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 94
 
-    $default  reduce using rule 46 (stmt0ToInf)
+    SEMICOLON  reduce using rule 56 (expr0Or1)
+    $default   reduce using rule 46 (stmt0ToInf)
 
-    variableDecl  go to state 70
+    variableDecl  go to state 95
     variable      go to state 13
     type          go to state 33
-    stmt0ToInf    go to state 71
+    stmtBlock     go to state 96
+    stmt0ToInf    go to state 97
+    stmt          go to state 98
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
 
 
 State 61
@@ -956,10 +998,10 @@ State 67
     STRING  shift, and go to state 5
     T_ID    shift, and go to state 8
 
-    variableDecl  go to state 72
+    variableDecl  go to state 111
     variable      go to state 13
     type          go to state 14
-    functionDecl  go to state 73
+    functionDecl  go to state 112
 
 
 State 68
@@ -976,7 +1018,7 @@ State 68
 
     variable             go to state 32
     type                 go to state 33
-    formals              go to state 74
+    formals              go to state 113
     variable1ToInfColon  go to state 35
 
 
@@ -994,443 +1036,412 @@ State 69
 
     variable             go to state 32
     type                 go to state 33
-    formals              go to state 75
+    formals              go to state 114
     variable1ToInfColon  go to state 35
 
 
 State 70
-
-   43 variableDecl0ToInf: variableDecl0ToInf variableDecl .
-
-    $default  reduce using rule 43 (variableDecl0ToInf)
-
-
-State 71
-
-   42 stmtBlock: OPENBRACE variableDecl0ToInf stmt0ToInf . CLOSEBRACE
-   45 stmt0ToInf: stmt0ToInf . stmt
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    FOR               shift, and go to state 78
-    WHILE             shift, and go to state 79
-    IF                shift, and go to state 80
-    RETURN            shift, and go to state 81
-    BREAK             shift, and go to state 82
-    CONTINUE          shift, and go to state 83
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    PRINT             shift, and go to state 86
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    OPENBRACE         shift, and go to state 52
-    CLOSEBRACE        shift, and go to state 96
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    $default  reduce using rule 56 (expr0Or1)
-
-    stmtBlock     go to state 102
-    stmt          go to state 103
-    expr0Or1      go to state 104
-    ifStmt        go to state 105
-    whileStmt     go to state 106
-    forStmt       go to state 107
-    returnStmt    go to state 108
-    breakStmt     go to state 109
-    continueStmt  go to state 110
-    printStmt     go to state 111
-    expr          go to state 112
-    lValue        go to state 113
-    call          go to state 114
-    constant      go to state 115
-
-
-State 72
-
-   29 field: accessMode variableDecl .
-
-    $default  reduce using rule 29 (field)
-
-
-State 73
-
-   30 field: accessMode functionDecl .
-
-    $default  reduce using rule 30 (field)
-
-
-State 74
-
-   41 prototype: VOID T_ID OPENPAR formals . CLOSEPAR SEMICOLON
-
-    CLOSEPAR  shift, and go to state 116
-
-
-State 75
-
-   40 prototype: type T_ID OPENPAR formals . CLOSEPAR SEMICOLON
-
-    CLOSEPAR  shift, and go to state 117
-
-
-State 76
 
   109 constant: NULL1 .
 
     $default  reduce using rule 109 (constant)
 
 
-State 77
+State 71
 
    72 expr: THIS .
 
     $default  reduce using rule 72 (expr)
 
 
-State 78
+State 72
 
    62 forStmt: FOR . OPENPAR expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR stmt
 
-    OPENPAR  shift, and go to state 118
+    OPENPAR  shift, and go to state 115
+
+
+State 73
+
+   61 whileStmt: WHILE . OPENPAR expr CLOSEPAR stmt
+
+    OPENPAR  shift, and go to state 116
+
+
+State 74
+
+   58 ifStmt: IF . OPENPAR expr CLOSEPAR stmt elseStmt0Or1
+
+    OPENPAR  shift, and go to state 117
+
+
+State 75
+
+   63 returnStmt: RETURN . expr0Or1 SEMICOLON
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    $default  reduce using rule 56 (expr0Or1)
+
+    expr0Or1  go to state 119
+    expr      go to state 107
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
+
+
+State 76
+
+   64 breakStmt: BREAK . SEMICOLON
+
+    SEMICOLON  shift, and go to state 120
+
+
+State 77
+
+   65 continueStmt: CONTINUE . SEMICOLON
+
+    SEMICOLON  shift, and go to state 121
+
+
+State 78
+
+   92 expr: NEW . T_ID
+
+    T_ID  shift, and go to state 122
 
 
 State 79
 
-   61 whileStmt: WHILE . OPENPAR expr CLOSEPAR stmt
+   93 expr: NEWARRAY . OPENPAR expr COLON type CLOSEPAR
 
-    OPENPAR  shift, and go to state 119
+    OPENPAR  shift, and go to state 123
 
 
 State 80
 
-   58 ifStmt: IF . OPENPAR expr CLOSEPAR stmt elseStmt0Or1
+   66 printStmt: PRINT . OPENPAR expr1ToInfColon CLOSEPAR SEMICOLON
 
-    OPENPAR  shift, and go to state 120
+    OPENPAR  shift, and go to state 124
 
 
 State 81
 
-   63 returnStmt: RETURN . expr0Or1 SEMICOLON
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    $default  reduce using rule 56 (expr0Or1)
-
-    expr0Or1  go to state 121
-    expr      go to state 112
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 82
-
-   64 breakStmt: BREAK . SEMICOLON
-
-    SEMICOLON  shift, and go to state 122
-
-
-State 83
-
-   65 continueStmt: CONTINUE . SEMICOLON
-
-    SEMICOLON  shift, and go to state 123
-
-
-State 84
-
-   92 expr: NEW . T_ID
-
-    T_ID  shift, and go to state 124
-
-
-State 85
-
-   93 expr: NEWARRAY . OPENPAR expr COLON type CLOSEPAR
+   90 expr: READINTEGER . OPENPAR CLOSEPAR
 
     OPENPAR  shift, and go to state 125
 
 
-State 86
+State 82
 
-   66 printStmt: PRINT . OPENPAR expr1ToInfColon CLOSEPAR SEMICOLON
+   91 expr: READLINE . OPENPAR CLOSEPAR
 
     OPENPAR  shift, and go to state 126
 
 
-State 87
+State 83
 
-   90 expr: READINTEGER . OPENPAR CLOSEPAR
+   95 expr: DTOI . OPENPAR expr CLOSEPAR
 
     OPENPAR  shift, and go to state 127
 
 
-State 88
+State 84
 
-   91 expr: READLINE . OPENPAR CLOSEPAR
+   94 expr: ITOD . OPENPAR expr CLOSEPAR
 
     OPENPAR  shift, and go to state 128
 
 
-State 89
+State 85
 
-   95 expr: DTOI . OPENPAR expr CLOSEPAR
+   97 expr: BTOI . OPENPAR expr CLOSEPAR
 
     OPENPAR  shift, and go to state 129
 
 
-State 90
+State 86
 
-   94 expr: ITOD . OPENPAR expr CLOSEPAR
+   96 expr: ITOB . OPENPAR expr CLOSEPAR
 
     OPENPAR  shift, and go to state 130
 
 
-State 91
-
-   97 expr: BTOI . OPENPAR expr CLOSEPAR
-
-    OPENPAR  shift, and go to state 131
-
-
-State 92
-
-   96 expr: ITOB . OPENPAR expr CLOSEPAR
-
-    OPENPAR  shift, and go to state 132
-
-
-State 93
+State 87
 
    80 expr: MINUS . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
-    expr      go to state 133
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    expr      go to state 131
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 94
+State 88
 
    89 expr: EXCLAMATION . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
-    expr      go to state 134
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    expr      go to state 132
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 95
+State 89
 
    74 expr: OPENPAR . expr CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
-    expr      go to state 135
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 96
-
-   42 stmtBlock: OPENBRACE variableDecl0ToInf stmt0ToInf CLOSEBRACE .
-
-    $default  reduce using rule 42 (stmtBlock)
+    expr      go to state 133
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 97
+State 90
 
   105 constant: T_INTLITERAL .
 
     $default  reduce using rule 105 (constant)
 
 
-State 98
+State 91
 
   106 constant: T_DOUBLELITERAL .
 
     $default  reduce using rule 106 (constant)
 
 
-State 99
+State 92
 
   108 constant: T_STRINGLITERAL .
 
     $default  reduce using rule 108 (constant)
 
 
-State 100
+State 93
 
   107 constant: T_BOOLEANLITERAL .
 
     $default  reduce using rule 107 (constant)
 
 
-State 101
+State 94
 
+   14 type: T_ID .
    98 lValue: T_ID .
   101 call: T_ID . OPENPAR actuals CLOSEPAR
 
-    OPENPAR  shift, and go to state 136
+    OPENPAR  shift, and go to state 134
 
-    $default  reduce using rule 98 (lValue)
+    OPENBRACK  reduce using rule 14 (type)
+    OPENBRACK  [reduce using rule 98 (lValue)]
+    T_ID       reduce using rule 14 (type)
+    $default   reduce using rule 98 (lValue)
 
 
-State 102
+State 95
+
+   43 variableDecl0ToInf: variableDecl0ToInf variableDecl .
+
+    $default  reduce using rule 43 (variableDecl0ToInf)
+
+
+State 96
 
    55 stmt: stmtBlock .
 
     $default  reduce using rule 55 (stmt)
 
 
-State 103
+State 97
 
-   45 stmt0ToInf: stmt0ToInf stmt .
+   42 stmtBlock: OPENBRACE variableDecl0ToInf stmt0ToInf . CLOSEBRACE
 
-    $default  reduce using rule 45 (stmt0ToInf)
+    CLOSEBRACE  shift, and go to state 135
 
 
-State 104
+State 98
+
+   45 stmt0ToInf: stmt . stmt0ToInf
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    OPENBRACE         shift, and go to state 52
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    SEMICOLON  reduce using rule 56 (expr0Or1)
+    $default   reduce using rule 46 (stmt0ToInf)
+
+    stmtBlock     go to state 96
+    stmt0ToInf    go to state 136
+    stmt          go to state 98
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
+
+
+State 99
 
    47 stmt: expr0Or1 . SEMICOLON
 
     SEMICOLON  shift, and go to state 137
 
 
-State 105
+State 100
 
    48 stmt: ifStmt .
 
     $default  reduce using rule 48 (stmt)
 
 
-State 106
+State 101
 
    49 stmt: whileStmt .
 
     $default  reduce using rule 49 (stmt)
 
 
-State 107
+State 102
 
    50 stmt: forStmt .
 
     $default  reduce using rule 50 (stmt)
 
 
-State 108
+State 103
 
    53 stmt: returnStmt .
 
     $default  reduce using rule 53 (stmt)
 
 
-State 109
+State 104
 
    51 stmt: breakStmt .
 
     $default  reduce using rule 51 (stmt)
 
 
-State 110
+State 105
 
    52 stmt: continueStmt .
 
     $default  reduce using rule 52 (stmt)
 
 
-State 111
+State 106
 
    54 stmt: printStmt .
 
     $default  reduce using rule 54 (stmt)
 
 
-State 112
+State 107
 
    57 expr0Or1: expr .
    75 expr: expr . PLUS expr
@@ -1469,7 +1480,7 @@ State 112
     $default  reduce using rule 57 (expr0Or1)
 
 
-State 113
+State 108
 
    69 expr: lValue .
    71     | lValue . EQ expr
@@ -1479,342 +1490,366 @@ State 113
     $default  reduce using rule 69 (expr)
 
 
-State 114
+State 109
 
    73 expr: call .
 
     $default  reduce using rule 73 (expr)
 
 
-State 115
+State 110
 
    70 expr: constant .
 
     $default  reduce using rule 70 (expr)
 
 
-State 116
+State 111
 
-   41 prototype: VOID T_ID OPENPAR formals CLOSEPAR . SEMICOLON
+   29 field: accessMode variableDecl .
 
-    SEMICOLON  shift, and go to state 154
-
-
-State 117
-
-   40 prototype: type T_ID OPENPAR formals CLOSEPAR . SEMICOLON
-
-    SEMICOLON  shift, and go to state 155
+    $default  reduce using rule 29 (field)
 
 
-State 118
+State 112
+
+   30 field: accessMode functionDecl .
+
+    $default  reduce using rule 30 (field)
+
+
+State 113
+
+   41 prototype: VOID T_ID OPENPAR formals . CLOSEPAR SEMICOLON
+
+    CLOSEPAR  shift, and go to state 154
+
+
+State 114
+
+   40 prototype: type T_ID OPENPAR formals . CLOSEPAR SEMICOLON
+
+    CLOSEPAR  shift, and go to state 155
+
+
+State 115
 
    62 forStmt: FOR OPENPAR . expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR stmt
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     $default  reduce using rule 56 (expr0Or1)
 
     expr0Or1  go to state 156
-    expr      go to state 112
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    expr      go to state 107
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 119
+State 116
 
    61 whileStmt: WHILE OPENPAR . expr CLOSEPAR stmt
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 157
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 120
+State 117
 
    58 ifStmt: IF OPENPAR . expr CLOSEPAR stmt elseStmt0Or1
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 158
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 121
+State 118
+
+   98 lValue: T_ID .
+  101 call: T_ID . OPENPAR actuals CLOSEPAR
+
+    OPENPAR  shift, and go to state 134
+
+    $default  reduce using rule 98 (lValue)
+
+
+State 119
 
    63 returnStmt: RETURN expr0Or1 . SEMICOLON
 
     SEMICOLON  shift, and go to state 159
 
 
-State 122
+State 120
 
    64 breakStmt: BREAK SEMICOLON .
 
     $default  reduce using rule 64 (breakStmt)
 
 
-State 123
+State 121
 
    65 continueStmt: CONTINUE SEMICOLON .
 
     $default  reduce using rule 65 (continueStmt)
 
 
-State 124
+State 122
 
    92 expr: NEW T_ID .
 
     $default  reduce using rule 92 (expr)
 
 
-State 125
+State 123
 
    93 expr: NEWARRAY OPENPAR . expr COLON type CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 160
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
-State 126
+State 124
 
    66 printStmt: PRINT OPENPAR . expr1ToInfColon CLOSEPAR SEMICOLON
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr1ToInfColon  go to state 161
     expr             go to state 162
-    lValue           go to state 113
-    call             go to state 114
-    constant         go to state 115
+    lValue           go to state 108
+    call             go to state 109
+    constant         go to state 110
 
 
-State 127
+State 125
 
    90 expr: READINTEGER OPENPAR . CLOSEPAR
 
     CLOSEPAR  shift, and go to state 163
 
 
-State 128
+State 126
 
    91 expr: READLINE OPENPAR . CLOSEPAR
 
     CLOSEPAR  shift, and go to state 164
 
 
-State 129
+State 127
 
    95 expr: DTOI OPENPAR . expr CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 165
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
+
+
+State 128
+
+   94 expr: ITOD OPENPAR . expr CLOSEPAR
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    expr      go to state 166
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
+
+
+State 129
+
+   97 expr: BTOI OPENPAR . expr CLOSEPAR
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    expr      go to state 167
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 130
 
-   94 expr: ITOD OPENPAR . expr CLOSEPAR
+   96 expr: ITOB OPENPAR . expr CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
-    expr      go to state 166
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    expr      go to state 168
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 131
-
-   97 expr: BTOI OPENPAR . expr CLOSEPAR
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    expr      go to state 167
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 132
-
-   96 expr: ITOB OPENPAR . expr CLOSEPAR
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    expr      go to state 168
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 133
 
    75 expr: expr . PLUS expr
    76     | expr . MINUS expr
@@ -1846,7 +1881,7 @@ State 133
     $default  reduce using rule 80 (expr)
 
 
-State 134
+State 132
 
    75 expr: expr . PLUS expr
    76     | expr . MINUS expr
@@ -1869,7 +1904,7 @@ State 134
     $default  reduce using rule 89 (expr)
 
 
-State 135
+State 133
 
    74 expr: OPENPAR expr . CLOSEPAR
    75     | expr . PLUS expr
@@ -1907,37 +1942,51 @@ State 135
     CLOSEPAR    shift, and go to state 169
 
 
-State 136
+State 134
 
   101 call: T_ID OPENPAR . actuals CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     $default  reduce using rule 104 (actuals)
 
     expr1ToInfColon  go to state 170
     expr             go to state 162
-    lValue           go to state 113
-    call             go to state 114
+    lValue           go to state 108
+    call             go to state 109
     actuals          go to state 171
-    constant         go to state 115
+    constant         go to state 110
+
+
+State 135
+
+   42 stmtBlock: OPENBRACE variableDecl0ToInf stmt0ToInf CLOSEBRACE .
+
+    $default  reduce using rule 42 (stmtBlock)
+
+
+State 136
+
+   45 stmt0ToInf: stmt stmt0ToInf .
+
+    $default  reduce using rule 45 (stmt0ToInf)
 
 
 State 137
@@ -1951,377 +2000,377 @@ State 138
 
    84 expr: expr GEQ . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 172
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 139
 
    82 expr: expr LEQ . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 173
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 140
 
    83 expr: expr GR . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 174
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 141
 
    81 expr: expr LE . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 175
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 142
 
    78 expr: expr SLASH . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 176
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 143
 
    75 expr: expr PLUS . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 177
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 144
 
    76 expr: expr MINUS . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 178
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 145
 
    77 expr: expr MUL . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 179
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 146
 
    79 expr: expr PERCENT . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 180
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 147
 
    85 expr: expr CHECKEQ . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 181
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 148
 
    86 expr: expr CHECKNOTEQ . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 182
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 149
 
    88 expr: expr OR . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 183
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 150
 
    87 expr: expr AND . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 184
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 151
@@ -2336,79 +2385,79 @@ State 152
 
   100 lValue: expr OPENBRACK . expr CLOSEBRACK
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 186
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 153
 
    71 expr: lValue EQ . expr
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     expr      go to state 187
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 154
 
-   41 prototype: VOID T_ID OPENPAR formals CLOSEPAR SEMICOLON .
+   41 prototype: VOID T_ID OPENPAR formals CLOSEPAR . SEMICOLON
 
-    $default  reduce using rule 41 (prototype)
+    SEMICOLON  shift, and go to state 188
 
 
 State 155
 
-   40 prototype: type T_ID OPENPAR formals CLOSEPAR SEMICOLON .
+   40 prototype: type T_ID OPENPAR formals CLOSEPAR . SEMICOLON
 
-    $default  reduce using rule 40 (prototype)
+    SEMICOLON  shift, and go to state 189
 
 
 State 156
 
    62 forStmt: FOR OPENPAR expr0Or1 . SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR stmt
 
-    SEMICOLON  shift, and go to state 188
+    SEMICOLON  shift, and go to state 190
 
 
 State 157
@@ -2446,7 +2495,7 @@ State 157
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 189
+    CLOSEPAR    shift, and go to state 191
 
 
 State 158
@@ -2484,7 +2533,7 @@ State 158
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 190
+    CLOSEPAR    shift, and go to state 192
 
 
 State 159
@@ -2527,7 +2576,7 @@ State 160
     CHECKNOTEQ  shift, and go to state 148
     OR          shift, and go to state 149
     AND         shift, and go to state 150
-    COLON       shift, and go to state 191
+    COLON       shift, and go to state 193
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
 
@@ -2537,8 +2586,8 @@ State 161
    66 printStmt: PRINT OPENPAR expr1ToInfColon . CLOSEPAR SEMICOLON
    67 expr1ToInfColon: expr1ToInfColon . COLON expr
 
-    COLON     shift, and go to state 192
-    CLOSEPAR  shift, and go to state 193
+    COLON     shift, and go to state 194
+    CLOSEPAR  shift, and go to state 195
 
 
 State 162
@@ -2629,7 +2678,7 @@ State 165
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 194
+    CLOSEPAR    shift, and go to state 196
 
 
 State 166
@@ -2667,7 +2716,7 @@ State 166
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 195
+    CLOSEPAR    shift, and go to state 197
 
 
 State 167
@@ -2705,7 +2754,7 @@ State 167
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 196
+    CLOSEPAR    shift, and go to state 198
 
 
 State 168
@@ -2743,7 +2792,7 @@ State 168
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEPAR    shift, and go to state 197
+    CLOSEPAR    shift, and go to state 199
 
 
 State 169
@@ -2758,7 +2807,7 @@ State 170
    67 expr1ToInfColon: expr1ToInfColon . COLON expr
   103 actuals: expr1ToInfColon .
 
-    COLON  shift, and go to state 192
+    COLON  shift, and go to state 194
 
     $default  reduce using rule 103 (actuals)
 
@@ -2767,7 +2816,7 @@ State 171
 
   101 call: T_ID OPENPAR actuals . CLOSEPAR
 
-    CLOSEPAR  shift, and go to state 198
+    CLOSEPAR  shift, and go to state 200
 
 
 State 172
@@ -3191,7 +3240,7 @@ State 185
    99 lValue: expr DOT T_ID .
   102 call: expr DOT T_ID . OPENPAR actuals CLOSEPAR
 
-    OPENPAR  shift, and go to state 199
+    OPENPAR  shift, and go to state 201
 
     $default  reduce using rule 99 (lValue)
 
@@ -3231,7 +3280,7 @@ State 186
     AND         shift, and go to state 150
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
-    CLOSEBRACK  shift, and go to state 200
+    CLOSEBRACK  shift, and go to state 202
 
 
 State 187
@@ -3268,132 +3317,146 @@ State 187
 
 State 188
 
-   62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON . expr SEMICOLON expr0Or1 CLOSEPAR stmt
+   41 prototype: VOID T_ID OPENPAR formals CLOSEPAR SEMICOLON .
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    expr      go to state 201
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
+    $default  reduce using rule 41 (prototype)
 
 
 State 189
 
-   61 whileStmt: WHILE OPENPAR expr CLOSEPAR . stmt
+   40 prototype: type T_ID OPENPAR formals CLOSEPAR SEMICOLON .
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    FOR               shift, and go to state 78
-    WHILE             shift, and go to state 79
-    IF                shift, and go to state 80
-    RETURN            shift, and go to state 81
-    BREAK             shift, and go to state 82
-    CONTINUE          shift, and go to state 83
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    PRINT             shift, and go to state 86
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    OPENBRACE         shift, and go to state 52
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    $default  reduce using rule 56 (expr0Or1)
-
-    stmtBlock     go to state 102
-    stmt          go to state 202
-    expr0Or1      go to state 104
-    ifStmt        go to state 105
-    whileStmt     go to state 106
-    forStmt       go to state 107
-    returnStmt    go to state 108
-    breakStmt     go to state 109
-    continueStmt  go to state 110
-    printStmt     go to state 111
-    expr          go to state 112
-    lValue        go to state 113
-    call          go to state 114
-    constant      go to state 115
+    $default  reduce using rule 40 (prototype)
 
 
 State 190
 
-   58 ifStmt: IF OPENPAR expr CLOSEPAR . stmt elseStmt0Or1
+   62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON . expr SEMICOLON expr0Or1 CLOSEPAR stmt
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    FOR               shift, and go to state 78
-    WHILE             shift, and go to state 79
-    IF                shift, and go to state 80
-    RETURN            shift, and go to state 81
-    BREAK             shift, and go to state 82
-    CONTINUE          shift, and go to state 83
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    PRINT             shift, and go to state 86
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    OPENBRACE         shift, and go to state 52
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
-    $default  reduce using rule 56 (expr0Or1)
-
-    stmtBlock     go to state 102
-    stmt          go to state 203
-    expr0Or1      go to state 104
-    ifStmt        go to state 105
-    whileStmt     go to state 106
-    forStmt       go to state 107
-    returnStmt    go to state 108
-    breakStmt     go to state 109
-    continueStmt  go to state 110
-    printStmt     go to state 111
-    expr          go to state 112
-    lValue        go to state 113
-    call          go to state 114
-    constant      go to state 115
+    expr      go to state 203
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
 
 
 State 191
+
+   61 whileStmt: WHILE OPENPAR expr CLOSEPAR . stmt
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    OPENBRACE         shift, and go to state 52
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    $default  reduce using rule 56 (expr0Or1)
+
+    stmtBlock     go to state 96
+    stmt          go to state 204
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
+
+
+State 192
+
+   58 ifStmt: IF OPENPAR expr CLOSEPAR . stmt elseStmt0Or1
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    OPENBRACE         shift, and go to state 52
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    $default  reduce using rule 56 (expr0Or1)
+
+    stmtBlock     go to state 96
+    stmt          go to state 205
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
+
+
+State 193
 
    93 expr: NEWARRAY OPENPAR expr COLON . type CLOSEPAR
 
@@ -3403,121 +3466,121 @@ State 191
     STRING  shift, and go to state 5
     T_ID    shift, and go to state 8
 
-    type  go to state 204
-
-
-State 192
-
-   67 expr1ToInfColon: expr1ToInfColon COLON . expr
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    expr      go to state 205
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 193
-
-   66 printStmt: PRINT OPENPAR expr1ToInfColon CLOSEPAR . SEMICOLON
-
-    SEMICOLON  shift, and go to state 206
+    type  go to state 206
 
 
 State 194
+
+   67 expr1ToInfColon: expr1ToInfColon COLON . expr
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    expr      go to state 207
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
+
+
+State 195
+
+   66 printStmt: PRINT OPENPAR expr1ToInfColon CLOSEPAR . SEMICOLON
+
+    SEMICOLON  shift, and go to state 208
+
+
+State 196
 
    95 expr: DTOI OPENPAR expr CLOSEPAR .
 
     $default  reduce using rule 95 (expr)
 
 
-State 195
+State 197
 
    94 expr: ITOD OPENPAR expr CLOSEPAR .
 
     $default  reduce using rule 94 (expr)
 
 
-State 196
+State 198
 
    97 expr: BTOI OPENPAR expr CLOSEPAR .
 
     $default  reduce using rule 97 (expr)
 
 
-State 197
+State 199
 
    96 expr: ITOB OPENPAR expr CLOSEPAR .
 
     $default  reduce using rule 96 (expr)
 
 
-State 198
+State 200
 
   101 call: T_ID OPENPAR actuals CLOSEPAR .
 
     $default  reduce using rule 101 (call)
 
 
-State 199
+State 201
 
   102 call: expr DOT T_ID OPENPAR . actuals CLOSEPAR
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     $default  reduce using rule 104 (actuals)
 
     expr1ToInfColon  go to state 170
     expr             go to state 162
-    lValue           go to state 113
-    call             go to state 114
-    actuals          go to state 207
-    constant         go to state 115
+    lValue           go to state 108
+    call             go to state 109
+    actuals          go to state 209
+    constant         go to state 110
 
 
-State 200
+State 202
 
   100 lValue: expr OPENBRACK expr CLOSEBRACK .
 
     $default  reduce using rule 100 (lValue)
 
 
-State 201
+State 203
 
    62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr . SEMICOLON expr0Or1 CLOSEPAR stmt
    75 expr: expr . PLUS expr
@@ -3550,39 +3613,39 @@ State 201
     CHECKNOTEQ  shift, and go to state 148
     OR          shift, and go to state 149
     AND         shift, and go to state 150
-    SEMICOLON   shift, and go to state 208
+    SEMICOLON   shift, and go to state 210
     DOT         shift, and go to state 151
     OPENBRACK   shift, and go to state 152
 
 
-State 202
+State 204
 
    61 whileStmt: WHILE OPENPAR expr CLOSEPAR stmt .
 
     $default  reduce using rule 61 (whileStmt)
 
 
-State 203
+State 205
 
    58 ifStmt: IF OPENPAR expr CLOSEPAR stmt . elseStmt0Or1
 
-    ELSE  shift, and go to state 209
+    ELSE  shift, and go to state 211
 
     $default  reduce using rule 59 (elseStmt0Or1)
 
-    elseStmt0Or1  go to state 210
+    elseStmt0Or1  go to state 212
 
 
-State 204
+State 206
 
    15 type: type . OPENBRACK CLOSEBRACK
    93 expr: NEWARRAY OPENPAR expr COLON type . CLOSEPAR
 
     OPENBRACK  shift, and go to state 24
-    CLOSEPAR   shift, and go to state 211
+    CLOSEPAR   shift, and go to state 213
 
 
-State 205
+State 207
 
    67 expr1ToInfColon: expr1ToInfColon COLON expr .
    75 expr: expr . PLUS expr
@@ -3621,186 +3684,186 @@ State 205
     $default  reduce using rule 67 (expr1ToInfColon)
 
 
-State 206
+State 208
 
    66 printStmt: PRINT OPENPAR expr1ToInfColon CLOSEPAR SEMICOLON .
 
     $default  reduce using rule 66 (printStmt)
 
 
-State 207
+State 209
 
   102 call: expr DOT T_ID OPENPAR actuals . CLOSEPAR
 
-    CLOSEPAR  shift, and go to state 212
-
-
-State 208
-
-   62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON . expr0Or1 CLOSEPAR stmt
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    $default  reduce using rule 56 (expr0Or1)
-
-    expr0Or1  go to state 213
-    expr      go to state 112
-    lValue    go to state 113
-    call      go to state 114
-    constant  go to state 115
-
-
-State 209
-
-   60 elseStmt0Or1: ELSE . stmt
-
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    FOR               shift, and go to state 78
-    WHILE             shift, and go to state 79
-    IF                shift, and go to state 80
-    RETURN            shift, and go to state 81
-    BREAK             shift, and go to state 82
-    CONTINUE          shift, and go to state 83
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    PRINT             shift, and go to state 86
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
-    OPENBRACE         shift, and go to state 52
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
-
-    $default  reduce using rule 56 (expr0Or1)
-
-    stmtBlock     go to state 102
-    stmt          go to state 214
-    expr0Or1      go to state 104
-    ifStmt        go to state 105
-    whileStmt     go to state 106
-    forStmt       go to state 107
-    returnStmt    go to state 108
-    breakStmt     go to state 109
-    continueStmt  go to state 110
-    printStmt     go to state 111
-    expr          go to state 112
-    lValue        go to state 113
-    call          go to state 114
-    constant      go to state 115
+    CLOSEPAR  shift, and go to state 214
 
 
 State 210
+
+   62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON . expr0Or1 CLOSEPAR stmt
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    $default  reduce using rule 56 (expr0Or1)
+
+    expr0Or1  go to state 215
+    expr      go to state 107
+    lValue    go to state 108
+    call      go to state 109
+    constant  go to state 110
+
+
+State 211
+
+   60 elseStmt0Or1: ELSE . stmt
+
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
+    OPENBRACE         shift, and go to state 52
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
+
+    $default  reduce using rule 56 (expr0Or1)
+
+    stmtBlock     go to state 96
+    stmt          go to state 216
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
+
+
+State 212
 
    58 ifStmt: IF OPENPAR expr CLOSEPAR stmt elseStmt0Or1 .
 
     $default  reduce using rule 58 (ifStmt)
 
 
-State 211
+State 213
 
    93 expr: NEWARRAY OPENPAR expr COLON type CLOSEPAR .
 
     $default  reduce using rule 93 (expr)
 
 
-State 212
+State 214
 
   102 call: expr DOT T_ID OPENPAR actuals CLOSEPAR .
 
     $default  reduce using rule 102 (call)
 
 
-State 213
+State 215
 
    62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 . CLOSEPAR stmt
 
-    CLOSEPAR  shift, and go to state 215
+    CLOSEPAR  shift, and go to state 217
 
 
-State 214
+State 216
 
    60 elseStmt0Or1: ELSE stmt .
 
     $default  reduce using rule 60 (elseStmt0Or1)
 
 
-State 215
+State 217
 
    62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR . stmt
 
-    NULL1             shift, and go to state 76
-    THIS              shift, and go to state 77
-    FOR               shift, and go to state 78
-    WHILE             shift, and go to state 79
-    IF                shift, and go to state 80
-    RETURN            shift, and go to state 81
-    BREAK             shift, and go to state 82
-    CONTINUE          shift, and go to state 83
-    NEW               shift, and go to state 84
-    NEWARRAY          shift, and go to state 85
-    PRINT             shift, and go to state 86
-    READINTEGER       shift, and go to state 87
-    READLINE          shift, and go to state 88
-    DTOI              shift, and go to state 89
-    ITOD              shift, and go to state 90
-    BTOI              shift, and go to state 91
-    ITOB              shift, and go to state 92
-    MINUS             shift, and go to state 93
-    EXCLAMATION       shift, and go to state 94
-    OPENPAR           shift, and go to state 95
+    NULL1             shift, and go to state 70
+    THIS              shift, and go to state 71
+    FOR               shift, and go to state 72
+    WHILE             shift, and go to state 73
+    IF                shift, and go to state 74
+    RETURN            shift, and go to state 75
+    BREAK             shift, and go to state 76
+    CONTINUE          shift, and go to state 77
+    NEW               shift, and go to state 78
+    NEWARRAY          shift, and go to state 79
+    PRINT             shift, and go to state 80
+    READINTEGER       shift, and go to state 81
+    READLINE          shift, and go to state 82
+    DTOI              shift, and go to state 83
+    ITOD              shift, and go to state 84
+    BTOI              shift, and go to state 85
+    ITOB              shift, and go to state 86
+    MINUS             shift, and go to state 87
+    EXCLAMATION       shift, and go to state 88
+    OPENPAR           shift, and go to state 89
     OPENBRACE         shift, and go to state 52
-    T_INTLITERAL      shift, and go to state 97
-    T_DOUBLELITERAL   shift, and go to state 98
-    T_STRINGLITERAL   shift, and go to state 99
-    T_BOOLEANLITERAL  shift, and go to state 100
-    T_ID              shift, and go to state 101
+    T_INTLITERAL      shift, and go to state 90
+    T_DOUBLELITERAL   shift, and go to state 91
+    T_STRINGLITERAL   shift, and go to state 92
+    T_BOOLEANLITERAL  shift, and go to state 93
+    T_ID              shift, and go to state 118
 
     $default  reduce using rule 56 (expr0Or1)
 
-    stmtBlock     go to state 102
-    stmt          go to state 216
-    expr0Or1      go to state 104
-    ifStmt        go to state 105
-    whileStmt     go to state 106
-    forStmt       go to state 107
-    returnStmt    go to state 108
-    breakStmt     go to state 109
-    continueStmt  go to state 110
-    printStmt     go to state 111
-    expr          go to state 112
-    lValue        go to state 113
-    call          go to state 114
-    constant      go to state 115
+    stmtBlock     go to state 96
+    stmt          go to state 218
+    expr0Or1      go to state 99
+    ifStmt        go to state 100
+    whileStmt     go to state 101
+    forStmt       go to state 102
+    returnStmt    go to state 103
+    breakStmt     go to state 104
+    continueStmt  go to state 105
+    printStmt     go to state 106
+    expr          go to state 107
+    lValue        go to state 108
+    call          go to state 109
+    constant      go to state 110
 
 
-State 216
+State 218
 
    62 forStmt: FOR OPENPAR expr0Or1 SEMICOLON expr SEMICOLON expr0Or1 CLOSEPAR stmt .
 
