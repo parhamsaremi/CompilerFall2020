@@ -95,9 +95,23 @@
 %nonassoc ELSE
 %nonassoc NoEQ
 
-%left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
-%right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID
+%right EQ
+%left OR
+%left AND
+%left CHECKEQ CHECKNOTEQ
+%nonassoc LE GR LEQ GEQ
+%left PLUS 
+%left MINUS
+%left MUL PERCENT
+%left SLASH 
 %nonassoc EXCLAMATION
+%left DOT
+
+/* -------- */
+
+/* %left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE */
+/* %right GEQ LE LEQ GR CHECKEQ CHECKNOTEQ AND OR T_ID */
+/* %nonassoc EXCLAMATION */
 
 %%
 
