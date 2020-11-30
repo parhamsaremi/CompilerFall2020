@@ -89,6 +89,7 @@
 %token T_BOOLEANLITERAL
 %token T_ID
 %token UNDEFINED
+%token NEG
 
 %nonassoc NoELSE
 %nonassoc ELSE
@@ -103,6 +104,7 @@
 %left MINUS
 %left MUL PERCENT
 %left SLASH 
+%left NEG
 %nonassoc EXCLAMATION
 %left DOT OPENBRACK
 // %left PLUS MINUS MUL SLASH PERCENT DOT EQ OPENBRACK OPENBRACE
@@ -294,7 +296,7 @@ expr:
 	| expr MUL expr
 	| expr SLASH expr
 	| expr PERCENT expr
-	| MINUS expr
+	| MINUS expr %prec NEG
 	| expr LE expr
 	| expr LEQ expr
 	| expr GR expr
