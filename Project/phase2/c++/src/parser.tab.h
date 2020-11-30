@@ -109,8 +109,9 @@ extern int yydebug;
     T_BOOLEANLITERAL = 315,
     T_ID = 316,
     UNDEFINED = 317,
-    NoELSE = 318,
-    NoEQ = 319
+    NoSHIT = 318,
+    NoELSE = 319,
+    NoEQ = 320
   };
 #endif
 
@@ -125,7 +126,7 @@ union YYSTYPE
   // char *sval;
   // char *bval;
 
-#line 129 "parser.tab.h"
+#line 130 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

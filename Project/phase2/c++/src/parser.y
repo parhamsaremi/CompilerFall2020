@@ -90,6 +90,7 @@
 %token T_ID
 %token UNDEFINED
 
+%nonassoc NoSHIT
 %nonassoc NoELSE
 %nonassoc ELSE
 %nonassoc NoEQ
@@ -209,7 +210,7 @@ variableDecl0ToInf:
 
 stmt0ToInf:
 	stmt0ToInf stmt
-	| %empty
+	| %empty %prec NoSHIT
 	;
 
 stmt:
