@@ -121,6 +121,7 @@ variableDecl:
 
 variable:
 	type T_ID
+	| new_type T_ID
 	;
 
 type:
@@ -128,10 +129,11 @@ type:
 	| DOUBLE
 	| BOOL
 	| STRING
-	| T_ID
 	| type OPENBRACK CLOSEBRACK
 	;
-
+new_type:
+	T_ID
+	;
 functionDecl:
 	type T_ID OPENPAR formals CLOSEPAR stmtBlock
 	| VOID T_ID OPENPAR formals CLOSEPAR stmtBlock
