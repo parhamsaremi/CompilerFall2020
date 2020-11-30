@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "parser.tab.h"
 #define YY_DECL int yylex()
-int linenumber=1;
+int linenumber=0;
 %}
 
 digit [0-9]

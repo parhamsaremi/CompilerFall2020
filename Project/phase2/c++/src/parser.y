@@ -100,8 +100,12 @@ start:
 	;
 
 program:
-	program decl {}
-	| decl {}
+	decl1ToInf
+	;
+
+decl1ToInf:
+	decl1ToInf decl
+	| decl
 	;
 
 decl:
@@ -316,10 +320,10 @@ constant:
 	| T_BOOLEANLITERAL
 	| T_STRINGLITERAL
 	| NULL1
-  ;
+	;
 
 %%
 void yyerror(const char *s) {
-//   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);
+   /* fprintf(yyout, "Syntax Error in token %d",linenumber); */
   fprintf(yyout, "Syntax Error");
 }
