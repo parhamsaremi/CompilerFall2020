@@ -187,7 +187,10 @@ extern int yydebug;
     T_STRINGLITERAL = 314,
     T_BOOLEANLITERAL = 315,
     T_ID = 316,
-    UNDEFINED = 317
+    UNDEFINED = 317,
+    NoSHIT = 318,
+    NoELSE = 319,
+    NoEQ = 320
   };
 #endif
 
@@ -202,7 +205,7 @@ union YYSTYPE
   // char *sval;
   // char *bval;
 
-#line 206 "parser.tab.c"
+#line 209 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -524,7 +527,7 @@ union yyalloc
 #define YYLAST   482
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  63
+#define YYNTOKENS  66
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  39
 /* YYNRULES -- Number of rules.  */
@@ -533,7 +536,7 @@ union yyalloc
 #define YYNSTATES  217
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   317
+#define YYMAXUTOK   320
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -576,25 +579,26 @@ static const yytype_int8 yytranslate[] =
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,    62
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    99,    99,   103,   104,   108,   109,   110,   111,   115,
-     119,   123,   124,   125,   126,   127,   128,   132,   133,   137,
-     138,   142,   143,   147,   151,   152,   156,   157,   161,   162,
-     166,   167,   171,   172,   176,   177,   178,   179,   183,   187,
-     188,   192,   193,   197,   201,   202,   206,   207,   211,   212,
-     213,   214,   215,   216,   217,   218,   219,   223,   224,   228,
-     232,   233,   237,   241,   245,   249,   253,   257,   261,   262,
-     266,   267,   268,   269,   270,   271,   272,   273,   274,   275,
-     276,   277,   278,   279,   280,   281,   282,   283,   284,   285,
-     286,   287,   288,   289,   290,   291,   292,   293,   294,   298,
-     299,   300,   304,   305,   309,   310,   314,   315,   316,   317,
-     318
+       0,   105,   105,   109,   110,   114,   115,   116,   117,   121,
+     125,   129,   130,   131,   132,   133,   134,   138,   139,   143,
+     144,   148,   149,   153,   157,   158,   162,   163,   167,   168,
+     172,   173,   177,   178,   182,   183,   184,   185,   189,   193,
+     194,   198,   199,   203,   207,   208,   212,   213,   217,   218,
+     219,   220,   221,   222,   223,   224,   225,   229,   230,   234,
+     238,   239,   243,   247,   251,   255,   259,   263,   267,   268,
+     272,   273,   274,   275,   276,   277,   278,   279,   280,   281,
+     282,   283,   284,   285,   286,   287,   288,   289,   290,   291,
+     292,   293,   294,   295,   296,   297,   298,   299,   300,   304,
+     305,   306,   310,   311,   315,   316,   320,   321,   322,   323,
+     324
 };
 #endif
 
@@ -612,14 +616,14 @@ static const char *const yytname[] =
   "CHECKNOTEQ", "OR", "AND", "EXCLAMATION", "SEMICOLON", "COLON", "DOT",
   "OPENBRACK", "CLOSEBRACK", "OPENPAR", "CLOSEPAR", "OPENBRACE",
   "CLOSEBRACE", "T_INTLITERAL", "T_DOUBLELITERAL", "T_STRINGLITERAL",
-  "T_BOOLEANLITERAL", "T_ID", "UNDEFINED", "$accept", "start", "program",
-  "decl", "variableDecl", "variable", "type", "functionDecl", "formals",
-  "variable1ToInfColon", "classDecl", "extendsIdent0Or1",
-  "implementsIdentPlusColon0Or1", "fields0ToInf", "field",
-  "ids1ToInfColon", "accessMode", "interfaceDecl", "prototype0ToInf",
-  "prototype", "stmtBlock", "variableDecl0ToInf", "stmt0ToInf", "stmt",
-  "expr0Or1", "ifStmt", "elseStmt0Or1", "whileStmt", "forStmt",
-  "returnStmt", "breakStmt", "continueStmt", "printStmt",
+  "T_BOOLEANLITERAL", "T_ID", "UNDEFINED", "NoSHIT", "NoELSE", "NoEQ",
+  "$accept", "start", "program", "decl", "variableDecl", "variable",
+  "type", "functionDecl", "formals", "variable1ToInfColon", "classDecl",
+  "extendsIdent0Or1", "implementsIdentPlusColon0Or1", "fields0ToInf",
+  "field", "ids1ToInfColon", "accessMode", "interfaceDecl",
+  "prototype0ToInf", "prototype", "stmtBlock", "variableDecl0ToInf",
+  "stmt0ToInf", "stmt", "expr0Or1", "ifStmt", "elseStmt0Or1", "whileStmt",
+  "forStmt", "returnStmt", "breakStmt", "continueStmt", "printStmt",
   "expr1ToInfColon", "expr", "lValue", "call", "actuals", "constant", YY_NULLPTR
 };
 #endif
@@ -635,7 +639,7 @@ static const yytype_int16 yytoknum[] =
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
-     315,   316,   317
+     315,   316,   317,   318,   319,   320
 };
 # endif
 
@@ -837,45 +841,45 @@ static const yytype_int16 yycheck[] =
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     4,     5,     6,     7,     8,     9,    61,    64,
-      65,    66,    67,    68,    69,    70,    73,    80,    61,    61,
-      61,     0,    66,    48,    51,    61,    53,    12,    74,    55,
-      52,    53,    68,    69,    71,    72,    61,    13,    75,    81,
-      71,    61,    54,    49,    61,    78,    55,     3,    56,    69,
-      82,    54,    55,    83,    68,    49,    76,    61,    61,    83,
-      84,    61,    30,    31,    32,    56,    77,    79,    53,    53,
-      67,    85,    67,    70,    71,    71,    10,    11,    14,    15,
+       0,     3,     4,     5,     6,     7,     8,     9,    61,    67,
+      68,    69,    70,    71,    72,    73,    76,    83,    61,    61,
+      61,     0,    69,    48,    51,    61,    53,    12,    77,    55,
+      52,    53,    71,    72,    74,    75,    61,    13,    78,    84,
+      74,    61,    54,    49,    61,    81,    55,     3,    56,    72,
+      85,    54,    55,    86,    71,    49,    79,    61,    61,    86,
+      87,    61,    30,    31,    32,    56,    80,    82,    53,    53,
+      70,    88,    70,    73,    74,    74,    10,    11,    14,    15,
       16,    18,    19,    20,    21,    22,    23,    24,    25,    26,
       27,    28,    29,    39,    47,    53,    56,    57,    58,    59,
-      60,    61,    83,    86,    87,    88,    90,    91,    92,    93,
-      94,    95,    97,    98,    99,   101,    54,    54,    53,    53,
-      53,    87,    48,    48,    61,    53,    53,    53,    53,    53,
-      53,    53,    53,    97,    97,    97,    53,    48,    33,    34,
+      60,    61,    86,    89,    90,    91,    93,    94,    95,    96,
+      97,    98,   100,   101,   102,   104,    54,    54,    53,    53,
+      53,    90,    48,    48,    61,    53,    53,    53,    53,    53,
+      53,    53,    53,   100,   100,   100,    53,    48,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    43,    44,    45,
-      46,    50,    51,    42,    48,    48,    87,    97,    97,    48,
-      97,    96,    97,    54,    54,    97,    97,    97,    97,    54,
-      96,   100,    97,    97,    97,    97,    97,    97,    97,    97,
-      97,    97,    97,    97,    97,    61,    97,    97,    48,    54,
+      46,    50,    51,    42,    48,    48,    90,   100,   100,    48,
+     100,    99,   100,    54,    54,   100,   100,   100,   100,    54,
+      99,   103,   100,   100,   100,   100,   100,   100,   100,   100,
+     100,   100,   100,   100,   100,    61,   100,   100,    48,    54,
       54,    49,    49,    54,    54,    54,    54,    54,    54,    53,
-      52,    97,    86,    86,    69,    97,    48,   100,    48,    17,
-      89,    54,    54,    87,    86,    54,    86
+      52,   100,    89,    89,    72,   100,    48,   103,    48,    17,
+      92,    54,    54,    90,    89,    54,    89
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    63,    64,    65,    65,    66,    66,    66,    66,    67,
-      68,    69,    69,    69,    69,    69,    69,    70,    70,    71,
-      71,    72,    72,    73,    74,    74,    75,    75,    76,    76,
-      77,    77,    78,    78,    79,    79,    79,    79,    80,    81,
-      81,    82,    82,    83,    84,    84,    85,    85,    86,    86,
-      86,    86,    86,    86,    86,    86,    86,    87,    87,    88,
-      89,    89,    90,    91,    92,    93,    94,    95,    96,    96,
-      97,    97,    97,    97,    97,    97,    97,    97,    97,    97,
-      97,    97,    97,    97,    97,    97,    97,    97,    97,    97,
-      97,    97,    97,    97,    97,    97,    97,    97,    97,    98,
-      98,    98,    99,    99,   100,   100,   101,   101,   101,   101,
-     101
+       0,    66,    67,    68,    68,    69,    69,    69,    69,    70,
+      71,    72,    72,    72,    72,    72,    72,    73,    73,    74,
+      74,    75,    75,    76,    77,    77,    78,    78,    79,    79,
+      80,    80,    81,    81,    82,    82,    82,    82,    83,    84,
+      84,    85,    85,    86,    87,    87,    88,    88,    89,    89,
+      89,    89,    89,    89,    89,    89,    89,    90,    90,    91,
+      92,    92,    93,    94,    95,    96,    97,    98,    99,    99,
+     100,   100,   100,   100,   100,   100,   100,   100,   100,   100,
+     100,   100,   100,   100,   100,   100,   100,   100,   100,   100,
+     100,   100,   100,   100,   100,   100,   100,   100,   100,   101,
+     101,   101,   102,   102,   103,   103,   104,   104,   104,   104,
+     104
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1588,25 +1592,25 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 99 "parser.y"
+#line 105 "parser.y"
                 {fprintf(yyout,"OK");}
-#line 1594 "parser.tab.c"
+#line 1598 "parser.tab.c"
     break;
 
   case 3:
-#line 103 "parser.y"
+#line 109 "parser.y"
                      {}
-#line 1600 "parser.tab.c"
+#line 1604 "parser.tab.c"
     break;
 
   case 4:
-#line 104 "parser.y"
+#line 110 "parser.y"
                {}
-#line 1606 "parser.tab.c"
+#line 1610 "parser.tab.c"
     break;
 
 
-#line 1610 "parser.tab.c"
+#line 1614 "parser.tab.c"
 
       default: break;
     }
@@ -1838,7 +1842,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 321 "parser.y"
+#line 327 "parser.y"
 
 void yyerror(const char *s) {
 //   fprintf(yyout, "Syntax Error in token %d, %s",linenumber , yytext);

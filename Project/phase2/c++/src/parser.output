@@ -3,10 +3,6 @@ Terminals unused in grammar
     UNDEFINED
 
 
-State 60 conflicts: 1 shift/reduce
-State 203 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: start $end
@@ -223,124 +219,127 @@ Terminals, with rules where they appear
     T_BOOLEANLITERAL (315) 107
     T_ID (316) 9 14 16 17 22 24 31 32 37 40 41 92 98 99 101 102
     UNDEFINED (317)
+    NoSHIT (318)
+    NoELSE (319)
+    NoEQ (320)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (63)
+    $accept (66)
         on left: 0
-    start (64)
+    start (67)
         on left: 1
         on right: 0
-    program (65)
+    program (68)
         on left: 2 3
         on right: 1 2
-    decl (66)
+    decl (69)
         on left: 4 5 6 7
         on right: 2 3
-    variableDecl (67)
+    variableDecl (70)
         on left: 8
         on right: 4 29 43
-    variable (68)
+    variable (71)
         on left: 9
         on right: 8 20 21
-    type (69)
+    type (72)
         on left: 10 11 12 13 14 15
         on right: 9 15 16 40 93
-    functionDecl (70)
+    functionDecl (73)
         on left: 16 17
         on right: 5 30
-    formals (71)
+    formals (74)
         on left: 18 19
         on right: 16 17 40 41
-    variable1ToInfColon (72)
+    variable1ToInfColon (75)
         on left: 20 21
         on right: 18 20
-    classDecl (73)
+    classDecl (76)
         on left: 22
         on right: 6
-    extendsIdent0Or1 (74)
+    extendsIdent0Or1 (77)
         on left: 23 24
         on right: 22
-    implementsIdentPlusColon0Or1 (75)
+    implementsIdentPlusColon0Or1 (78)
         on left: 25 26
         on right: 22
-    fields0ToInf (76)
+    fields0ToInf (79)
         on left: 27 28
         on right: 22 27
-    field (77)
+    field (80)
         on left: 29 30
         on right: 27
-    ids1ToInfColon (78)
+    ids1ToInfColon (81)
         on left: 31 32
         on right: 26 31
-    accessMode (79)
+    accessMode (82)
         on left: 33 34 35 36
         on right: 29 30
-    interfaceDecl (80)
+    interfaceDecl (83)
         on left: 37
         on right: 7
-    prototype0ToInf (81)
+    prototype0ToInf (84)
         on left: 38 39
         on right: 37 38
-    prototype (82)
+    prototype (85)
         on left: 40 41
         on right: 38
-    stmtBlock (83)
+    stmtBlock (86)
         on left: 42
         on right: 16 17 55
-    variableDecl0ToInf (84)
+    variableDecl0ToInf (87)
         on left: 43 44
         on right: 42 43
-    stmt0ToInf (85)
+    stmt0ToInf (88)
         on left: 45 46
         on right: 42 45
-    stmt (86)
+    stmt (89)
         on left: 47 48 49 50 51 52 53 54 55
         on right: 45 58 60 61 62
-    expr0Or1 (87)
+    expr0Or1 (90)
         on left: 56 57
         on right: 47 62 63
-    ifStmt (88)
+    ifStmt (91)
         on left: 58
         on right: 48
-    elseStmt0Or1 (89)
+    elseStmt0Or1 (92)
         on left: 59 60
         on right: 58
-    whileStmt (90)
+    whileStmt (93)
         on left: 61
         on right: 49
-    forStmt (91)
+    forStmt (94)
         on left: 62
         on right: 50
-    returnStmt (92)
+    returnStmt (95)
         on left: 63
         on right: 53
-    breakStmt (93)
+    breakStmt (96)
         on left: 64
         on right: 51
-    continueStmt (94)
+    continueStmt (97)
         on left: 65
         on right: 52
-    printStmt (95)
+    printStmt (98)
         on left: 66
         on right: 54
-    expr1ToInfColon (96)
+    expr1ToInfColon (99)
         on left: 67 68
         on right: 66 67 103
-    expr (97)
+    expr (100)
         on left: 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97
         on right: 57 58 61 62 67 68 71 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 93 94 95 96 97 99 100 102
-    lValue (98)
+    lValue (101)
         on left: 98 99 100
         on right: 69 71
-    call (99)
+    call (102)
         on left: 101 102
         on right: 73
-    actuals (100)
+    actuals (103)
         on left: 103 104
         on right: 101 102
-    constant (101)
+    constant (104)
         on left: 105 106 107 108 109
         on right: 70
 
@@ -895,7 +894,6 @@ State 60
     STRING  shift, and go to state 5
     T_ID    shift, and go to state 8
 
-    T_ID      [reduce using rule 46 (stmt0ToInf)]
     $default  reduce using rule 46 (stmt0ToInf)
 
     variableDecl  go to state 70
@@ -3570,7 +3568,6 @@ State 203
 
     ELSE  shift, and go to state 209
 
-    ELSE      [reduce using rule 59 (elseStmt0Or1)]
     $default  reduce using rule 59 (elseStmt0Or1)
 
     elseStmt0Or1  go to state 210
