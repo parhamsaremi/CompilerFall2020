@@ -2,8 +2,313 @@
 \حل{}
 \begin{enumerate}
 	\item 
-	برای هر تابع توضیح می‌دهیم که چه اتفاقی می‌افتد و چه تغییراتی در استک اعمال می‌شود:\\
-	در ابتدا با توجه به اینکه
+	ابتدا برای حالت static برای هر تابع توضیح می‌دهیم که چه اتفاقی می‌افتد و چه تغییراتی در استک اعمال می‌شود:\\
+	نکته‌ای که در نوع static می‌باشد این است که هر تابع مهم نیست که از کجا صدا زده شود و در هر صورت اسکوپ پدر آن ثابت می‌باشد(بسته به جایی که تعریف شده است) و در این حالت پدر همه اسکوپ‌ها، اسکوپ گلوبال می‌باشد.
+	در ابتدا با توجه به اینکه سه متغیر در اسکوپ گلوبال تعریف شده‌اند جدول به صورت زیر می‌باشد. در جدول زیر \lr{variable name} که نام متغیر می‌باشد، \lr{line number} شماره خطی که متعیر در آن تعریف شده می‌باشد و \lr{value} نیز مقدار متغیر می‌باشد.
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				variable name & line number & value\\
+				\hline
+				x & 1 & -\\
+				\hline
+				y & 1 & -\\
+				\hline
+				z & 1 & -\\
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{latin}
+
+	با اجرای تابع main سه متغیر مقداردهی می‌شوند و پس از آن تابع C صدا زده می‌شود استک به صورت زیر می‌باشد:
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				variable name & line number & value\\
+				\hline
+				x & 1 & 10\\
+				\hline
+				y & 1 & 11\\
+				\hline
+				z & 1 & 12\\
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{latin}
+	وقتی تابع C صدا زده می‌شود متغیر z تعریف می‌شود و در یک اسکوپ جدید قرار می‌گیرد که جدول آن به صورت زیر بدست می‌آید:
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				variable name & line number & value\\
+				\hline
+				x & 1 & 10\\
+				\hline
+				y & 1 & 11\\
+				\hline
+				z & 1 & 12\\
+				\hline
+				\rowcolor{black} \multicolumn{3}{|c|}{}\\
+				\hline
+				z & 22 & 5\\
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{latin}
+	حال تابع D صدا زده می‌شود که متعیر‌های تابع D در یک استک تعریف می‌شوند که پدر آن استک،‌ استک گلوبال می‌باشد و استک مربوط به تابع C (اگر به صورت گراف در نظر بگیریم) برادر این استک می‌باشد ولی برای نمایش دادن فقط استک گلوبال و استک مربوط به تابع D را نمایش می‌دهیم که در آن یک متغیر x تعریف شده و به آن مقدار داده شده (برابر با $z+1$ می‌باشد که z در استک گلوبال می‌باشد) و مقدار متغیر y نیز تغییر کرده است (برابر با $x+1$ می‌باشد که x در این استک تعریف شده است)، جدول استک به صورت زیر می‌باشد:
+	\begin{latin}
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				variable name & line number & value\\
+				\hline
+				x & 1 & 10\\
+				\hline
+				y & 1 & 14\\
+				\hline
+				z & 1 & 12\\
+				\hline
+				\rowcolor{black} \multicolumn{3}{|c|}{}\\
+				\hline
+				x & 14 & 13\\
+				\hline
+				
+			\end{tabular}
+		\end{center}
+	\end{latin}
+حال تابع B را اجرا می‌کنیم مانند قبل فقط استک این تابع و استک گلوبال را نمایش می‌دهیم و دو استک مربوط به تابع‌های C و D را نمایش نمی‌دهیم. در این تابع یک متغیر y تعریف شده و مقداردهی شده، همچنین مقدار x وz در استک گلوبال دچار تغییر شده است (x برابر با $z+1$ قرار گرفته که z در استک گلوبال می‌باشد و مقدار آن برابر با ۱۲ می‌باشد پس مقدار x برابر با ۱۳ می‌شود و مقدار z نیز برابر با $y+2$ قرار می‌‌گیرد که y در همی استک می‌باشد و مقدار آن برابر با ۰ می‌باشد پس z برابر با ۲ می‌شود) جدول آن به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 13\\
+			\hline
+			y & 1 & 14\\
+			\hline
+			z & 1 & 2\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			y & 5 & 0\\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{latin}
+حال عبارت زیر چاپ می‌شود (برای y از همین استک استفاده شده و برای بقیه از  استک گلوبال):
+\begin{center}
+	\begin{latin}
+		13 0 2
+\end{latin}
+\end{center}
+در نهایت اجرای تابع تمام می‌شود و استک آن خالی می‌شود و همچنین تابع‌های D و C نیز چنین اتفاقی برایشان می‌افتد به تابع main برمی‌گردیم که در اینجا عبارت زیر با توجه به مقدار متغیر‌های گلوبال چاپ می‌شود و عبارت زیر چاپ می‌شود:
+\begin{center}
+	\begin{latin}
+		13 14 2
+	\end{latin}
+	
+\end{center}
+در هنگام اجرای خط ۱۷ استک به صورت زیر می‌باشد که استک‌های C و D پدرشان استک گلوبال می‌باشد و این دو با یکدیگر برادرند:\\
+\begin{latin}
+	Global:
+\end{latin}
+\begin{center}
+	\begin{latin}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 14\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			
+		\end{tabular}
+	\end{latin}
+\end{center}
+\begin{latin}
+	C:
+\end{latin}
+\begin{center}
+	\begin{latin}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			z & 22 & 5\\
+			\hline
+		\end{tabular}
+	\end{latin}
+\end{center}
+\begin{latin}
+	D:
+\end{latin}
+\begin{center}
+	\begin{latin}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 14 & 13\\
+			\hline
+			
+			
+		\end{tabular}
+	\end{latin}
+\end{center}
+
 	\item
-	 
+برای استک داینامیک همواره به آخرین تعریف از یک متغیر برمی‌گردیم و از آن مقدار استفاده می‌کنیم مانند قسمت قبل روند اجرا را تابع به تابع پیش می‌رویم. در ابتدا ۳ متغیر در استک گلوبال تعریف می‌شوند و در main مقداردهی می‌شوند. جدول به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 11\\
+			\hline
+			z & 1 & 12\\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{latin}
 \end{enumerate}
+حال تابع C صدا زده می‌شود در آن متغیر z تعریف می‌شود و مقدار آن برابر با ۵ قرار داده می‌شود استک به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 11\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			z & 22 & 5\\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{latin}
+
+حال تابع D صدا زده می‌شود در این تابع متغیر x تعریف می‌شود و مقدار آن برابر با $z+1$ می‌شود که با توجه به اینکه آخرین z در استک برابر با ۵ می‌باشد مقدار x برابر با ۶ می‌شود در نتیجه مقدار y نیز برابر با ۷ می‌شود. استک به صورت زیر بدست می‌آید:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 7\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			z & 22 & 5\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			x & 14 & 6\\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{latin}
+حال تابع B صدا زده می‌شود در این تابع متغیر y تعریف می‌شود و مقدار آن برابر با ۰ قرار می‌گیرد. سپس مقدار آخرین x در استک برابر با z+1 قرار می‌گیرد که با توجه به اینکه آخرین z در استک همان z خط ۲۲ می‌باشد و مقدار آن برابر با ۵ می‌باشد بنابراین مقدار x برابر با ۶ می‌‌شود و مقدار z نیز برابر با ۲ می‌شود (zای که در خط ۲۲ تعریف شده است و xای که در خط ۱۴ تعریف شده است) بنابراین استک به صورت زیر بدست می‌آید:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 7\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			z & 22 & 2\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			x & 14 & 6\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			y & 5 & 0\\
+			\hline
+			
+		\end{tabular}
+	\end{center}
+\end{latin}
+که در این تابع مقدایر زیر چاپ می‌شوند:
+\begin{center}
+	\begin{latin}
+		6 0 2
+	\end{latin}
+	
+\end{center}
+حال به تابع main برمی‌گردیم بنابراین استک‌ها خالی می‌شوند و استک به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 7\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			
+		\end{tabular}
+	\end{center}
+\end{latin}
+حال باید مقادیر x و y و z را چاپ کنیم بنابراین عبارت چاپ شده به صورت زیر می‌باشد:
+\begin{center}
+	\begin{latin}
+		10 7 12
+	\end{latin}
+	
+\end{center}
+در مراحل بالا استک هنگام اجرای خط ۱۷ نیز نمایش داده شده است که به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			variable name & line number & value\\
+			\hline
+			x & 1 & 10\\
+			\hline
+			y & 1 & 7\\
+			\hline
+			z & 1 & 12\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			z & 22 & 5\\
+			\hline
+			\rowcolor{black} \multicolumn{3}{|c|}{}\\
+			\hline
+			x & 14 & 6\\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{latin}
+%\hline
+%\rowcolor{black} \multicolumn{3}{|c|}{}\\
+%\hline
