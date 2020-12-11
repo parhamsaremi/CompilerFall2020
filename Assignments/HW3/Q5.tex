@@ -1,7 +1,72 @@
 %نام و نام خانوادگی:
 %شماره دانشجویی: 
-\مسئله{پارسر \lr{LR(1)}}
+\مسئله{$Type\:Checking$}
 \پاسخ{ }
 \\
-الف) 
-
+۱) در خط ۷ ام قاعده زیر مورد استفاده قرار می‌گیرد:
+\begin{prooftree}
+	\AxiomC{$S: List\,e=new\:ArrayList()$}
+	\UnaryInfC{$S: e: ArrayList$}
+\end{prooftree}
+در خط ۸ تا ۱۰ قواعد زیر استفاده می‌شود:
+\begin{prooftree}
+	\AxiomC{$S: e: ArrayList$}
+	\UnaryInfC{$S: e.add: Object=>boolean$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$S: f: A=>B $}
+	\AxiomC{$S: e:T \qquad T\le A$}
+	\BinaryInfC{$S: f(e): boolean$}
+\end{prooftree}
+در خط ۱۲ قواعد زیر استفاده می‌شوند که در خط ۱۳ و ۱۴ هم همین قواعد دوباره به کار می‌آیند:
+\begin{prooftree}
+	\AxiomC{$S: e: ArrayList$}
+	\AxiomC{$S: i: int$}
+	\BinaryInfC{$S: e.get(i): Object$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$S: U\le X$}
+	\UnaryInfC{$S: (X)U:X$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$X\le T$}
+	\UnaryInfC{$S: T\,e=X:T$}
+\end{prooftree}
+پس از اجرای کد می‌توان دید که در حین اجرای برنامه، در خط ۱۴ به خطا می‌خوریم. چرا که همان طور که در آخرین قاعده بالا هم می‌بینیم باید بتوان عدد ۲۶ را به String تبدیل کرد که نمی‌توان به همین خاطر به خطا می‌خوریم.
+\\
+\\
+۲) پس از تغییر List به List<String> قواعد به صورت زیر می‌شود:
+\\
+در خط ۷ ام قاعده زیر مورد استفاده قرار می‌گیرد:
+\begin{prooftree}
+	\AxiomC{$S: List<T>\,e=new\:ArrayList()$}
+	\UnaryInfC{$S: e: ArrayList<T>$}
+\end{prooftree}
+در خط ۸ تا ۱۰ قواعد زیر استفاده می‌شود:
+\begin{prooftree}
+	\AxiomC{$S: e: ArrayList<T>$}
+	\UnaryInfC{$S: e.add: T=>boolean$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$S: f: A=>B $}
+	\AxiomC{$S: e:T \qquad T\le A$}
+	\BinaryInfC{$S: f(e): boolean$}
+\end{prooftree}
+در خط ۱۲ قواعد زیر استفاده می‌شوند که در خط ۱۳ و ۱۴ هم همین قواعد دوباره به کار می‌آیند:
+\begin{prooftree}
+	\AxiomC{$S: e: ArrayList<Z>$}
+	\AxiomC{$S: i: int$}
+	\BinaryInfC{$S: e.get(i): Z$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$S: U\le X$}
+	\UnaryInfC{$S: (X)U:X$}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$X\le T$}
+	\UnaryInfC{$S: T\,e=X:T$}
+\end{prooftree}
+اگر برنامه جدید را اجرا کنیم، می‌بینیم که در خط  ۱۰ خطا می‌دهد به این خاطر که type ورودی تابع با آن چیزی که مورد انتظار است تطابق ندارد. در واقع قاعده سوم (قاعده دوم خطوط ۸ تا ۱۰) رعایت نمی‌شود.
+\\
+\\
+بنابراین به خاطر اینکه دو قاعده‌ای که در بخش ۱ و ۲ رعایت نمی‌شوند، متفاوت هستند، این تفاوت در خروجی کد هم مشاهده می‌شود.
