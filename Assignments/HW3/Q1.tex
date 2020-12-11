@@ -1,0 +1,79 @@
+%نام و نام خانوادگی:
+%شماره دانشجویی: 
+\مسئله{گرامر مبهم}
+\پاسخ{
+
+\begin{enumerate}
+	\item
+رشته‌ی \lr{00111} را در نظر می‌گیریم نشان می‌دهیم که این عبارت با دو درخت متفاوت پارس می‌شود. درخت اول به صورت زیر می‌باشد:
+\begin {center}
+\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+semithick ,
+state/.style ={ circle ,top color =white , bottom color = white ,
+	draw,white , text=black , minimum width =1 cm}]
+\node[state] (S1){$S$};
+\node[state] (A1) [below left=of S1] {$A$};
+\node[state] (S2) [below right =of S1] {$S$};
+\node[state] (T1) [below left =of A1] {\lr{0}};
+\node[state] (T2) [below right =of A1] {\lr{1}};
+\node[state] (S3) [below right=of S2] {$\epsilon$};
+\node[state] (A2) [below left=of T2] {$A$};
+\node[state] (A3) [below left =of A2] {\lr{$A$}};
+\node[state] (T4) [below right =of A2] {\lr{1}};
+\node[state] (T5) [below right =of A3] {\lr{1}};
+\node[state] (T6) [below left =of A3] {\lr{0}};
+
+
+
+\path (S1) edge [] node[left] {} (A1);
+\path (S1) edge [] node[] {} (S2);
+\path (S2) edge [] node[] {} (S3);
+\path (A1) edge [] node[] {} (T1);
+\path (A1) edge [] node[] {} (T2);
+\path (A1) edge [] node[] {} (A2);
+\path (A2) edge [] node[] {} (A3);
+\path (A2) edge [] node[] {} (T4);
+\path (A3) edge [] node[] {} (T5);
+\path (A3) edge [] node[] {} (T6);
+\end{tikzpicture}
+\end{center}
+حال همین کار را با استفاده از یک درخت دیگر نیز انجام می‌دهیم:
+\begin {center}
+\begin {tikzpicture}[-latex ,auto ,node distance =1 cm and 1cm ,on grid ,
+semithick ,
+state/.style ={ circle ,top color =white , bottom color = white ,
+	draw,white , text=black , minimum width =1 cm}]
+\node[state] (S1){$S$};
+\node[state] (S2) [below right =of S1] {$S$};
+\node[state] (S3) [below right=of S2] {$\epsilon$};
+\node[state] (A1) [below left=of S1] {$A$};
+\node[state] (T0) [below right =of A1] {\lr{1}};
+\node[state] (A2) [below left=of A1] {$A$};
+\node[state] (T1) [below left =of A2] {\lr{0}};
+\node[state] (T2) [below right =of A2] {\lr{1}};
+\node[state] (A3) [below left =of T2] {\lr{$A$}};
+
+\node[state] (T5) [below right =of A3] {\lr{1}};
+\node[state] (T6) [below left =of A3] {\lr{0}};
+
+
+\path (S1) edge [] node[] {} (A1);
+\path (S1) edge [] node[] {} (S2);
+\path (S2) edge [] node[] {} (S3);
+\path (A1) edge [] node[] {} (T0);
+\path (A1) edge [] node[] {} (A2);
+\path (A2) edge [] node[] {} (A3);
+\path (A2) edge [] node[] {} (T1);
+\path (A2) edge [] node[] {} (T2);
+\path (A3) edge [] node[] {} (T5);
+\path (A3) edge [] node[] {} (T6);
+
+
+\end{tikzpicture}
+\end{center}
+بنابراین با توجه به دو درخت بالا و آوردن مثال نقض ثابت می‌شود که گرامر نا‌مبهم نیست و مبهم است.
+	\item
+	از آنجایی که برای یک عبارت چند درخت پارس تولید می‌شود این مشکل به وجود می‌آید که کامپایلر نمی‌داند که باید از کدام استفاده کند، به عنوان مثال در صورت اهمیت اولویت در گرامر ممکن است که مفهوم‌های متفاوتی برداشت شود به عنوان مثال نیز در جزوه گرامری گفته شد که \lr{id+id*id} را به دو صورت متفاوت پارس می‌کرد و دچار مشکل می‌شود.
+\end{enumerate}
+
+}
