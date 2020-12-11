@@ -1,6 +1,6 @@
 Terminals unused in grammar
 
-    UNDEFINED
+   UNDEFINED
 
 
 Grammar
@@ -162,191 +162,159 @@ Grammar
 
 Terminals, with rules where they appear
 
-    $end (0) 0
-    error (256)
-    VOID (258) 18 43
-    INT (259) 11
-    DOUBLE (260) 12
-    BOOL (261) 13
-    STRING (262) 14
-    CLASS (263) 24
-    INTERFACE (264) 39
-    NULL1 (265) 114
-    THIS (266) 77
-    EXTENDS (267) 26
-    IMPLEMENTS (268) 28
-    FOR (269) 65
-    WHILE (270) 64
-    IF (271) 61
-    ELSE (272) 63
-    RETURN (273) 66
-    BREAK (274) 67
-    CONTINUE (275) 68
-    NEW (276) 97
-    NEWARRAY (277) 98 99
-    PRINT (278) 69
-    READINTEGER (279) 95
-    READLINE (280) 96
-    DTOI (281) 101
-    ITOD (282) 100
-    BTOI (283) 103
-    ITOB (284) 102
-    PRIVATE (285) 35
-    PROTECTED (286) 36
-    PUBLIC (287) 37
-    GEQ (288) 89
-    LEQ (289) 87
-    GR (290) 88
-    LE (291) 86
-    SLASH (292) 83
-    PLUS (293) 80
-    MINUS (294) 81 85
-    MUL (295) 82
-    PERCENT (296) 84
-    EQ (297) 75 76
-    CHECKEQ (298) 90
-    CHECKNOTEQ (299) 91
-    OR (300) 93
-    AND (301) 92
-    EXCLAMATION (302) 94
-    SEMICOLON (303) 8 42 43 44 50 65 66 67 68 69
-    COLON (304) 22 33 70 98 99
-    DOT (305) 104 107
-    OPENBRACK (306) 15 16 105
-    CLOSEBRACK (307) 15 16 105
-    OPENPAR (308) 17 18 19 42 43 44 61 64 65 69 79 95 96 98 99 100 101 102 103 106 107
-    CLOSEPAR (309) 17 18 19 42 43 44 61 64 65 69 79 95 96 98 99 100 101 102 103 106 107
-    OPENBRACE (310) 24 39 45
-    CLOSEBRACE (311) 24 39 45
-    T_INTLITERAL (312) 110
-    T_DOUBLELITERAL (313) 111
-    T_STRINGLITERAL (314) 113
-    T_BOOLEANLITERAL (315) 112
-    T_ID (316) 9 10 16 17 18 19 24 26 33 34 39 42 43 44 73 76 97 99 104 106 107
-    UNDEFINED (317)
-    NEG (318)
-    NoELSE (319)
-    NoEQ (320)
+$end (0) 0
+error (256)
+VOID (258) 18 43
+INT (259) 11
+DOUBLE (260) 12
+BOOL (261) 13
+STRING (262) 14
+CLASS (263) 24
+INTERFACE (264) 39
+NULL1 (265) 114
+THIS (266) 77
+EXTENDS (267) 26
+IMPLEMENTS (268) 28
+FOR (269) 65
+WHILE (270) 64
+IF (271) 61
+ELSE (272) 63
+RETURN (273) 66
+BREAK (274) 67
+CONTINUE (275) 68
+NEW (276) 97
+NEWARRAY (277) 98 99
+PRINT (278) 69
+READINTEGER (279) 95
+READLINE (280) 96
+DTOI (281) 101
+ITOD (282) 100
+BTOI (283) 103
+ITOB (284) 102
+PRIVATE (285) 35
+PROTECTED (286) 36
+PUBLIC (287) 37
+GEQ (288) 89
+LEQ (289) 87
+GR (290) 88
+LE (291) 86
+SLASH (292) 83
+PLUS (293) 80
+MINUS (294) 81 85
+MUL (295) 82
+PERCENT (296) 84
+EQ (297) 75 76
+CHECKEQ (298) 90
+CHECKNOTEQ (299) 91
+OR (300) 93
+AND (301) 92
+EXCLAMATION (302) 94
+SEMICOLON (303) 8 42 43 44 50 65 66 67 68 69
+COLON (304) 22 33 70 98 99
+DOT (305) 104 107
+OPENBRACK (306) 15 16 105
+CLOSEBRACK (307) 15 16 105
+OPENPAR (308) 17 18 19 42 43 44 61 64 65 69 79 95 96 98 99 100 101
+    102 103 106 107
+CLOSEPAR (309) 17 18 19 42 43 44 61 64 65 69 79 95 96 98 99 100 101
+    102 103 106 107
+OPENBRACE (310) 24 39 45
+CLOSEBRACE (311) 24 39 45
+T_INTLITERAL (312) 110
+T_DOUBLELITERAL (313) 111
+T_STRINGLITERAL (314) 113
+T_BOOLEANLITERAL (315) 112
+T_ID (316) 9 10 16 17 18 19 24 26 33 34 39 42 43 44 73 76 97 99 104
+    106 107
+UNDEFINED (317)
+NEG (318)
+NoELSE (319)
+NoEQ (320)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (66)
-        on left: 0
-    start (67)
-        on left: 1
-        on right: 0
-    program (68)
-        on left: 2 3
-        on right: 1 2
-    decl (69)
-        on left: 4 5 6 7
-        on right: 2 3
-    variableDecl (70)
-        on left: 8
-        on right: 4 31 46
-    variable (71)
-        on left: 9 10
-        on right: 8 22 23
-    type (72)
-        on left: 11 12 13 14 15 16
-        on right: 9 15 17 42 98
-    functionDecl (73)
-        on left: 17 18 19
-        on right: 5 32
-    formals (74)
-        on left: 20 21
-        on right: 17 18 19 42 43 44
-    variable1ToInfColon (75)
-        on left: 22 23
-        on right: 20 22
-    classDecl (76)
-        on left: 24
-        on right: 6
-    extendsIdent0Or1 (77)
-        on left: 25 26
-        on right: 24
-    implementsIdentPlusColon0Or1 (78)
-        on left: 27 28
-        on right: 24
-    fields0ToInf (79)
-        on left: 29 30
-        on right: 24 29
-    field (80)
-        on left: 31 32
-        on right: 29
-    ids1ToInfColon (81)
-        on left: 33 34
-        on right: 28 33
-    accessMode (82)
-        on left: 35 36 37 38
-        on right: 31 32
-    interfaceDecl (83)
-        on left: 39
-        on right: 7
-    prototype0ToInf (84)
-        on left: 40 41
-        on right: 39 40
-    prototype (85)
-        on left: 42 43 44
-        on right: 40
-    stmtBlock (86)
-        on left: 45
-        on right: 17 18 19 58
-    variableDecl0ToInf (87)
-        on left: 46 47
-        on right: 45 46
-    stmt0ToInf (88)
-        on left: 48 49
-        on right: 45 48
-    stmt (89)
-        on left: 50 51 52 53 54 55 56 57 58
-        on right: 48 61 63 64 65
-    expr0Or1 (90)
-        on left: 59 60
-        on right: 50 65 66
-    ifStmt (91)
-        on left: 61
-        on right: 51
-    elseStmt0Or1 (92)
-        on left: 62 63
-        on right: 61
-    whileStmt (93)
-        on left: 64
-        on right: 52
-    forStmt (94)
-        on left: 65
-        on right: 53
-    returnStmt (95)
-        on left: 66
-        on right: 56
-    breakStmt (96)
-        on left: 67
-        on right: 54
-    continueStmt (97)
-        on left: 68
-        on right: 55
-    printStmt (98)
-        on left: 69
-        on right: 57
-    expr1ToInfColon (99)
-        on left: 70 71
-        on right: 69 70 108
-    expr (100)
-        on left: 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103
-        on right: 60 61 64 65 70 71 75 76 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 98 99 100 101 102 103 104 105 107
-    lValue (101)
-        on left: 104 105
-        on right: 72 75
-    call (102)
-        on left: 106 107
-        on right: 78
-    actuals (103)
-        on left: 108 109
-        on right: 106 107
-    constant (104)
-        on left: 110 111 112 113 114
-        on right: 74
+$accept (66)
+    on left: 0
+start (67)
+    on left: 1, on right: 0
+program (68)
+    on left: 2 3, on right: 1 2
+decl (69)
+    on left: 4 5 6 7, on right: 2 3
+variableDecl (70)
+    on left: 8, on right: 4 31 46
+variable (71)
+    on left: 9 10, on right: 8 22 23
+type (72)
+    on left: 11 12 13 14 15 16, on right: 9 15 17 42 98
+functionDecl (73)
+    on left: 17 18 19, on right: 5 32
+formals (74)
+    on left: 20 21, on right: 17 18 19 42 43 44
+variable1ToInfColon (75)
+    on left: 22 23, on right: 20 22
+classDecl (76)
+    on left: 24, on right: 6
+extendsIdent0Or1 (77)
+    on left: 25 26, on right: 24
+implementsIdentPlusColon0Or1 (78)
+    on left: 27 28, on right: 24
+fields0ToInf (79)
+    on left: 29 30, on right: 24 29
+field (80)
+    on left: 31 32, on right: 29
+ids1ToInfColon (81)
+    on left: 33 34, on right: 28 33
+accessMode (82)
+    on left: 35 36 37 38, on right: 31 32
+interfaceDecl (83)
+    on left: 39, on right: 7
+prototype0ToInf (84)
+    on left: 40 41, on right: 39 40
+prototype (85)
+    on left: 42 43 44, on right: 40
+stmtBlock (86)
+    on left: 45, on right: 17 18 19 58
+variableDecl0ToInf (87)
+    on left: 46 47, on right: 45 46
+stmt0ToInf (88)
+    on left: 48 49, on right: 45 48
+stmt (89)
+    on left: 50 51 52 53 54 55 56 57 58, on right: 48 61 63 64 65
+expr0Or1 (90)
+    on left: 59 60, on right: 50 65 66
+ifStmt (91)
+    on left: 61, on right: 51
+elseStmt0Or1 (92)
+    on left: 62 63, on right: 61
+whileStmt (93)
+    on left: 64, on right: 52
+forStmt (94)
+    on left: 65, on right: 53
+returnStmt (95)
+    on left: 66, on right: 56
+breakStmt (96)
+    on left: 67, on right: 54
+continueStmt (97)
+    on left: 68, on right: 55
+printStmt (98)
+    on left: 69, on right: 57
+expr1ToInfColon (99)
+    on left: 70 71, on right: 69 70 108
+expr (100)
+    on left: 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89
+    90 91 92 93 94 95 96 97 98 99 100 101 102 103, on right: 60 61
+    64 65 70 71 75 76 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93
+    94 98 99 100 101 102 103 104 105 107
+lValue (101)
+    on left: 104 105, on right: 72 75
+call (102)
+    on left: 106 107, on right: 78
+actuals (103)
+    on left: 108 109, on right: 106 107
+constant (104)
+    on left: 110 111 112 113 114, on right: 74
 
 
 State 0
