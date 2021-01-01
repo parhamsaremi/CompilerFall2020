@@ -1,0 +1,17 @@
+\مسئله{}
+\پاسخ{}
+کدساز خواسته شده به صورت زیر است:
+\begin{latin}
+	\begin{verbatim}
+		cgen(do stmt while(expr);){
+			let L_before be a new label.
+			let L_after be a new label.
+			Emit(L_before:)
+			cgen(stmt)
+			let t = cgen(expr)
+			emit(ifz t goto L_after)
+			emit(goto L_before)
+			emit(L_after)
+		}
+	\end{verbatim}
+\end{latin}
