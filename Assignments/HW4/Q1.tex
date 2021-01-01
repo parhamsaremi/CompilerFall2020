@@ -32,31 +32,15 @@ cgen
 \begin{latin}
 \textbf{cgen}(id(list of expressions))=
 \big\{ 
-\\
-Let numberOfExpressions be the number of expressions in the list.
-\\
+\\Let numberOfExpressions be the number of expressions in the list.\\
 enumerate expressions from 1 to numberOfExpressions.
+%_{ }
 \\
-_{ }
-{Let} {$ $} t_{1}=\textbf{cgen}(expr_{1})
+{Let} {$ $} $t_{1}$=\textbf{cgen}($expr_{1}$)
 \\
-Let {$ $} t_{2}=\textbf{cgen}(expr_{2})
+Let {$ $} $t_{2}$=\textbf{cgen}($expr_{2}$)
 \\
-Let {$ $} t_{3}=\textbf{cgen}(expr_{3})
-\\
-.
-\\
-.
-\\
-.
-\\
-Let {$ $} t_{n}=\textbf{cgen}(expr_{n})
-\\
-Emit(PushParam {$ $} t_{n});
-\\
-Emit(PushParam {$ $} t_{n-1});
-\\
-Emit(PushParam {$ $} t_{n-2});
+Let {$ $} $t_{3}$=\textbf{cgen}($expr_{3}$)
 \\
 .
 \\
@@ -64,7 +48,21 @@ Emit(PushParam {$ $} t_{n-2});
 \\
 .
 \\
-Emit(PushParam {$ $} t_{1});
+Let {$ $} $t_{n}$=\textbf{cgen}($expr_{n}$)
+\\
+Emit(PushParam {$ $} $t_{n}$);
+\\
+Emit(PushParam {$ $} $t_{n-1}$);
+\\
+Emit(PushParam {$ $} $t_{n-2}$);
+\\
+.
+\\
+.
+\\
+.
+\\
+Emit(PushParam {$ $} $t_{1}$);
 \\
 Emit(PushParam {$ $} numberOfExpressions);
 \\
