@@ -1,0 +1,26 @@
+\مسئله{}
+\پاسخ{}
+
+برای اینکه با sp به مشکل بخوریم باید کد ما در یک تابع شامل \lr{dynamic stack allocation} باشد زیرا اگر چنین چیزی داشته باشیم نمیدانیم برای اینکه به ورودی‌ها دسترسی داشته باشیم باید چند خانه در استک به عقب برگردیم زیرا در زمان اجرا مقداری حافظه به استک اضافه شده که در زمان کامپایل وجود نداشته و ما از این مقدار اطلاعی نداریم بنابراین برای دسترسی به ورودی‌ها مجبوریم از fp استفاده کنیم کد زبان سی به صورت زیر است که آن را به TAC تبدیل می‌کنیم:
+\begin{latin}
+	\begin{verbatim}
+		void allocateStackAndMakeSPUseless(int x, int a){
+		    char* mem = _malloca(x);
+		    c = 2*a;
+		}
+	\end{verbatim}
+\end{latin}
+که کد TAC آن به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{verbatim}
+		allocateStackAndMakeSPUseless:
+		    BeginFunc 20;
+		    _t0 = x;
+		    PushParam _t0;
+		    _t1 = LCall _MallocA;
+		    PopParams 4;
+		    _t2 = 2 * a;
+		    EndFunc;
+			
+	\end{verbatim}
+\end{latin}
