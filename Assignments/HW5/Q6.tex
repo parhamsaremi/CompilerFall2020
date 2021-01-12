@@ -1,2 +1,90 @@
 \مسئله{}
 \پاسخ{}
+\\
+الف) متغیرهای زنده هر خط به در زیر نمایش داده شده‌اند: (دقت شود که مقادیر خط i ام در پایین، متغیرهای زنده پس از اجرای خط i ام برنامه را نشان می‌دهند. همچنین مقادیر خط ۰ ام و ۱۱ ام به ترتیب مقادیر قبل از شروع اجرای برنامه و مقادیر پس از اجرای خط ۱۱ برنامه را نشان می‌دهند)
+\begin{latin}
+	\begin{verbatim}
+		0. {f, b, e}
+		1. {f, a, b, e}
+		2. {f, a, b, e}
+		3. {f, a, b, e}
+		4. {f, c, a, b}
+		5. {d, f, c, a, b}
+		6. {x, d, f, c, a}
+		7. {x, z, d, f, c}
+		8. {x, z, d, f}
+		9. {x, z, d}
+		10. {x, z, d, y}
+		11. {x, z, d}
+	\end{verbatim}
+\end{latin}
+ب) با توجه به بخش بالا، باید خطوط کامنت شده در زیر حذف شوند به این خاطر که code dead هستند:
+\begin{latin}
+	\begin{verbatim}
+		1. a = 1 + 2;
+		2. b = a + b;
+		3. //z = a * 2;
+		4. c = b + e;
+		5. d = c + b;
+		6. x = b + 3;
+		7. z = a * 8;
+		8. //t = c - 2;
+		9. //f = x + f;
+		10. y = x - 2;
+		11. d = d - y;
+	\end{verbatim}
+\end{latin}
+پس از حذف آن‌ها به کد زیر می‌رسیم:
+\begin{latin}
+	\begin{verbatim}
+		1. a = 1 + 2;
+		2. b = a + b;
+		3. c = b + e;
+		4. d = c + b;
+		5. x = b + 3;
+		6. z = a * 8;
+		7. y = x - 2;
+		8. d = d - y;
+	\end{verbatim}
+\end{latin}
+حال براساس propagation copy و folding constant کد را بهینه‌تر میکنیم و به کد زیر می‌رسیم:
+\begin{latin}
+	\begin{verbatim}
+		1. a = 3;
+		2. b = 3 + b;
+		3. c = b + e;
+		4. d = c + b;
+		5. x = b;
+		6. z = 24;
+		7. y = b - 2;
+		8. d = d - y;
+	\end{verbatim}
+\end{latin}
+حال یک بار دیگر code dead ها را حذف می‌کنیم تا خط اول هم حذف شود و به کد نهایی زیر می‌رسیم. این بهینه‌ترین کد ممکن هست:
+\begin{latin}
+	\begin{verbatim}
+		1. b = 3 + b;
+		2. c = b + e;
+		3. d = c + b;
+		4. x = b;
+		5. z = 24;
+		6. y = b - 2;
+		7. d = d - y;
+	\end{verbatim}
+\end{latin}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
