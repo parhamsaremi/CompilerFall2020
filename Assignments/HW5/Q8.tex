@@ -1,2 +1,282 @@
 \مسئله{}
 \پاسخ{}
+ابتدا کد را تحلیل می‌کنیم تا زنده بودن هر متغیر را بدست آوریم از آنجایی که در نهایت مقادیر b , c چاپ شده‌اند پس این مقادیر در انتهای کد زنده می‌باشند:
+\begin{latin}
+	\begin{verbatim}
+		{b, e}
+		a = b
+		{b, e, a}
+		c = 7 + 7 * e
+		{b, c, a}
+		d = a
+		{b, c, d}
+		a = d * d
+		{b, c, a}
+		d = 5 * a
+		{b, c, d}
+		f = c * 5 + 10
+		{b, f, d}
+		f = d - f
+		{b, f}
+		c = f + 1
+		{b , c}
+		e = c * b
+		{b, c}
+	\end{verbatim}
+\end{latin}
+که با توجه به تحلیل بالا گراف به صورت زیر بدست می‌آید:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state] (a){$a$};
+			\node[state, below right =of a] (b){$b$};
+			\node[state, below left=of a] (f){$f$};
+			\node[state, below =of b] (c) {$c$};
+			\node[state, below left=of c] (d) {$d$};
+			\node[state, below =of f] (e) {$e$};
+			
+			\path (e) edge [] node[below] {} (b);
+			\path (e) edge [] node[below] {} (a);
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (f);
+			\path (d) edge [] node[below] {} (f);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+از آنجایی که حداقل درجه برای یک راس برابر با ۲ می‌باشد ابتدا تلاش می‌کنیم با ۳ رجیستر این‌ها را پوشش دهیم بنابراین با این فرض جلو می‌رویم،‌ از آنجایی که ۳ رجیستر داریم ابتدا راس f که دارای درجه‌ی دو می‌باشد را حذف می‌کنیم بنابراین گراف به صورت زیر تبدیل می‌شود و صف متغیر‌ها به صورت [f] می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state] (a){$a$};
+			\node[state, below right =of a] (b){$b$};
+			\node[state, below =of b] (c) {$c$};
+			\node[state, below left=of c] (d) {$d$};
+			\node[state, above left=of d] (e) {$e$};
+			
+			\path (e) edge [] node[below] {} (b);
+			\path (e) edge [] node[below] {} (a);
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+حال با توجه به درجه ۲ بودن e آن را حذف می‌کنیم و صف متغیر‌ها به صورت \lr{[f, e]} و گراف به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state] (a){$a$};
+			\node[state, below right =of a] (b){$b$};
+			\node[state, below =of b] (c) {$c$};
+			\node[state, below left=of c] (d) {$d$};
+			
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+			
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+حال با توجه به درجه ۲ بودن d آن را حذف می‌کنیم و صف متغیر‌ها به صورت  \lr{[f, e, d]} و گراف به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state] (a){$a$};
+			\node[state, below right =of a] (b){$b$};
+			\node[state, below =of b] (c) {$c$};
+			
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+حال با توجه به درجه ۲ بودن c آن را حذف می‌کنیم و صف متغیر‌ها به صورت  \lr{[f, e, d, c]} و گراف به صورت زیر می‌باشد:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state] (a){$a$};
+			\node[state, below right =of a] (b){$b$};
+			
+			\path (a) edge [] node[below] {} (b);
+			
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+در نهایت نیز متغیر b را از گراف حذف می‌کنیم و پس از آن نیر با حذف a صف به صورت  \lr{[f, e, d, c, b]} می‌باشد حال ابتدا a را رنگ می‌کنیم و در گراف قرار می‌دهیم و گراف به صورت زیر بدست می‌آید:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+
+حال b را به گراف بر‌می‌گردانیم، صف به صورت \lr{[f, e, d, c]} می‌باشد و در زیر گراف جدید مشاهده می‌شود:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			\node[state, style={thick, fill=red!30}, below right =of a] (b){$b$};
+			
+			\path (a) edge [] node[below] {} (b);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+حال c را به گراف بر می‌گردانیم، صف به صورت \lr{[f, e, d]} می‌باشد و در زیر گراف جدید مشاهده می‌شود:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			\node[state, style={thick, fill=red!30}, below right =of a] (b){$b$};
+			\node[state, style={thick, fill=yellow!30}, below =of b] (c) {$c$};
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+
+حال d را به گراف بر می‌گردانیم، صف به صورت \lr{[f, e]} می‌باشد و در زیر گراف جدید مشاهده می‌شود:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			\node[state, style={thick, fill=red!30}, below right =of a] (b){$b$};
+			\node[state, style={thick, fill=yellow!30}, below =of b] (c) {$c$};
+			\node[state, style={thick, fill=blue!30}, below left=of c] (d) {$d$};
+			
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+
+حال e را به گراف بر می‌گردانیم، صف به صورت \lr{[f]} می‌باشد و در زیر گراف جدید مشاهده می‌شود:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			\node[state, style={thick, fill=red!30}, below right =of a] (b){$b$};
+			\node[state, style={thick, fill=yellow!30}, below =of b] (c) {$c$};
+			\node[state, style={thick, fill=blue!30}, below left=of c] (d) {$d$};
+			\node[state, style={thick, fill=yellow!30}, above left=of d] (e) {$e$};
+			
+			\path (e) edge [] node[below] {} (b);
+			\path (e) edge [] node[below] {} (a);
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+
+
+
+حال f را به گراف بر می‌گردانیم با توجه به اینکه b,d راس‌های مجاور آن می‌باشند رنگ f برابر با زرد می‌شود:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[-,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, style={thick, fill=blue!30}] (a){$a$};
+			\node[state, style={thick, fill=red!30}, below right =of a] (b){$b$};
+			\node[state, style={thick, fill=yellow!30}, below =of b] (c) {$c$};
+			\node[state, style={thick, fill=blue!30}, below left=of c] (d) {$d$};
+			\node[state, style={thick, fill=yellow!30}, above left=of d] (e) {$e$};
+			\node[state, style={thick, fill=yellow!30}, above=of e] (f) {$f$};
+			
+			\path (e) edge [] node[below] {} (b);
+			\path (e) edge [] node[below] {} (a);
+			\path (a) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (b);
+			\path (c) edge [] node[below] {} (a);
+			\path (c) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (d);
+			\path (b) edge [] node[below] {} (f);
+			\path (d) edge [] node[below] {} (f);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+
+
