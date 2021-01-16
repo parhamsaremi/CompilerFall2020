@@ -1,2 +1,55 @@
 \مسئله{}
 \پاسخ{}
+الف و ب) با حذف A->B درجه‌ی ورودی راس B برابر با صفر می‌شود پس باید حذف شود و با حذف B به همین شکل D هم حذف می‌شود و این استدلال برای هر دو بخش برقرار می‌باشد. بنابراین گراف به صورت زیر بدست می‌آید:
+\begin{latin}
+	\begin{center}
+		\begin{tikzpicture}
+			[->,
+			->=stealth,
+			node distance=1cm,
+			every state/.style={thick, fill=white!10},
+			initial text=$ $,
+			]
+			\node[state, accepting] (X){$X$};
+			\node[state, below =of X] (A){$A$};
+			\node[state, below right=of A] (C) {$C$};
+			%\node[state, below left=of A] (B) {$B$};
+			\node[state, below left=of C] (E) {$E$};
+			%\node[state, below left=of B] (D) {$D$};
+			\node[state, below left=of E] (G) {$G$};
+			\node[state, below right=of G] (I) {$I$};
+			\node[state, above right=of I] (H) {$H$};
+			\node[state, above right=of H] (F) {$F$};
+			
+			
+			\path (X) edge [] node[below] {} (A);	
+		%	\path (A) edge [] node[] {} (B);
+		%	\path (B) edge [] node[] {} (D);
+		%	\path (D) edge [] node[] {} (G);
+			\path (G) edge [] node[] {} (E);
+			\path (E) edge [] node[] {} (C);
+			\path (C) edge [] node[] {} (F);
+		%	\path (B) edge [] node[] {} (E);
+			\path (C) edge [] node[] {} (A);
+			\path (I) edge [] node[] {} (G);
+			\path (H) edge [] node[] {} (I);
+			\path (G) edge [] node[] {} (H);
+			\path (F) edge [] node[] {} (H);
+			
+		\end{tikzpicture}
+	\end{center}
+\end{latin}
+با توجه به گراف بالا refcount‌ها به صورت زیر می‌باشند:
+\begin{latin}
+	\begin{verbatim}
+		G : 1
+		I : 1
+		H : 2
+		F : 1
+		E : 1
+		C : 1
+		A : 2
+	\end{verbatim}
+\end{latin}
+ج) با توجه به قسمت قبل متوجه می‌شویم که به هیچکدام از گره‌ها به غیر از A و X نمی‌توان رسید بنابراین اگر فرض کنیم عملیات stop-and-copy انجام می‌شود و آبجکت‌ها در درون نیمه‌ی دوم می‌باشند آنگاه بعد از زباله‌روبی در آدرس ۰ آبجکت A قرار دارد و در آدرس ۵۰ آبجکت X و بالعکس اگر در نیمه‌ی اول باشد به آدرس ۰ و ۵۰ نیمه‌ی دوم حافظه می‌رود. همچنین اگر فرض کنیم مانند hybrid از ابتدای یک حافظه شروع به پر کردن می‌کند باز هم به ترتیب در آدرس ۰ و ۵۰ آن حافظه قرار خواهند گرفت. در کل نکته‌ی اصلی همان حذف همه بجز X و A می‌باشد.
+
