@@ -21,8 +21,7 @@ def main(argv):
     has_error = False
     with open("tests/" + inputfile, "r") as input_file:
         grammar = r"""
-        program: start
-        start : decl decl_prime
+        program : decl decl_prime
         decl_prime: decl decl_prime
             | 
         decl : variable_decl 
@@ -166,7 +165,7 @@ def main(argv):
                 id.id = 999;
             }
         """
-        parser = Lark(grammar,start="start",parser='lalr', debug=False)
+        parser = Lark(grammar,start="program",parser='lalr', debug=False)
         # print(parser.parse(code))
         try:
             x = input_file.read()
