@@ -21,118 +21,153 @@ def main(argv):
     has_error = False
     with open("tests/" + inputfile, "r") as input_file:
         grammar = r"""
-    start : (decl)+
-    decl : variable_decl 
-        | function_decl 
-        | class_decl 
-        | interface_decl
-    variable_decl : variable ";"
-    variable : type identifier
-    type : "int" 
-        | "double" 
-        | "bool" 
-        | "string" 
-        | identifier 
-        | type "[]"
-    function_decl : type identifier "("formals")" stmt_block 
-        | "void" identifier "("formals")" stmt_block
-    formals : variable (","variable)* 
-        | 
-    class_decl : "class" identifier ("extends" identifier)? ("implements" identifier("," identifier)*)? "{"(field)*"}"
-    field : access_mode variable_decl 
-        | access_mode function_decl
-    access_mode : "private" 
-        | "protected" 
-        | "public" 
-        | 
-    interface_decl : "interface" identifier "{"(prototype)*"}"
-    prototype : type identifier "(" formals ")" ";" 
-        | "void" identifier "(" formals ")" ";"
-    stmt_block : "{" (variable_decl)* (stmt)* "}"
-    stmt : (expr)? ";" 
-        | if_stmt 
-        | while_stmt 
-        | for_stmt 
-        | break_stmt 
-        | continue_stmt 
-        | return_stmt 
-        | print_stmt 
-        | stmt_block
-    if_stmt : "if" "(" expr ")" stmt ("else" stmt)?
-    while_stmt : "while" "(" expr ")" stmt
-    for_stmt : "for" "(" (expr)? ";" expr ";" (expr)? ")" stmt
-    return_stmt : "return" (expr)? ";"
-    break_stmt : "break" ";"
-    continue_stmt : "continue" ";"
-    print_stmt : "Print" "(" expr (","expr)* ")" ";"
-    expr : l_value "=" expr 
-        | constant 
-        | l_value 
-        | "this" 
-        | call 
-        | "(" expr ")" 
-        | expr "+" expr 
-        | expr "-" expr 
-        | expr "*" expr 
-        | expr "/" expr 
-        | expr "%" expr 
-        | "-" expr 
-        | expr "<" expr 
-        | expr "<=" expr 
-        | expr ">" expr 
-        | expr ">=" expr 
-        | expr "==" expr 
-        | expr "!=" expr 
-        | expr "&&" expr 
-        | expr "||" expr 
-        | "!" expr 
-        | "ReadInteger" "(" ")" 
-        | "ReadLine" "(" ")" 
-        | "new" identifier 
-        | "NewArray" "(" expr "," type ")" 
-        | "itod" "(" expr ")" 
-        | "dtoi" "(" expr ")" 
-        | "itob" "(" expr ")" 
-        | "btoi" "(" expr ")"
-    l_value : identifier 
-        | expr "." identifier 
-        | expr "[" expr "]"
-    call : identifier "(" actuals ")" 
-        | expr "." identifier "(" actuals ")"
-    actuals : expr (","expr)* 
-        | 
-    constant : T_INT 
-        | T_DOUBLE 
-        | T_BOOL 
-        | T_STRING 
-        | "null"
-    T_DOUBLE : /(\d+\.(\d*)?((e|E)(\+|-)?\d+)?)/ 
-        | /(\d+(e|E)(\+|-)?\d+)/
-    T_INT : /(0[x|X][0-9a-fA-F]+)/ 
-        | /(\d+)/
-    T_BOOL : /(true)/ 
-        | /(false)/
-    T_STRING : "\"" /[^\"\n]*/ "\""
-    identifier :  /(?!((true)|(false)|(void)|(int)|(double)|(bool)|(string)|(class)|(interface)|(null)|(this)|(extends)|(implements)|(for)|(while)|(if)|(else)|(return)|(break)|(continue)|(new)|(NewArray)|(Print)|(ReadInteger)|(ReadLine)|(dtoi)|(itod)|(btoi)|(itob)|(private)|(protected)|(public))([^_a-zA-Z0-9]|$))[a-zA-Z][_a-zA-Z0-9]*/
-    COMMENT: "//" /[^\n]*/
-    COMMENTM: "/*" /[^(\*\/)]/ "*/"
-    %ignore COMMENT 
-    %ignore COMMENTM
-    %import common.WS
-    %ignore WS
-    """
+        program: start
+        start : decl decl_prime
+        decl_prime: decl decl_prime
+            | 
+        decl : variable_decl 
+            | function_decl 
+            | class_decl 
+            | interface_decl
+        variable_decl : variable ";"
+        variable : type identifier
+        type : "int" 
+            | "double" 
+            | "bool" 
+            | "string" 
+            | identifier 
+            | type "[]"
+        function_decl : type identifier "("formals")" stmt_block 
+            | "void" identifier "("formals")" stmt_block
+        formals : variable variable_prime 
+            | 
+        variable_prime: "," variable variable_prime
+            | 
+        class_decl : "class" identifier extends implements "{" field_prime "}"
+        extends: "extends" identifier
+            | 
+        implements: "implements" identifier id_prime
+            |
+        id_prime: "," identifier id_prime
+            |
+        field_prime: field field_prime
+            | 
+        field : access_mode variable_decl 
+            | access_mode function_decl
+        access_mode : "private" 
+            | "protected" 
+            | "public" 
+            | 
+        interface_decl : "interface" identifier "{" prototype_prime "}"
+        prototype_prime: prototype prototype_prime
+            |
+        prototype : type identifier "(" formals ")" ";" 
+            | "void" identifier "(" formals ")" ";"
+        stmt_block : "{" variable_decl_prime stmt_prime "}"
+        variable_decl_prime : variable_decl_prime variable_decl
+            | 
+        stmt_prime : stmt stmt_prime
+            | 
+        stmt : expr_prime ";" 
+            | if_stmt 
+            | while_stmt 
+            | for_stmt 
+            | break_stmt 
+            | continue_stmt 
+            | return_stmt 
+            | print_stmt 
+            | stmt_block
+        if_stmt : "if" "(" expr ")" stmt else_prime     # todo check more
+        else_prime: "else" stmt
+            |
+        while_stmt : "while" "(" expr ")" stmt
+        for_stmt : "for" "(" expr_prime ";" expr ";" expr_prime ")" stmt
+        return_stmt : "return" expr_prime ";"
+        expr_prime: expr 
+            |
+        break_stmt : "break" ";"
+        continue_stmt : "continue" ";"
+        print_stmt : "Print" "(" expr exprs ")" ";"
+        expr: assign
+        assign: l_value "=" assign
+            | or
+        or: or "||" and
+            | and
+        and: and "&&" eq_neq
+            | eq_neq
+        eq_neq: eq_neq EQUAL comp
+            | comp
+        comp: comp COMPARE add_sub
+            | add_sub
+        add_sub: add_sub AS mul_div_mod
+            | mul_div_mod
+        mul_div_mod: mul_div_mod MDM not_neg
+            | not_neg
+        not_neg: NN not_neg
+            | others
+        others: constant
+            | "this"
+            | l_value
+            | call
+            | "(" expr ")"
+            | "ReadInteger" "(" ")"
+            | "ReadLine" "(" ")" 
+            | "new" identifier 
+            | "NewArray" "(" expr "," type ")" 
+            | "itod" "(" expr ")" 
+            | "dtoi" "(" expr ")" 
+            | "itob" "(" expr ")" 
+            | "btoi" "(" expr ")"
+        l_value : identifier 
+            | others "." identifier 
+            | others "[" expr "]"
+        call : identifier "(" actuals ")" 
+            | others "." identifier "(" actuals ")"
+        actuals : expr exprs
+            | 
+        exprs: "," expr exprs
+            |
+        constant : T_INT 
+            | T_DOUBLE 
+            | T_BOOL 
+            | T_STRING 
+            | "null"
+        NN: "-"
+            | "!"
+        AS: "+"
+            | "-"
+        MDM: "/"
+            | "%"
+            | "*"
+        EQUAL: "=="
+            | "!="
+        COMPARE:">="
+            | "<="
+            | "<"
+            | ">"
+        T_DOUBLE : /(\d+\.(\d*)?((e|E)(\+|-)?\d+)?)/ 
+            | /(\d+(e|E)(\+|-)?\d+)/
+        T_INT : /(0[x|X][0-9a-fA-F]+)/ 
+            | /(\d+)/
+        T_BOOL : /(true)/ 
+            | /(false)/
+        T_STRING : "\"" /[^\"\n]*/ "\""
+        identifier :  /(?!((true)|(false)|(void)|(int)|(double)|(bool)|(string)|(class)|(interface)|(null)|(this)|(extends)|(implements)|(for)|(while)|(if)|(else)|(return)|(break)|(continue)|(new)|(NewArray)|(Print)|(ReadInteger)|(ReadLine)|(dtoi)|(itod)|(btoi)|(itob)|(private)|(protected)|(public))([^_a-zA-Z0-9]|$))[a-zA-Z][_a-zA-Z0-9]*/
+        COMMENT: "//" /[^\n]*/
+        COMMENTM: "/*" /[^(\*\/)]/ "*/"
+        %ignore COMMENT 
+        %ignore COMMENTM
+        %import common.WS
+        %ignore WS
+        """
 
         code = """
             void main () {
-    2;
-    true;
-    "string";
-    null;
-    1.5E5;
-}
-
+                id.id = 999;
+            }
         """
         parser = Lark(grammar,start="start",parser='lalr', debug=False)
+        # print(parser.parse(code))
         try:
             x = input_file.read()
             print(x)
