@@ -77,7 +77,7 @@ def main(argv):
             | return_stmt 
             | print_stmt 
             | stmt_block
-        if_stmt : "if" "(" expr ")" stmt else_prime     # todo check more
+        if_stmt : "if" "(" expr ")" stmt else_prime    
         else_prime: "else" stmt
             |
         while_stmt : "while" "(" expr ")" stmt
