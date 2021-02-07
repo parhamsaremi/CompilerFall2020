@@ -1,5 +1,6 @@
 import sys, getopt
 from lark import Lark
+from FirstTraverse import FirstTraverse
 def main(argv):
     inputfile = ''
     outputfile = ''
@@ -21,7 +22,7 @@ def main(argv):
     has_error = False
     with open("tests/" + inputfile, "r") as input_file:
         grammar = r"""
-        program : decl decl_prime
+        program : decl decl_prime -> program
         decl_prime: decl decl_prime
             | 
         decl : variable_decl 
@@ -165,7 +166,8 @@ def main(argv):
                 id.id = 999;
             }
         """
-        parser = Lark(grammar,start="program",parser='lalr', debug=False)
+
+        parser = Lark(grammar,start="program", transformer=FirstTraverse(),parser='lalr', debug=False)
         # print(parser.parse(code))
         try:
             x = input_file.read()
