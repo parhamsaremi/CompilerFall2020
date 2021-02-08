@@ -1,0 +1,1 @@
+difference in line #1: file: out/t055-expr16.out -----> content: hello <> file: tests/t055-expr16.out -----> content: OK 

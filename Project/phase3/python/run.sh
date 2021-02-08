@@ -21,7 +21,6 @@ do
     else
         python main.py -i $filelist -o $output_filename
     fi
-    echo
     if [ $? -eq 0 ]; then
         echo "Code Executed Successfuly!"
         if command -v python3; then

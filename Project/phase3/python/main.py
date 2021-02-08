@@ -22,12 +22,12 @@ def main(argv):
 
     parser = None
     has_error = False
-    print(os.system('pwd'))
-    with open("/tests/" + inputfile, "r") as input_file:
+    # print(os.system('pwd'))
+    with open("./phase3/python/tests/" + inputfile, "r") as input_file:
         grammar = r"""
         program : decl decl_prime -> program
         decl_prime: decl decl_prime -> decl_prime
-            | -> decl_prime
+            | 
         decl : variable_decl -> decl_variable_decl
             | function_decl -> decl_function_decl
             | class_decl -> decl_class_decl
@@ -130,10 +130,10 @@ def main(argv):
             | 
         exprs: "," expr exprs -> exprs_expr
             |
-        constant : T_INT -> constant
-            | T_DOUBLE -> constant
-            | T_BOOL -> constant
-            | T_STRING -> constant
+        constant : T_INT -> constant_int
+            | T_DOUBLE -> constant_double
+            | T_BOOL -> constant_bool
+            | T_STRING -> constant_string
             | "null" -> constant_null
         NN: "-" -> nn 
             | "!" -> nn
