@@ -2,7 +2,9 @@ from lark import Transformer
 from SymbolTable import SymbolTable
 from Scope import Scope
 
-# TODO add '_f' to end of all functions
+# TODO:
+# add '_f' to end of all functions
+# may need to change if_stmt in grammar
 
 class FirstTraverse(Transformer):
     def __init__(self):
@@ -27,30 +29,59 @@ class FirstTraverse(Transformer):
     def decl_interface_decl(self, args):
         pass
 
-    def variable_decl(self, args):
+    def variable_decl_f(self, args):
         return {
             'decl_type': 'variable_decl',
             'variable': args[0]
         }
+
+    def variable_decl_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'variable_decls': []
+            }
+        else:
+            varialbe_decls = args[1]['variable_decls']
+            varialbe_decls.append(args[0])
+            return {
+                'variable_decls': varialbe_decls
+            }
 
     def function_decl_f(self, args):
         # TODO function scope
         # if declared function returns type
         if type(args[0]) == dict:
             return {
+                'decl_type': 'function_decl'
                 'type': args[0],
                 'id': args[1]['value'],
-                'variables': args[3]['variables'],
+                'formals': args[3]['variables'],
                 'stmt_block': args[5]
             }
         # if declared function returns void
         else:
+            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
-                'type': 'void',
+                'decl_type': 'function_decl'
+                'type': type_,
                 'id': args[1]['value'],
-                'variables': args[3]['varialbes'],
+                'formals': args[3]['varialbes'],
                 'stmt_block': args[5]
             }
+
+    def interface_decl_f(self, args):
+        return {
+            'id': args[0]['value']
+            'prototypes': args[1]['prototypes']
+        }
+
+    def class_decl_f(self, args):
+        # TODO class scope
+        return {
+            'id': args[1]['value'],
+            'parent_class': args[2]['parent_class'],
+            'interfaces': args[3]['interfaces'],
+        }
 
     def variable(self, args):
         return {
@@ -69,7 +100,7 @@ class FirstTraverse(Transformer):
             return {
                 'variables': variables_list
             }
-        
+
     def formals_f(self, args):
         if len(args) == 0:
             return {
@@ -82,6 +113,34 @@ class FirstTraverse(Transformer):
                 'variables': variables_list
             }
 
+    def prototype_f(self, args):
+        # if prototype returns type
+        if type(args[0]) == dict:
+            return {fu
+                'type': args[0],
+                'id': args[1]['value'],
+                'formals': args[3]['variables']
+            }
+        # if prototype returns void
+        else:
+            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
+            return {
+                'type': type_,
+                'id': args[1]['value'],
+                'formals': args[3]['variables']
+            }
+
+    def prototype_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'prototypes': []
+            }
+        else:
+            prototypes = args[1]['prototypes']
+            prototypes.append(args[0])
+            return {
+                'prototype': prototypes
+            }
 
     def type_primitive(self, args):
         return {
@@ -103,6 +162,63 @@ class FirstTraverse(Transformer):
             'type': args[0]['type']
             'class': args[0]['class']
         }
+
+    def implements_f(self, args):
+        if len(args) == 0:
+            return {
+                'interfaces': None
+            }
+        else:
+            ids = args[2]['ids']
+            ids.append(args[1]['value'])
+            return {
+                'interfaces': ids
+            }
+
+    def extends_f(self, args):
+        return {
+            'parent_class': args[1]['value']
+        }
+
+    def field_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'fields': [] 
+            }
+        else:
+            fields = args[1]['fields']
+            fields.append(args[0])
+            return {
+                'fields': fields
+            }
+
+    def field_f(self, args):
+        return {
+            'access_mode': args[0]['value']
+            'declaration': args[1]
+        }
+
+    def access_mode_f(self, args):
+        if len(args[0]) == 0:
+            return {
+                'value': 'public'
+            }
+        else:
+            return {
+                'value': args[0].value
+            }
+
+    def id_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'ids': []
+            }
+        else:
+            ids = args[2]['ids']
+            ids.append(args[1]['value'])
+            return {
+                'ids': ids
+            }
 
     def constant(self, args):
         return {

@@ -31,7 +31,7 @@ def main(argv):
             | function_decl -> decl_function_decl
             | class_decl -> decl_class_decl
             | interface_decl -> decl_interface_decl
-        variable_decl : variable ";" -> variable_decl
+        variable_decl : variable ";" -> variable_decl_f
         variable : type identifier -> variable
         type : "int" -> type_primitive
             | "double" -> type_primitive
@@ -45,29 +45,29 @@ def main(argv):
             | -> formals_f
         variable_prime: "," variable variable_prime -> variable_prime_f
             | -> variable_prime_f
-        class_decl : "class" identifier extends implements "{" field_prime "}" -> class_decl
-        extends: "extends" identifier -> extends
+        class_decl : "class" identifier extends implements "{" field_prime "}" -> class_decl_f
+        extends: "extends" identifier -> extends_f
             | 
-        implements: "implements" identifier id_prime -> implements
-            |
-        id_prime: "," identifier id_prime -> id_prime
-            |
-        field_prime: field field_prime -> field_prime
-            | 
-        field : access_mode variable_decl -> field_variable
-            | access_mode function_decl -> field_function
+        implements: "implements" identifier id_prime -> implements_f
+            | -> implements_f
+        id_prime: "," identifier id_prime -> id_prime_f
+            | -> id_prime_f
+        field_prime: field field_prime -> field_prime_f
+            | -> field_prime_f
+        field : access_mode variable_decl -> field_f
+            | access_mode function_decl -> field_f
         access_mode : "private" -> access_mode
             | "protected" -> access_mode
             | "public" -> access_mode
             | -> access_mode
-        interface_decl : "interface" identifier "{" prototype_prime "}" -> interface_decl
-        prototype_prime: prototype prototype_prime -> prototype_prime
-            |
-        prototype : type identifier "(" formals ")" ";" -> prototype_type
-            | "void" identifier "(" formals ")" ";" -> prototype_void
+        interface_decl : "interface" identifier "{" prototype_prime "}" -> interface_decl_f
+        prototype_prime: prototype prototype_prime -> prototype_prime_f
+            | prototype_prime_f
+        prototype : type identifier "(" formals ")" ";" -> prototype_f
+            | "void" identifier "(" formals ")" ";" -> prototype_f
         stmt_block : "{" variable_decl_prime stmt_prime "}" -> stmt_block
-        variable_decl_prime : variable_decl_prime variable_decl -> variable_decl_prime
-            | 
+        variable_decl_prime : variable_decl_prime variable_decl -> variable_decl_prime_f
+            | -> variable_decl_prime_f
         stmt_prime : stmt stmt_prime -> stmt_prime_f
             | -> stmt_prime_f
         stmt : expr_prime ";" -> stmt_expr_prime
@@ -85,8 +85,8 @@ def main(argv):
         while_stmt : "while" "(" expr ")" stmt -> while_stmt
         for_stmt : "for" "(" expr_prime ";" expr ";" expr_prime ")" stmt -> for_stmt
         return_stmt : "return" expr_prime ";" -> return_stmt
-        expr_prime: expr -> expr_prime
-            | 
+        expr_prime: expr -> expr_prime_f
+            | -> expr_prime_f
         break_stmt : "break" ";" break_stmt
         continue_stmt : "continue" ";" -> continue_stmt
         print_stmt : "Print" "(" expr exprs ")" ";" -> print_stmt
