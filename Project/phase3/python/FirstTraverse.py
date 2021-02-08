@@ -2,6 +2,7 @@ from lark import Transformer
 from SymbolTable import SymbolTable
 from Scope import Scope
 
+# TODO add '_f' to end of all functions
 
 class FirstTraverse(Transformer):
     def __init__(self):
@@ -32,14 +33,55 @@ class FirstTraverse(Transformer):
             'variable': args[0]
         }
 
-    def function_decl(self, args):
-        pass
+    def function_decl_f(self, args):
+        # TODO function scope
+        # if declared function returns type
+        if type(args[0]) == dict:
+            return {
+                'type': args[0],
+                'id': args[1]['value'],
+                'variables': args[3]['variables'],
+                'stmt_block': args[5]
+            }
+        # if declared function returns void
+        else:
+            return {
+                'type': 'void',
+                'id': args[1]['value'],
+                'variables': args[3]['varialbes'],
+                'stmt_block': args[5]
+            }
 
     def variable(self, args):
         return {
             'type': args[0],
             'id': args[1]['value']
         }
+
+    def variable_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'variables': []
+            }
+        else:
+            variables_list = args[2]['variables']
+            varialbes_list.append(args[1])
+            return {
+                'variables': variables_list
+            }
+        
+    def formals_f(self, args):
+        if len(args) == 0:
+            return {
+                'variables': []
+            }
+        else:
+            variables_list = args[1]['variables']
+            variables_list.append(args[0])
+            return {
+                'variables': variables_list
+            }
+
 
     def type_primitive(self, args):
         return {
@@ -61,10 +103,6 @@ class FirstTraverse(Transformer):
             'type': args[0]['type']
             'class': args[0]['class']
         }
-
-
-    ####
-
 
     def constant(self, args):
         return {

@@ -22,7 +22,6 @@ def main(argv):
 
     parser = None
     has_error = False
-    print(os.system('pwd'))
     with open("/tests/" + inputfile, "r") as input_file:
         grammar = r"""
         program : decl decl_prime -> program
@@ -40,12 +39,12 @@ def main(argv):
             | "string" -> type_primitive
             | identifier -> type_id
             | type "[]" -> type_arr
-        function_decl : type identifier "("formals")" stmt_block -> function_decl_not_void 
-            | "void" identifier "("formals")" stmt_block -> function_decl_void
-        formals : variable variable_prime -> formals
-            | 
-        variable_prime: "," variable variable_prime -> variable_prime
-            | 
+        function_decl : type identifier "("formals")" stmt_block -> function_decl_f
+            | "void" identifier "("formals")" stmt_block -> function_decl_f
+        formals : variable variable_prime -> formals_f
+            | -> formals_f
+        variable_prime: "," variable variable_prime -> variable_prime_f
+            | -> variable_prime_f
         class_decl : "class" identifier extends implements "{" field_prime "}" -> class_decl
         extends: "extends" identifier -> extends
             | 
@@ -69,8 +68,8 @@ def main(argv):
         stmt_block : "{" variable_decl_prime stmt_prime "}" -> stmt_block
         variable_decl_prime : variable_decl_prime variable_decl -> variable_decl_prime
             | 
-        stmt_prime : stmt stmt_prime -> stmt_prime
-            | 
+        stmt_prime : stmt stmt_prime -> stmt_prime_f
+            | -> stmt_prime_f
         stmt : expr_prime ";" -> stmt_expr_prime
             | if_stmt -> stmt_if
             | while_stmt -> stmt_while
