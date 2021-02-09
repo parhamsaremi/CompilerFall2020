@@ -25,49 +25,49 @@ def main(argv):
     with open("tests/" + inputfile, "r") as input_file:
         grammar = r"""
         program : decl decl_prime -> program_f
-        decl_prime: decl decl_prime
-            | 
-        decl : variable_decl 
-            | function_decl 
-            | class_decl 
-            | interface_decl
-        variable_decl : variable ";"
-        variable : type identifier
-        type : "int" 
-            | "double" 
-            | "bool" 
-            | "string" 
-            | identifier 
-            | type "[]"
+        decl_prime: decl decl_prime -> decl_prime_f
+            | -> decl_prime_f
+        decl : variable_decl -> decl_f
+            | function_decl -> decl_f
+            | class_decl -> decl_f
+            | interface_decl -> decl_f
+        variable_decl : variable ";" -> variable_decl_f
+        variable : type identifier -> variable_f
+        type : "int" -> type_int_f
+            | "double" -> type_double_f
+            | "bool" -> type_bool_f
+            | "string" -> type_string_f
+            | identifier -> type_id_f
+            | type "[]" -> type_arr_f
         function_decl : type identifier "("formals")" stmt_block 
             | "void" identifier "("formals")" stmt_block
-        formals : variable variable_prime 
-            | 
-        variable_prime: "," variable variable_prime
-            | 
+        formals : variable variable_prime -> formals_f
+            | -> formals_f
+        variable_prime: "," variable variable_prime -> variable_prime_f
+            | -> variable_prime_f
         class_decl : "class" identifier extends implements "{" field_prime "}"
-        extends: "extends" identifier
-            | 
-        implements: "implements" identifier id_prime
-            |
-        id_prime: "," identifier id_prime
-            |
-        field_prime: field field_prime
-            | 
+        extends: "extends" identifier -> extends_f
+            | -> extends_f
+        implements: "implements" identifier id_prime -> implements_f
+            | -> implements_f
+        id_prime: "," identifier id_prime -> id_prime
+            | -> id_prime
+        field_prime: field field_prime -> field_prime
+            | -> field_prime
         field : access_mode variable_decl 
             | access_mode function_decl
-        access_mode : "private" 
-            | "protected" 
-            | "public" 
-            | 
-        interface_decl : "interface" identifier "{" prototype_prime "}"
-        prototype_prime: prototype prototype_prime
-            |
-        prototype : type identifier "(" formals ")" ";" 
-            | "void" identifier "(" formals ")" ";"
+        access_mode : "private" -> access_mode_f
+            | "protected" -> access_mode_f
+            | "public" -> access_mode_f
+            | -> access_mode_f
+        interface_decl : "interface" identifier "{" prototype_prime "}" -> interface_decl_f
+        prototype_prime: prototype prototype_prime -> prototype_prime_f
+            | -> prototype_prime_f
+        prototype : type identifier "(" formals ")" ";" -> prototype_f
+            | "void" identifier "(" formals ")" ";" -> prototype_f
         stmt_block : "{" variable_decl_prime stmt_prime "}"
-        variable_decl_prime : variable_decl_prime variable_decl
-            | 
+        variable_decl_prime : variable_decl_prime variable_decl -> variable_decl_prime_f
+            | -> variable_decl_prime_f
         stmt_prime : stmt stmt_prime
             | 
         stmt : expr_prime ";" 
@@ -154,7 +154,7 @@ def main(argv):
         T_BOOL : /(true)/ 
             | /(false)/
         T_STRING : "\"" /[^\"\n]*/ "\""
-        identifier :  /(?!((true)|(false)|(void)|(int)|(double)|(bool)|(string)|(class)|(interface)|(null)|(this)|(extends)|(implements)|(for)|(while)|(if)|(else)|(return)|(break)|(continue)|(new)|(NewArray)|(Print)|(ReadInteger)|(ReadLine)|(dtoi)|(itod)|(btoi)|(itob)|(private)|(protected)|(public))([^_a-zA-Z0-9]|$))[a-zA-Z][_a-zA-Z0-9]*/
+        identifier :  /(?!((true)|(false)|(void)|(int)|(double)|(bool)|(string)|(class)|(interface)|(null)|(this)|(extends)|(implements)|(for)|(while)|(if)|(else)|(return)|(break)|(continue)|(new)|(NewArray)|(Print)|(ReadInteger)|(ReadLine)|(dtoi)|(itod)|(btoi)|(itob)|(private)|(protected)|(public))([^_a-zA-Z0-9]|$))[a-zA-Z][_a-zA-Z0-9]*/ -> identifier_f
         COMMENT: "//" /[^\n]*/
         COMMENTM: "/*" /[^(\*\/)]/ "*/"
         %ignore COMMENT 

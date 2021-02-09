@@ -16,7 +16,7 @@ class FirstTraverse(Transformer):
     def program_f(self, args):
         pass
 
-    def decl_prime(self, args):
+    def decl_prime_f(self, args):
         pass
 
     def decl_variable_decl(self, args):
@@ -33,7 +33,7 @@ class FirstTraverse(Transformer):
 
     def variable_decl_f(self, args):
         return {
-            'decl_type': 'variable_decl',
+            'decl_type': 'variable',
             'variable': args[0]
         }
 
@@ -43,10 +43,10 @@ class FirstTraverse(Transformer):
                 'variable_decls': []
             }
         else:
-            varialbe_decls = args[1]['variable_decls']
-            varialbe_decls.append(args[0])
+            variable_decls = args[0]['variable_decls']
+            variable_decls.append(args[1])
             return {
-                'variable_decls': varialbe_decls
+                'variable_decls': variable_decls
             }
 
     def function_decl_f(self, args):
@@ -54,7 +54,7 @@ class FirstTraverse(Transformer):
         # if declared function returns type
         if type(args[0]) == dict:
             return {
-                'decl_type': 'function_decl',
+                'decl_type': 'function',
                 'type': args[0],
                 'id': args[1]['value'],
                 'formals': args[3]['variables'],
@@ -64,7 +64,7 @@ class FirstTraverse(Transformer):
         else:
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
-                'decl_type': 'function_decl',
+                'decl_type': 'function',
                 'type': type_,
                 'id': args[1]['value'],
                 'formals': args[3]['varialbes'],
@@ -85,7 +85,7 @@ class FirstTraverse(Transformer):
             'interfaces': args[3]['interfaces'],
         }
 
-    def variable(self, args):
+    def variable_f(self, args):
         return {
             'type': args[0],
             'id': args[1]['value']
@@ -117,7 +117,7 @@ class FirstTraverse(Transformer):
 
     def prototype_f(self, args):
         # if prototype returns type
-        if type(args[0]) == dict:
+        if len(args) == 3:
             return {
                 'type': args[0],
                 'id': args[1]['value'],
@@ -144,21 +144,42 @@ class FirstTraverse(Transformer):
                 'prototype': prototypes
             }
 
-    def type_primitive(self, args):
+    def type_int_f(self, args):
         return {
             'is_arr': False,
-            'type': args[0].value,
-            'class': 'primitive'
+            'type': 'int',
+            'class': 'Primitive'
         }
 
-    def type_id(self, args):
+    def type_double_f(self, args):
+        return {
+            'is_arr': False,
+            'type': 'double',
+            'class': 'Primitive'
+        }
+
+    def type_bool_f(self, args):
+        return {
+            'is_arr': False,
+            'type': 'bool',
+            'class': 'Primitive'
+        }
+
+    def type_string_f(self, args):
+        return {
+            'is_arr': False,
+            'type': 'string',
+            'class': 'Primitive'
+        }
+
+    def type_id_f(self, args):
         return {
             'is_arr': False,
             'type': 'Object',
-            'class': args[0].value
+            'class': args[0]['value']
         }
 
-    def type_arr(self, args):
+    def type_arr_f(self, args):
         return {
             'is_arr': True,
             'type': args[0]['type'],
@@ -178,9 +199,16 @@ class FirstTraverse(Transformer):
             }
 
     def extends_f(self, args):
-        return {
-            'parent_class': args[1]['value']
-        }
+        # if class extends another class
+        if len(args) == 2:
+            return {
+                'parent_class': args[1]['value']
+            }
+        # if class doesn't extend any class
+        else:
+            return {
+                'parent_class': None
+            }
 
     def field_prime_f(self, args):
         if len(args) == 0:
@@ -252,7 +280,7 @@ class FirstTraverse(Transformer):
             'value': None
         }
 
-    def identifier(self, args):
+    def identifier_f(self, args):
         return {
             'value': args[0]
             }

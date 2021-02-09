@@ -8,7 +8,7 @@ def main():
         int int int int
     """
     grammar = r"""
-        s: INT s -> s_f
+        s: "int" s -> s_f
             | -> s_f
         INT: "int"
         DELIM: /[ \r\t\n\f]/
