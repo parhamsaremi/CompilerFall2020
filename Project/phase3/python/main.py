@@ -39,27 +39,27 @@ def main(argv):
             | "string" -> type_string_f
             | identifier -> type_id_f
             | type "[]" -> type_arr_f
-        function_decl : type identifier "("formals")" stmt_block 
-            | "void" identifier "("formals")" stmt_block
+        function_decl : type identifier "("formals")" stmt_block -> function_decl_f
+            | "void" identifier "("formals")" stmt_block -> function_decl_f
         formals : variable variable_prime -> formals_f
             | -> formals_f
         variable_prime: "," variable variable_prime -> variable_prime_f
             | -> variable_prime_f
-        class_decl : "class" identifier extends implements "{" field_prime "}"
+        class_decl : "class" identifier extends implements "{" field_prime "}" -> class_decl_f
         extends: "extends" identifier -> extends_f
             | -> extends_f
         implements: "implements" identifier id_prime -> implements_f
             | -> implements_f
-        id_prime: "," identifier id_prime -> id_prime
-            | -> id_prime
-        field_prime: field field_prime -> field_prime
-            | -> field_prime
-        field : access_mode variable_decl 
-            | access_mode function_decl
-        access_mode : "private" -> access_mode_f
-            | "protected" -> access_mode_f
-            | "public" -> access_mode_f
-            | -> access_mode_f
+        id_prime: "," identifier id_prime -> id_prime_f
+            | -> id_prime_f
+        field_prime: field field_prime -> field_prime_f
+            | -> field_prime_f
+        field : access_mode variable_decl -> field_f
+            | access_mode function_decl -> field_f
+        access_mode : "private" -> access_mode_private_f
+            | "protected" -> access_mode_protected_f
+            | "public" -> access_mode_public_f
+            | -> access_mode_public_f
         interface_decl : "interface" identifier "{" prototype_prime "}" -> interface_decl_f
         prototype_prime: prototype prototype_prime -> prototype_prime_f
             | -> prototype_prime_f

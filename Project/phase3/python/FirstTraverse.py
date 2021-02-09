@@ -52,13 +52,13 @@ class FirstTraverse(Transformer):
     def function_decl_f(self, args):
         # TODO function scope
         # if declared function returns type
-        if type(args[0]) == dict:
+        if len(args) == 4:
             return {
                 'decl_type': 'function',
                 'type': args[0],
                 'id': args[1]['value'],
-                'formals': args[3]['variables'],
-                'stmt_block': args[5]
+                'formals': args[2]['variables'],
+                'stmt_block': args[3]
             }
         # if declared function returns void
         else:
@@ -66,9 +66,9 @@ class FirstTraverse(Transformer):
             return {
                 'decl_type': 'function',
                 'type': type_,
-                'id': args[1]['value'],
-                'formals': args[3]['varialbes'],
-                'stmt_block': args[5]
+                'id': args[0]['value'],
+                'formals': args[1]['variables'],
+                'stmt_block': args[2]
             }
 
     def interface_decl_f(self, args):
@@ -80,9 +80,9 @@ class FirstTraverse(Transformer):
     def class_decl_f(self, args):
         # TODO class scope
         return {
-            'id': args[1]['value'],
-            'parent_class': args[2]['parent_class'],
-            'interfaces': args[3]['interfaces'],
+            'id': args[0]['value'],
+            'parent_class': args[1]['parent_class'],
+            'interfaces': args[2]['interfaces'],
         }
 
     def variable_f(self, args):
@@ -228,15 +228,20 @@ class FirstTraverse(Transformer):
             'declaration': args[1]
         }
 
-    def access_mode_f(self, args):
-        if len(args[0]) == 0:
-            return {
-                'value': 'public'
-            }
-        else:
-            return {
-                'value': args[0].value
-            }
+    def access_mode_private(self, args):
+        return {
+            'value': 'private'
+        }
+
+    def access_mode_protected(self, args):
+        return {
+            'value': 'private'
+        }
+
+    def access_mode_public(self, args):
+        return {
+            'value': 'private'
+        }
 
     def id_prime_f(self, args):
         if len(args) == 0:
