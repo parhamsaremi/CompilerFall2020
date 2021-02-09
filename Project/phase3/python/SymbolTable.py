@@ -4,7 +4,7 @@ from Scope import Scope
 class SymbolTable:
     symbol_table = None
 
-    def __init__():
+    def __init__(self):
         self.scope_count = 0
         self.scope_dict = {}
         self.scope_stack = []

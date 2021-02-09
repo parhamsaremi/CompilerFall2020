@@ -6,13 +6,14 @@ from Scope import Scope
 # TODO:
 # add '_f' to end of all functions
 # may need to change if_stmt in grammar
+# deleted wrong terminal rules, might need extra work
 
 class FirstTraverse(Transformer):
     def __init__(self):
         super().__init__()
         self.symbol_table = SymbolTable.get_symbol_table()
 
-    def program(self, args):
+    def program_f(self, args):
         pass
 
     def decl_prime(self, args):
@@ -53,7 +54,7 @@ class FirstTraverse(Transformer):
         # if declared function returns type
         if type(args[0]) == dict:
             return {
-                'decl_type': 'function_decl'
+                'decl_type': 'function_decl',
                 'type': args[0],
                 'id': args[1]['value'],
                 'formals': args[3]['variables'],
@@ -63,7 +64,7 @@ class FirstTraverse(Transformer):
         else:
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
-                'decl_type': 'function_decl'
+                'decl_type': 'function_decl',
                 'type': type_,
                 'id': args[1]['value'],
                 'formals': args[3]['varialbes'],
@@ -72,7 +73,7 @@ class FirstTraverse(Transformer):
 
     def interface_decl_f(self, args):
         return {
-            'id': args[0]['value']
+            'id': args[0]['value'],
             'prototypes': args[1]['prototypes']
         }
 
@@ -117,7 +118,7 @@ class FirstTraverse(Transformer):
     def prototype_f(self, args):
         # if prototype returns type
         if type(args[0]) == dict:
-            return {fu
+            return {
                 'type': args[0],
                 'id': args[1]['value'],
                 'formals': args[3]['variables']
@@ -160,7 +161,7 @@ class FirstTraverse(Transformer):
     def type_arr(self, args):
         return {
             'is_arr': True,
-            'type': args[0]['type']
+            'type': args[0]['type'],
             'class': args[0]['class']
         }
 
@@ -195,7 +196,7 @@ class FirstTraverse(Transformer):
 
     def field_f(self, args):
         return {
-            'access_mode': args[0]['value']
+            'access_mode': args[0]['value'],
             'declaration': args[1]
         }
 
@@ -221,66 +222,35 @@ class FirstTraverse(Transformer):
                 'ids': ids
             }
 
-    def constant(self, args):
+    def constant_int_f(self, args):
         return {
-            'value': args[0]['value']
-            
+            'type': 'int',
+            'value': args[0]
+        }
+
+    def constant_double_f(self, args):
+        return {
+            'type': 'double',
+            'value': args[0]
+        }
+
+    def constant_bool_f(self, args):
+        return {
+            'type': 'bool',
+            'value': args[0]
+        }
+
+    def constant_string_f(self, args):
+        return {
+            'type': 'string',
+            'value': args[0]
         }
 
     def constant_null(self, args):
         return {
-            value: None,
-            type: 'null'
+            'type': 'null',
+            'value': None
         }
-
-    def nn(self, args):
-        return {
-            'value': args[0].value
-        }
-
-    def as(self, args):
-        return {
-            'value': args[0].value
-        }
-
-    def mdm(self, args):
-        return {
-            'value': args[0].value
-        }
-
-    def equal(self, args):
-        return {
-            'value': args[0].value
-        }
-
-    def compare(self, args):
-        return {
-            'value': args[0].value
-        }
-
-    def t_double(self, args):
-        return {
-            'value': float(args[0].value),
-            'type': 'double'
-            }
-
-    def t_int(self, args):
-        return {
-            'value': int(args[0].value),
-            'type': 'int'
-            }
-
-    def t_bool(self, args):
-        return {
-            'value': bool(args[0].value),
-            'type': 'bool'
-            }
-
-    def t_string(self, args):
-        return {
-            'value': args[0],
-            'type': 'string'
-            }
 
     def identifier(self, args):
         return {
