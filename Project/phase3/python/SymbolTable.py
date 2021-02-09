@@ -1,5 +1,6 @@
 from Scope import Scope
 
+# NOTE: might be removed in the future
 
 class SymbolTable:
     symbol_table = None

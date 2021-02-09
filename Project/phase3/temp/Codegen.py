@@ -6,6 +6,7 @@ class CG(Transformer):
         super().__init__()
 
     def s_f(self, args):
+        raise Exception('error')
         res = None
         if len(args) == 0:
             res = {

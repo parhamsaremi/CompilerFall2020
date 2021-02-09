@@ -4,11 +4,11 @@ class Scope:
 
     def __init__(self):
         self.parent = None
-        self.id = scope_count
-        Scope.scope_dict[self.id] = scope
+        self.id = Scope.scope_count
+        Scope.scope_dict[self.id] = self
         Scope.scope_count += 1 
         self.children = []
-        self.variables = []
-        self.functions = []
-        self.classes = []
-        self.interfaces = []
+        self.decls= {}
+
+    def does_decl_id_exist(id: string):
+        return self.decls.keys().__contains__(id)
