@@ -65,11 +65,11 @@ def main(argv):
             | -> prototype_prime_f
         prototype : type identifier "(" formals ")" ";" -> prototype_f
             | "void" identifier "(" formals ")" ";" -> prototype_f
-        stmt_block : "{" variable_decl_prime stmt_prime "}"
+        stmt_block : "{" variable_decl_prime stmt_prime "}" -> stmt_block_f
         variable_decl_prime : variable_decl_prime variable_decl -> variable_decl_prime_f
             | -> variable_decl_prime_f
-        stmt_prime : stmt stmt_prime
-            | 
+        stmt_prime : stmt stmt_prime -> stmt_prime_f
+            | -> stmt_prime_f
         stmt : expr_prime ";" 
             | if_stmt 
             | while_stmt 
@@ -125,10 +125,10 @@ def main(argv):
             | others "[" expr "]"
         call : identifier "(" actuals ")" 
             | others "." identifier "(" actuals ")"
-        actuals : expr exprs
-            | 
-        exprs: "," expr exprs
-            |
+        actuals : expr exprs -> actuals_f
+            | -> actuals_f
+        exprs: "," expr exprs -> exprs_f
+            | -> exprs_f
         constant : T_INT -> constant_int_f
             | T_DOUBLE -> constant_double_f
             | T_BOOL -> constant_bool_f

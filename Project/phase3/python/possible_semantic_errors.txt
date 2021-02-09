@@ -3,7 +3,7 @@
 class:
     Same id used by 2 or more fields #
     A prototye which belongs to an implemented interface isn't implemented
-    
+
 
 function:
 

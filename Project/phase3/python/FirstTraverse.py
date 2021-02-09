@@ -76,8 +76,6 @@ class FirstTraverse(Transformer):
         return {'id': args[0]['value'], 'prototypes': args[1]['prototypes']}
 
     def class_decl_f(self, args):
-        # TODO class scope
-        # TODO scope
         scope = Scope()
         fields = args[3]['fields']
         for field in fields:
@@ -85,7 +83,7 @@ class FirstTraverse(Transformer):
             decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 if scope.does_decl_id_exist(decl['id']):
-                    raise SemErr(f'duplicate id \'{decl['id']}\' in class \'{args[0]['value']}\'')
+                    raise SemErr(f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\'')
                 scope.decls[decl['id']] = decl
                 scope.children.append(decl['scope'])
                 decl['scope'].parent = scope
@@ -95,10 +93,46 @@ class FirstTraverse(Transformer):
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
             'id': args[0]['value'],
+            'scope': scope,
             'parent_class': args[1]['parent_class'],
             'interfaces': args[2]['interfaces'],
             'fields': args[3]['fields']
         }
+
+    def stmt_block_f(self, args):
+        # TODO scope
+        scope = Scope()
+        return {
+            'scope': scope,
+            'variable_decls': args[0]['variable_decls'],
+            'stmts': args[1]['stmts']
+        }
+    
+    def exprs_f(self, args):
+        if len(args) == 0:
+            return {
+                'exprs': []
+            }
+        else:
+            exprs = args[0]
+            for expr in args[1]['exprs']:
+                exprs.append(expr)
+            return {
+                'exprs': exprs
+            }
+
+    def actuals_f(self, args):
+        if len(args) == 0:
+            return {
+                'exprs': []
+            }
+        else:
+            exprs = args[0]
+            for expr in args[1]['exprs']:
+                exprs.append(expr)
+            return {
+                'exprs': exprs
+            }
 
     def variable_f(self, args):
         return {'type': args[0], 'id': args[1]['value']}
@@ -143,6 +177,18 @@ class FirstTraverse(Transformer):
             prototypes = args[1]['prototypes']
             prototypes.append(args[0])
             return {'prototype': prototypes}
+
+    def stmt_prime_f(self, args):
+        if len(args) == 0:
+            return {
+                'stmts': []
+            }
+        else:
+            stmts = args[1]['stmts']
+            stmts.append(args[0])
+            return {
+                'stmts': stmts
+            }
 
     def type_int_f(self, args):
         return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
