@@ -147,7 +147,14 @@ class FirstTraverse(Transformer):
         }
 
     def if_stmt_f(self, args):
-        pass
+        scopes = get_scopes_of_children(args)
+        return {
+            'scopes': scopes,
+            'stmt_type': 'if_else',
+            'condition_expr': args[0],
+            'if_stmt': args[1],
+            'else_stmt': args[2]['stmt']
+        }
 
     def else_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -201,10 +208,7 @@ class FirstTraverse(Transformer):
         exprs = args[0]
         for expr in args[1]['exprs']:
             exprs.append(expr)
-        return {
-            'scopes': [None],
-            'exprs': exprs
-        }
+        return {'scopes': [None], 'exprs': exprs}
 
     def variable_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -216,10 +220,24 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variables': variables_list}
 
     def while_stmt_f(self, args):
-        return {'scope': args[1]['scope'], 'expr': args[0], 'stmt': args[1]}
+        scopes = get_scopes_of_children(args)
+        return {
+            'stmt_type': 'while',
+            'scopes': scopes,
+            'condition_expr': args[0],
+            'stmt': args[1]
+        }
 
     def for_stmt_f(self, args):
-        return {'init_exprs': args[0]}
+        scopes = get_scopes_of_children(args)
+        return {
+            'scopes': scopes,
+            'stmt_type': 'for',
+            'init_expr': args[0]['stmt'],
+            'condition_expr': args[1],
+            'step_expr': args[2],
+            'stmt': args[3]
+        }
 
     def formals_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -257,6 +275,33 @@ class FirstTraverse(Transformer):
             prototypes = args[1]['prototypes']
             prototypes.append(args[0])
             return {'scopes': [None], 'prototype': prototypes}
+
+    def call_f(self, args):
+        # id()
+        if len(args) == 2:
+            return {'scopes': [None], 'id': args[0]}
+        # obj.field()
+        else:
+            return {'scopes': [None], 'obj_id': args}
+
+    def l_value_id_f(self, args):
+        return {'scopes': [None], 'l_value_type': 'id', 'l_value': args[0]}
+
+    def l_value_obj_f(self, args):
+        return {
+            'scopes': [None],
+            'l_value_type': 'obj_field',
+            'obj': args[0],
+            'obj_field': args[1]
+        }
+
+    def l_value_arr_f(self, args):
+        return {
+            'scopes': [None],
+            'l_value_type': 'array',
+            'arr': args[0],
+            'index': args[1]
+        }
 
     def stmt_prime_f(self, args):
         scopes = get_scopes_of_children(args)

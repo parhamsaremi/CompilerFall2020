@@ -70,7 +70,7 @@ def main(argv):
             | -> variable_decl_prime_f
         stmt_prime : stmt stmt_prime -> stmt_prime_f
             | -> stmt_prime_f
-        stmt : expr_prime ";"
+        stmt : expr_prime ";" 
             | if_stmt 
             | while_stmt 
             | for_stmt 
@@ -120,11 +120,11 @@ def main(argv):
             | "dtoi" "(" expr ")" 
             | "itob" "(" expr ")" 
             | "btoi" "(" expr ")"
-        l_value : identifier 
-            | others "." identifier 
-            | others "[" expr "]"
-        call : identifier "(" actuals ")" 
-            | others "." identifier "(" actuals ")"
+        l_value : identifier -> l_value_id_f
+            | others "." identifier -> l_value_obj_f
+            | others "[" expr "]" -> l_value_arr_f
+        call : identifier "(" actuals ")" -> call_f
+            | others "." identifier "(" actuals ")" -> call_f
         actuals : expr exprs -> actuals_f
             | -> actuals_f
         exprs: "," expr exprs -> exprs_f
