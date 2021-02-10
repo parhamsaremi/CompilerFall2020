@@ -145,6 +145,12 @@ class FirstTraverse(Transformer):
             varialbes_list.append(args[1])
             return {'variables': variables_list}
 
+    def while_stmt_f(self, args):
+        return {
+            'expr': args[0],
+            'stmt': args[1]
+        }
+
     def formals_f(self, args):
         if len(args) == 0:
             return {'variables': []}

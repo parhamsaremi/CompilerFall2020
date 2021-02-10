@@ -82,7 +82,7 @@ def main(argv):
         if_stmt : "if" "(" expr ")" stmt else_prime    
         else_prime: "else" stmt
             |
-        while_stmt : "while" "(" expr ")" stmt
+        while_stmt : "while" "(" expr ")" stmt -> while_stmt_f
         for_stmt : "for" "(" expr_prime ";" expr ";" expr_prime ")" stmt
         return_stmt : "return" expr_prime ";"
         expr_prime: expr 
