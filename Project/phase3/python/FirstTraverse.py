@@ -12,6 +12,8 @@ from SemanticError import SemanticError as SemErr
 def get_scopes_of_children(args):
     res = []
     for arg in args:
+        if type(arg) != dict:
+            continue
         for scope in arg['scopes']:
             if scope is not None:
                 res.append(scope)
@@ -23,7 +25,7 @@ def set_parent_of_children_scope(parent_scope: Scope, children_scopes: list):
         scope.parent = parent_scope
 
 
-def set_children_of_parent_scope(parent_scope, children_scopes):
+def set_children_of_parent_scope(parent_scope: Scope, children_scopes: list):
     for scope in children_scopes:
         parent_scope.children.append(scope)
 
@@ -47,12 +49,12 @@ class FirstTraverse(Transformer):
     def decl_prime_f(self, args):
         scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'scopes': [scopes], 'decls': []}
+            return {'scopes': scopes, 'decls': []}
         else:
             decls = [args[0]]
             for decl in args[1]['decls']:
                 decls.append(decl)
-            return {'scopes': [scopes], 'decls': decls}
+            return {'scopes': scopes, 'decls': decls}
 
     def decl_f(self, args):
         return args[0]
@@ -103,13 +105,21 @@ class FirstTraverse(Transformer):
 
     def interface_decl_f(self, args):
         # TODO scope
-        return {'id': args[0]['value'], 'prototypes': args[1]['prototypes']}
+        scope = Scope()
+        children_scopes = get_scopes_of_children(args)
+        set_parent_of_children_scope(scope, children_scopes)
+        set_children_of_parent_scope(scope, children_scopes)
+        return {
+            'scopes': [scope],
+            'id': args[0]['value'],
+            'prototypes': args[1]['prototypes']
+        }
 
     def class_decl_f(self, args):
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
-        set_children_of_parent_scope(scope, parent_scope)
+        set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
         for field in fields:
             decl = field['declaration']
@@ -127,7 +137,7 @@ class FirstTraverse(Transformer):
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
-            'scope': [scope],
+            'scopes': [scope],
             'id': args[0]['value'],
             'parent_class': args[1]['parent_class'],
             'interfaces': args[2]['interfaces'],
@@ -145,6 +155,20 @@ class FirstTraverse(Transformer):
             'variable_decls': args[0]['variable_decls'],
             'stmts': args[1]['stmts']
         }
+
+    def stmt_expr_prime_f(self, args):
+        scopes = get_scopes_of_children(args)
+        return {'scopes': scopes, 'stmt_type': 'expr_prime', 'stmt': args[0]}
+
+    def stmt_f(self, args):
+        scopes = get_scopes_of_children(args)
+        res = args[0]
+        res['scopes'] = scopes
+        return res
+
+    def stmt_stmt_block_f(self, args):
+        scopes = get_scopes_of_children(args)
+        return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
 
     def if_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -164,7 +188,9 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'stmt': args[0]}
 
     def expr_f(self, args):
-        return args[0]
+        res = args[0]
+        res['scopes'] = [None]
+        return res
 
     def expr_prime_f(self, args):
         # TODO check it
@@ -222,8 +248,8 @@ class FirstTraverse(Transformer):
     def while_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
-            'stmt_type': 'while',
             'scopes': scopes,
+            'stmt_type': 'while',
             'condition_expr': args[0],
             'stmt': args[1]
         }
@@ -402,18 +428,26 @@ class FirstTraverse(Transformer):
     def access_mode_public(self, args):
         return {'scopes': [None], 'value': 'private'}
 
+    def assign_f(self, args):
+        if len(args) == 1:
+            return {'expr_type': args[0]['expr_type'], 'expr': args[0]}
+        else:
+            return {
+                'expr_type': 'assign',
+                'l_value': args[0],
+                'r_value': args[1]
+            }
+
     def or_f(self, args):
         if len(args) == 1:
-            return {
-                'op_list': [],
-                'and_list': [args[0]]
-            }
+            return {'expr_type': 'or', 'op_list': [], 'and_list': [args[0]]}
         else:
             and_list = args[0]['and_list']
             and_list.append(args[1])
             op_list = args[0]['op_list']
-            op_list.append(args[1].value)
+            op_list.append('||')
             return {
+                'expr_type': 'or',
                 'op_list': op_list,
                 'and_list': and_list
             }
@@ -421,6 +455,7 @@ class FirstTraverse(Transformer):
     def and_f(self, args):
         if len(args) == 1:
             return {
+                'expr_type': 'and',
                 'op_list': [],
                 'eq_neq_list': [args[0]]
             }
@@ -428,8 +463,9 @@ class FirstTraverse(Transformer):
             eq_neq_list = args[0]['eq_neq_list']
             eq_neq_list.append(args[1])
             op_list = args[0]['op_list']
-            op_list.append(args[1].value)
+            op_list.append('&&')
             return {
+                'expr_type': 'and',
                 'op_list': op_list,
                 'eq_neq_list': eq_neq_list
             }
@@ -437,6 +473,7 @@ class FirstTraverse(Transformer):
     def eq_neq_f(self, args):
         if len(args) == 1:
             return {
+                'expr_type': 'eq_neq',
                 'op_list': [],
                 'comp_list': [args[0]]
             }
@@ -445,11 +482,16 @@ class FirstTraverse(Transformer):
             comp_list.append(args[1])
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
-            return {'comp_list': comp_list}
+            return {
+                'expr_type': 'eq_neq',
+                'op_list': op_list,
+                'comp_list': comp_list
+            }
 
     def comp_f(self, args):
         if len(args) == 1:
             return {
+                'expr_type': 'comp',
                 'op_list': [],
                 'add_sub_list': [args[0]]
             }
@@ -459,6 +501,7 @@ class FirstTraverse(Transformer):
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
+                'expr_type': 'comp',
                 'op_list': op_list,
                 'add_sub_list': add_sub_list
             }
@@ -466,6 +509,7 @@ class FirstTraverse(Transformer):
     def add_sub_f(self, args):
         if len(args) == 1:
             return {
+                'expr_type': 'add_sub',
                 'op_list': [],
                 'mul_div_mod_list': [args[0]]
             }
@@ -475,6 +519,7 @@ class FirstTraverse(Transformer):
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
+                'expr_type': 'add_sub',
                 'op_list': op_list,
                 'mul_div_mod_list': mul_div_mod_list
             }
@@ -482,6 +527,7 @@ class FirstTraverse(Transformer):
     def mul_div_mod_f(self, args):
         if len(args) == 1:
             return {
+                'expr_type': 'mul_div_mod',
                 'op_list': [],
                 'not_neg_list': [args[0]]
             }
@@ -491,25 +537,69 @@ class FirstTraverse(Transformer):
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
+                'expr_type': 'mul_div_mod',
                 'op_list': op_list,
                 'not_neg_list': not_neg_list
             }
 
     def not_neg_f(self, args):
         if len(args) == 1:
-            return {
-                'op_list': []
-                'others': args[0]
-            }
+            return {'expr_type': 'not_neg', 'op_list': [], 'others': args[0]}
         else:
             op_list = args[1]['op_list']
             op_list.append(args[0].value)
             return {
+                'expr_type': 'not_neg',
                 'op_list': op_list,
                 'others': args[1]['others']
             }
 
-    
+    def others_constant_f(self, args):
+        res = args[0]
+        res['expr_type'] = 'constant'
+        return res
+
+    def others_this_f(self, args):
+        return {'expr_type': 'this'}
+
+    def others_lvalue_f(self, args):
+        res = args[0]
+        res['expr_type'] = 'lvalue'
+        return res
+
+    def others_call_f(self, args):
+        res = args[0]
+        res['expr_type'] = 'call'
+        return res
+
+    def others_p_expr_p_f(self, args):
+        res = args[0]
+        res['expr_type'] = '(expr)'
+        return res
+
+    def others_read_int_f(self, args):
+        return {'expr_type': 'read_int'}
+
+    def others_read_line_f(self, args):
+        return {'expr_type': 'read_line'}
+
+    def others_new_id_f(self, args):
+        return {'expr_type': 'new_id', 'id': args[0]['value']}
+
+    def others_new_arr_f(self, args):
+        return {'expr_type': 'new_arr', 'size': args[0], 'type': args[1]}
+
+    def others_itod_f(self, args):
+        return {'expr_type': 'itod', 'expr': args[0]}
+
+    def others_dtoi_f(self, args):
+        return {'expr_type': 'dtoi', 'expr': args[0]}
+
+    def others_itob_f(self, args):
+        return {'expr_type': 'itob', 'expr': args[0]}
+
+    def others_btoi_f(self, args):
+        return {'expr_type': 'btoi', 'expr': args[0]}
 
     def id_prime_f(self, args):
         if len(args) == 0:
@@ -531,7 +621,7 @@ class FirstTraverse(Transformer):
     def constant_string_f(self, args):
         return {'scopes': [None], 'type': 'string', 'value': args[0]}
 
-    def constant_null(self, args):
+    def constant_null_f(self, args):
         return {'scopes': [None], 'type': 'null', 'value': None}
 
     def identifier_f(self, args):

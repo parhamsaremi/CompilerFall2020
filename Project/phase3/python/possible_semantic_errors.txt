@@ -6,6 +6,8 @@ class:
 
 
 function:
-
+    Same id declared as a variable 2 or more times
+    type checking
 
 interface:
+    Same id used by 2 or more prototypes

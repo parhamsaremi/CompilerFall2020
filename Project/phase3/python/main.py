@@ -70,15 +70,15 @@ def main(argv):
             | -> variable_decl_prime_f
         stmt_prime : stmt stmt_prime -> stmt_prime_f
             | -> stmt_prime_f
-        stmt : expr_prime ";" 
-            | if_stmt 
-            | while_stmt 
-            | for_stmt 
-            | break_stmt 
-            | continue_stmt 
-            | return_stmt 
-            | print_stmt 
-            | stmt_block
+        stmt : expr_prime ";" -> stmt_expr_prime_f
+            | if_stmt -> stmt_f
+            | while_stmt -> stmt_f
+            | for_stmt -> stmt_f
+            | break_stmt -> stmt_f
+            | continue_stmt -> stmt_f
+            | return_stmt -> stmt_f
+            | print_stmt -> stmt_f
+            | stmt_block -> stmt_stmt_block_f
         if_stmt : "if" "(" expr ")" stmt else_prime -> if_stmt_f
         else_prime: "else" stmt -> else_prime_f
             | -> else_prime_f
@@ -107,19 +107,19 @@ def main(argv):
             | not_neg -> mul_div_mod_f
         not_neg: NN not_neg -> not_neg_f
             | others -> not_neg_f
-        others: constant 
-            | "this"
-            | l_value
-            | call
-            | "(" expr ")"
-            | "ReadInteger" "(" ")"
-            | "ReadLine" "(" ")" 
-            | "new" identifier 
-            | "NewArray" "(" expr "," type ")" 
-            | "itod" "(" expr ")" 
-            | "dtoi" "(" expr ")" 
-            | "itob" "(" expr ")" 
-            | "btoi" "(" expr ")"
+        others: constant -> others_constant_f
+            | "this" -> others_this_f
+            | l_value -> others_lvalue_f
+            | call -> others_call_f
+            | "(" expr ")" -> others_p_expr_p_f
+            | "ReadInteger" "(" ")" -> others_read_int_f
+            | "ReadLine" "(" ")" -> others_read_line_f
+            | "new" identifier -> others_new_id_f
+            | "NewArray" "(" expr "," type ")" -> others_new_arr_f
+            | "itod" "(" expr ")" -> others_itod_f
+            | "dtoi" "(" expr ")" -> others_dtoi_f
+            | "itob" "(" expr ")" -> others_itob_f
+            | "btoi" "(" expr ")" -> others_btoi_f
         l_value : identifier -> l_value_id_f
             | others "." identifier -> l_value_obj_f
             | others "[" expr "]" -> l_value_arr_f
