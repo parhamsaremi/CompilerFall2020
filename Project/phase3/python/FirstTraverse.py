@@ -9,31 +9,57 @@ from SemanticError import SemanticError as SemErr
 # deleted wrong terminal rules, might need extra work
 
 
+def get_scopes_of_children(args):
+    res = []
+    for arg in args:
+        for scope in arg['scopes']:
+            if scope is not None:
+                res.append(scope)
+    return res
+
+
+def set_parent_of_children_scope(parent_scope: Scope, children_scopes: list):
+    for scope in children_scopes:
+        scope.parent = parent_scope
+
+
+def set_children_of_parent_scope(parent_scope, children_scopes):
+    for scope in children_scopes:
+        parent_scope.children.append(scope)
+
+
 class FirstTraverse(Transformer):
     def __init__(self):
         super().__init__()
-        self.symbol_table = SymbolTable.get_symbol_table()
+        # self.symbol_table = SymbolTable.get_symbol_table()
 
     def program_f(self, args):
-        pass
+        # TODO scope (more precisely global scope)
+        scope = Scope()
+        children_scopes = get_scopes_of_children(args)
+        set_parent_of_children_scope(scope, children_scopes)
+        set_children_of_parent_scope(scope, children_scopes)
+        decls = [args[0]]
+        for decl in args[1]['decls']:
+            decls.append(decl)
+        return {'scopes': [scope], 'decls': decls}
 
     def decl_prime_f(self, args):
-        pass
+        scopes = get_scopes_of_children(args)
+        if len(args) == 0:
+            return {'scopes': [scopes], 'decls': []}
+        else:
+            decls = [args[0]]
+            for decl in args[1]['decls']:
+                decls.append(decl)
+            return {'scopes': [scopes], 'decls': decls}
 
-    def decl_variable_decl(self, args):
-        pass
-
-    def decl_function_decl(self, args):
-        pass
-
-    def decl_class_decl(self, args):
-        pass
-
-    def decl_interface_decl(self, args):
-        pass
+    def decl_f(self, args):
+        return args[0]
 
     def variable_decl_f(self, args):
         return {
+            'scopes': [None],
             'decl_type': 'variable',
             'type': args[0]['type'],
             'id': args[0]['id']
@@ -41,20 +67,22 @@ class FirstTraverse(Transformer):
 
     def variable_decl_prime_f(self, args):
         if len(args) == 0:
-            return {'variable_decls': []}
+            return {'scopes': [None], 'variable_decls': []}
         else:
             variable_decls = args[0]['variable_decls']
             variable_decls.append(args[1])
-            return {'variable_decls': variable_decls}
+            return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, args):
-        # TODO function scope
+        # TODO function scope (it has bug now)
         scope = Scope()
-
+        children_scopes = get_scopes_of_children(args)
+        set_parent_of_children_scope(scope, children_scopes)
+        set_children_of_parent_scope(scope, children_scopes)
         # if declared function returns type
         if len(args) == 4:
             return {
-                'scope': scope,
+                'scopes': [scope],
                 'decl_type': 'function',
                 'type': args[0],
                 'id': args[1]['value'],
@@ -65,6 +93,7 @@ class FirstTraverse(Transformer):
         else:
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
+                'scopes': [scope],
                 'decl_type': 'function',
                 'type': type_,
                 'id': args[0]['value'],
@@ -73,10 +102,14 @@ class FirstTraverse(Transformer):
             }
 
     def interface_decl_f(self, args):
+        # TODO scope
         return {'id': args[0]['value'], 'prototypes': args[1]['prototypes']}
 
     def class_decl_f(self, args):
         scope = Scope()
+        children_scopes = get_scopes_of_children(args)
+        set_parent_of_children_scope(scope, children_scopes)
+        set_children_of_parent_scope(scope, parent_scope)
         fields = args[3]['fields']
         for field in fields:
             decl = field['declaration']
@@ -87,15 +120,15 @@ class FirstTraverse(Transformer):
                         f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
                     )
                 scope.decls[decl['id']] = decl
-                scope.children.append(decl['scope'])
+                # scope.children.append(decl['scope'])
                 decl['scope'].parent = scope
             elif decl['decl_type'] == 'variable':
                 scope.decls[decl['id']] = decl
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
+            'scope': [scope],
             'id': args[0]['value'],
-            'scope': scope,
             'parent_class': args[1]['parent_class'],
             'interfaces': args[2]['interfaces'],
             'fields': args[3]['fields']
@@ -104,56 +137,104 @@ class FirstTraverse(Transformer):
     def stmt_block_f(self, args):
         # TODO scope
         scope = Scope()
+        children_scopes = get_scopes_of_children(args)
+        set_parent_of_children_scope(scope, children_scopes)
+        set_children_of_parent_scope(scope, children_scopes)
         return {
-            'scope': scope,
+            'scopes': [scope],
             'variable_decls': args[0]['variable_decls'],
             'stmts': args[1]['stmts']
         }
 
-    def exprs_f(self, args):
+    def if_stmt_f(self, args):
+        pass
+
+    def else_prime_f(self, args):
+        scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'exprs': []}
+            return {'scopes': [None], 'stmt': None}
+        else:
+            return {'scopes': [None], 'stmt': args[0]}
+
+    def expr_f(self, args):
+        return args[0]
+
+    def expr_prime_f(self, args):
+        # TODO check it
+        if len(args) == 0:
+            return None
+        else:
+            return args[0]
+
+    def exprs_f(self, args):
+        scopes = get_scopes_of_children(args)
+        if len(args) == 0:
+            return {'scopes': [None], 'exprs': []}
         else:
             exprs = args[0]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
-            return {'exprs': exprs}
+            return {'scopes': [None], 'exprs': exprs}
 
     def actuals_f(self, args):
         if len(args) == 0:
-            return {'exprs': []}
+            return {'scopes': [None], 'exprs': []}
         else:
             exprs = args[0]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
-            return {'exprs': exprs}
+            return {'scopes': [None], 'exprs': exprs}
+
+    def return_stmt_f(self, args):
+        return {'scopes': [None], 'stmt_type': 'return'}
+
+    def break_stmt_f(self, args):
+        return {'scopes': [None], 'stmt_type': 'break'}
+
+    def continue_stmt_f(self, args):
+        return {'scopes': [None], 'stmt_type': 'continue'}
 
     def variable_f(self, args):
-        return {'type': args[0], 'id': args[1]['value']}
+        return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
+
+    def print_stmt_f(self, args):
+        exprs = args[0]
+        for expr in args[1]['exprs']:
+            exprs.append(expr)
+        return {
+            'scopes': [None],
+            'exprs': exprs
+        }
 
     def variable_prime_f(self, args):
+        scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'variables': []}
+            return {'scopes': [None], 'variables': []}
         else:
             variables_list = args[2]['variables']
             varialbes_list.append(args[1])
-            return {'variables': variables_list}
+            return {'scopes': [None], 'variables': variables_list}
 
     def while_stmt_f(self, args):
-        return {'expr': args[0], 'stmt': args[1]}
+        return {'scope': args[1]['scope'], 'expr': args[0], 'stmt': args[1]}
+
+    def for_stmt_f(self, args):
+        return {'init_exprs': args[0]}
 
     def formals_f(self, args):
+        scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'variables': []}
+            return {'scopes': [None], 'variables': []}
         else:
             variables_list = args[1]['variables']
             variables_list.append(args[0])
-            return {'variables': variables_list}
+            return {'scopes': [None], 'variables': variables_list}
 
     def prototype_f(self, args):
         # if prototype returns type
         if len(args) == 3:
             return {
+                'scopes': [None],
                 'type': args[0],
                 'id': args[1]['value'],
                 'formals': args[3]['variables']
@@ -162,44 +243,73 @@ class FirstTraverse(Transformer):
         else:
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
+                'scopes': [None],
                 'type': type_,
                 'id': args[1]['value'],
                 'formals': args[3]['variables']
             }
 
     def prototype_prime_f(self, args):
+        # TODO does prototype have scope
         if len(args) == 0:
-            return {'prototypes': []}
+            return {'scopes': [None], 'prototypes': []}
         else:
             prototypes = args[1]['prototypes']
             prototypes.append(args[0])
-            return {'prototype': prototypes}
+            return {'scopes': [None], 'prototype': prototypes}
 
     def stmt_prime_f(self, args):
+        scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'stmts': []}
+            return {'scopes': [None], 'stmts': []}
         else:
             stmts = args[1]['stmts']
             stmts.append(args[0])
-            return {'stmts': stmts}
+            return {'scopes': [None], 'stmts': stmts}
 
     def type_int_f(self, args):
-        return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+        return {
+            'scopes': [None],
+            'is_arr': False,
+            'type': 'int',
+            'class': 'Primitive'
+        }
 
     def type_double_f(self, args):
-        return {'is_arr': False, 'type': 'double', 'class': 'Primitive'}
+        return {
+            'scopes': [None],
+            'is_arr': False,
+            'type': 'double',
+            'class': 'Primitive'
+        }
 
     def type_bool_f(self, args):
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {
+            'scopes': [None],
+            'is_arr': False,
+            'type': 'bool',
+            'class': 'Primitive'
+        }
 
     def type_string_f(self, args):
-        return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
+        return {
+            'scopes': [None],
+            'is_arr': False,
+            'type': 'string',
+            'class': 'Primitive'
+        }
 
     def type_id_f(self, args):
-        return {'is_arr': False, 'type': 'Object', 'class': args[0]['value']}
+        return {
+            'scopes': [None],
+            'is_arr': False,
+            'type': 'Object',
+            'class': args[0]['value']
+        }
 
     def type_arr_f(self, args):
         return {
+            'scopes': [None],
             'is_arr': True,
             'type': args[0]['type'],
             'class': args[0]['class']
@@ -207,62 +317,68 @@ class FirstTraverse(Transformer):
 
     def implements_f(self, args):
         if len(args) == 0:
-            return {'interfaces': None}
+            return {'scopes': [None], 'interfaces': None}
         else:
             ids = args[2]['ids']
             ids.append(args[1]['value'])
-            return {'interfaces': ids}
+            return {'scopes': [None], 'interfaces': ids}
 
     def extends_f(self, args):
         # if class extends another class
         if len(args) == 2:
-            return {'parent_class': args[1]['value']}
+            return {'scopes': [None], 'parent_class': args[1]['value']}
         # if class doesn't extend any class
         else:
-            return {'parent_class': None}
+            return {'scopes': [None], 'parent_class': None}
 
     def field_prime_f(self, args):
+        scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'fields': []}
+            return {'scopes': scopes, 'fields': []}
         else:
             fields = args[1]['fields']
             fields.append(args[0])
-            return {'fields': fields}
+            return {'scopes': scopes, 'fields': fields}
 
     def field_f(self, args):
-        return {'access_mode': args[0]['value'], 'declaration': args[1]}
+        scopes = get_scopes_of_children(args)
+        return {
+            'scopes': scopes,
+            'access_mode': args[0]['value'],
+            'declaration': args[1]
+        }
 
     def access_mode_private(self, args):
-        return {'value': 'private'}
+        return {'scopes': [None], 'value': 'private'}
 
     def access_mode_protected(self, args):
-        return {'value': 'private'}
+        return {'scopes': [None], 'value': 'private'}
 
     def access_mode_public(self, args):
-        return {'value': 'private'}
+        return {'scopes': [None], 'value': 'private'}
 
     def id_prime_f(self, args):
         if len(args) == 0:
-            return {'ids': []}
+            return {'scopes': [None], 'ids': []}
         else:
             ids = args[2]['ids']
             ids.append(args[1]['value'])
-            return {'ids': ids}
+            return {'scopes': [None], 'ids': ids}
 
     def constant_int_f(self, args):
-        return {'type': 'int', 'value': args[0]}
+        return {'scopes': [None], 'type': 'int', 'value': args[0]}
 
     def constant_double_f(self, args):
-        return {'type': 'double', 'value': args[0]}
+        return {'scopes': [None], 'type': 'double', 'value': args[0]}
 
     def constant_bool_f(self, args):
-        return {'type': 'bool', 'value': args[0]}
+        return {'scopes': [None], 'type': 'bool', 'value': args[0]}
 
     def constant_string_f(self, args):
-        return {'type': 'string', 'value': args[0]}
+        return {'scopes': [None], 'type': 'string', 'value': args[0]}
 
     def constant_null(self, args):
-        return {'type': 'null', 'value': None}
+        return {'scopes': [None], 'type': 'null', 'value': None}
 
     def identifier_f(self, args):
-        return {'value': args[0]}
+        return {'scopes': [None], 'value': args[0]}

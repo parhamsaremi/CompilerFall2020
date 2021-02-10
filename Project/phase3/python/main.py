@@ -70,7 +70,7 @@ def main(argv):
             | -> variable_decl_prime_f
         stmt_prime : stmt stmt_prime -> stmt_prime_f
             | -> stmt_prime_f
-        stmt : expr_prime ";" 
+        stmt : expr_prime ";"
             | if_stmt 
             | while_stmt 
             | for_stmt 
@@ -79,18 +79,18 @@ def main(argv):
             | return_stmt 
             | print_stmt 
             | stmt_block
-        if_stmt : "if" "(" expr ")" stmt else_prime    
-        else_prime: "else" stmt
-            |
+        if_stmt : "if" "(" expr ")" stmt else_prime -> if_stmt_f
+        else_prime: "else" stmt -> else_prime_f
+            | -> else_prime_f
         while_stmt : "while" "(" expr ")" stmt -> while_stmt_f
-        for_stmt : "for" "(" expr_prime ";" expr ";" expr_prime ")" stmt
-        return_stmt : "return" expr_prime ";"
-        expr_prime: expr 
-            |
-        break_stmt : "break" ";"
-        continue_stmt : "continue" ";"
-        print_stmt : "Print" "(" expr exprs ")" ";"
-        expr: assign
+        for_stmt : "for" "(" expr_prime ";" expr ";" expr_prime ")" stmt -> for_stmt_f
+        return_stmt : "return" expr_prime ";" -> return_stmt_f
+        expr_prime: expr -> expr_prime_f
+            | -> expr_prime_f
+        break_stmt : "break" ";" -> break_stmt_f
+        continue_stmt : "continue" ";" -> continue_stmt_f
+        print_stmt : "Print" "(" expr exprs ")" ";" -> print_stmt_f
+        expr: assign -> expr_f
         assign: l_value "=" assign
             | or
         or: or "||" and

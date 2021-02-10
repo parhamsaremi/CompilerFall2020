@@ -1,1 +1,1 @@
-OK 
+difference in line #1: file: out/t074-expr35.out -----> content: Syntax Error <> file: tests/t074-expr35.out -----> content: OK 
