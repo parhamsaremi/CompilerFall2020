@@ -91,23 +91,23 @@ def main(argv):
         continue_stmt : "continue" ";" -> continue_stmt_f
         print_stmt : "Print" "(" expr exprs ")" ";" -> print_stmt_f
         expr: assign -> expr_f
-        assign: l_value "=" assign
-            | or
-        or: or "||" and
-            | and
-        and: and "&&" eq_neq
-            | eq_neq
-        eq_neq: eq_neq EQUAL comp
-            | comp
-        comp: comp COMPARE add_sub
-            | add_sub
-        add_sub: add_sub AS mul_div_mod
-            | mul_div_mod
-        mul_div_mod: mul_div_mod MDM not_neg
-            | not_neg
-        not_neg: NN not_neg
-            | others
-        others: constant
+        assign: l_value "=" assign -> assign_f
+            | or -> assign_f
+        or: or "||" and -> or_f
+            | and -> or_f
+        and: and "&&" eq_neq -> and_f
+            | eq_neq -> and_f
+        eq_neq: eq_neq EQUAL comp -> eq_neq_f
+            | comp -> eq_neq_f
+        comp: comp COMPARE add_sub -> comp_f
+            | add_sub -> comp_f
+        add_sub: add_sub AS mul_div_mod -> add_sub_f
+            | mul_div_mod -> add_sub_f
+        mul_div_mod: mul_div_mod MDM not_neg -> mul_div_mod_f
+            | not_neg -> mul_div_mod_f
+        not_neg: NN not_neg -> not_neg_f
+            | others -> not_neg_f
+        others: constant 
             | "this"
             | l_value
             | call

@@ -402,6 +402,115 @@ class FirstTraverse(Transformer):
     def access_mode_public(self, args):
         return {'scopes': [None], 'value': 'private'}
 
+    def or_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'and_list': [args[0]]
+            }
+        else:
+            and_list = args[0]['and_list']
+            and_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {
+                'op_list': op_list,
+                'and_list': and_list
+            }
+
+    def and_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'eq_neq_list': [args[0]]
+            }
+        else:
+            eq_neq_list = args[0]['eq_neq_list']
+            eq_neq_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {
+                'op_list': op_list,
+                'eq_neq_list': eq_neq_list
+            }
+
+    def eq_neq_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'comp_list': [args[0]]
+            }
+        else:
+            comp_list = args[0]['comp_list']
+            comp_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {'comp_list': comp_list}
+
+    def comp_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'add_sub_list': [args[0]]
+            }
+        else:
+            add_sub_list = args[0]['add_sub_list']
+            add_sub_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {
+                'op_list': op_list,
+                'add_sub_list': add_sub_list
+            }
+
+    def add_sub_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'mul_div_mod_list': [args[0]]
+            }
+        else:
+            mul_div_mod_list = args[0]['mul_div_mod_list']
+            mul_div_mod_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {
+                'op_list': op_list,
+                'mul_div_mod_list': mul_div_mod_list
+            }
+
+    def mul_div_mod_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': [],
+                'not_neg_list': [args[0]]
+            }
+        else:
+            not_neg_list = args[0]['not_neg_list']
+            not_neg_list.append(args[1])
+            op_list = args[0]['op_list']
+            op_list.append(args[1].value)
+            return {
+                'op_list': op_list,
+                'not_neg_list': not_neg_list
+            }
+
+    def not_neg_f(self, args):
+        if len(args) == 1:
+            return {
+                'op_list': []
+                'others': args[0]
+            }
+        else:
+            op_list = args[1]['op_list']
+            op_list.append(args[0].value)
+            return {
+                'op_list': op_list,
+                'others': args[1]['others']
+            }
+
+    
+
     def id_prime_f(self, args):
         if len(args) == 0:
             return {'scopes': [None], 'ids': []}
