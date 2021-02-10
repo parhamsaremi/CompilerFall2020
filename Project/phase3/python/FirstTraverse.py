@@ -83,7 +83,9 @@ class FirstTraverse(Transformer):
             decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 if scope.does_decl_id_exist(decl['id']):
-                    raise SemErr(f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\'')
+                    raise SemErr(
+                        f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
+                    )
                 scope.decls[decl['id']] = decl
                 scope.children.append(decl['scope'])
                 decl['scope'].parent = scope
@@ -107,32 +109,24 @@ class FirstTraverse(Transformer):
             'variable_decls': args[0]['variable_decls'],
             'stmts': args[1]['stmts']
         }
-    
+
     def exprs_f(self, args):
         if len(args) == 0:
-            return {
-                'exprs': []
-            }
+            return {'exprs': []}
         else:
             exprs = args[0]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
-            return {
-                'exprs': exprs
-            }
+            return {'exprs': exprs}
 
     def actuals_f(self, args):
         if len(args) == 0:
-            return {
-                'exprs': []
-            }
+            return {'exprs': []}
         else:
             exprs = args[0]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
-            return {
-                'exprs': exprs
-            }
+            return {'exprs': exprs}
 
     def variable_f(self, args):
         return {'type': args[0], 'id': args[1]['value']}
@@ -146,10 +140,7 @@ class FirstTraverse(Transformer):
             return {'variables': variables_list}
 
     def while_stmt_f(self, args):
-        return {
-            'expr': args[0],
-            'stmt': args[1]
-        }
+        return {'expr': args[0], 'stmt': args[1]}
 
     def formals_f(self, args):
         if len(args) == 0:
@@ -186,15 +177,11 @@ class FirstTraverse(Transformer):
 
     def stmt_prime_f(self, args):
         if len(args) == 0:
-            return {
-                'stmts': []
-            }
+            return {'stmts': []}
         else:
             stmts = args[1]['stmts']
             stmts.append(args[0])
-            return {
-                'stmts': stmts
-            }
+            return {'stmts': stmts}
 
     def type_int_f(self, args):
         return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
