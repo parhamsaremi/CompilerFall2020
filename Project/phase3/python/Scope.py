@@ -10,5 +10,5 @@ class Scope:
         self.children = []
         self.decls= {}
 
-    def does_decl_id_exist(id: str):
+    def does_decl_id_exist(self, id: str):
         return self.decls.keys().__contains__(id)

@@ -76,13 +76,18 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, args):
-        # TODO function scope (it has bug now)
+        # TODO function scope _ complete its symbol table #
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         # if declared function returns type
         if len(args) == 4:
+            for variable in args[2]['variables']:
+                variable['decl_type'] = 'variable'
+                if scope.does_decl_id_exist(variable['id']):
+                    raise SemErr(f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\'')
+                scope.decls[variable['id']] = variable
             return {
                 'scopes': [scope],
                 'decl_type': 'function',
@@ -93,6 +98,11 @@ class FirstTraverse(Transformer):
             }
         # if declared function returns void
         else:
+            for variable in args[1]['variables']:
+                variable['decl_type'] = 'variable'
+                if scope.does_decl_id_exist(variable['id']):
+                    raise SemErr(f'duplicate id \'{variable["id"]}\' in formals of function \'{args[0]["value"]}\'')
+                scope.decls[variable['id']] = variable
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
                 'scopes': [scope],
@@ -109,6 +119,11 @@ class FirstTraverse(Transformer):
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
+        for prototype in args[1]['prototypes']:
+            # TODO is it an error?
+            if scope.does_decl_id_exist(prototype['id']):
+                raise SemErr(f'duplicate id for prototypes')
+            scope.decls[prototype['id']] = prototype
         return {
             'scopes': [scope],
             'id': args[0]['value'],
@@ -125,14 +140,13 @@ class FirstTraverse(Transformer):
             decl = field['declaration']
             decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
+                scope.decls[decl['id']] = decl
+                decl['scope'].parent = scope
+            elif decl['decl_type'] == 'variable':
                 if scope.does_decl_id_exist(decl['id']):
                     raise SemErr(
                         f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
                     )
-                scope.decls[decl['id']] = decl
-                # scope.children.append(decl['scope'])
-                decl['scope'].parent = scope
-            elif decl['decl_type'] == 'variable':
                 scope.decls[decl['id']] = decl
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
@@ -150,6 +164,10 @@ class FirstTraverse(Transformer):
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
+        for variable_decl in args[0]['variable_decls']:
+            if scope.does_decl_id_exist(variable_decl['id']):
+                raise SemErr(f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable')
+            scope.decls[variable_decl['id']] = variable_decl
         return {
             'scopes': [scope],
             'variable_decls': args[0]['variable_decls'],
@@ -279,6 +297,7 @@ class FirstTraverse(Transformer):
         if len(args) == 3:
             return {
                 'scopes': [None],
+                'decl_type': 'prototype',
                 'type': args[0],
                 'id': args[1]['value'],
                 'formals': args[3]['variables']
