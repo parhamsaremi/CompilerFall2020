@@ -159,7 +159,7 @@ class FirstTraverse(Transformer):
         }
 
     def stmt_block_f(self, args):
-        # TODO scope
+        # TODO scope 
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
