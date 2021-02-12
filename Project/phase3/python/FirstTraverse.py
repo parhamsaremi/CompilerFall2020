@@ -8,6 +8,11 @@ from SemanticError import SemanticError as SemErr
 # may need to change if_stmt in grammar
 # deleted wrong terminal rules, might need extra work
 
+int_space = 4
+double_space = 4
+bool_space = 4
+pointer_space = 4
+
 
 def get_scopes_of_children(args):
     res = []
@@ -33,10 +38,8 @@ def set_children_of_parent_scope(parent_scope: Scope, children_scopes: list):
 class FirstTraverse(Transformer):
     def __init__(self):
         super().__init__()
-        # self.symbol_table = SymbolTable.get_symbol_table()
 
     def program_f(self, args):
-        # TODO scope (more precisely global scope)
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
@@ -76,19 +79,24 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, args):
-        # TODO function scope _ complete its symbol table #
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         # if declared function returns type
         if len(args) == 4:
+            max_stack_used = args[3]['max_stack_used']
             for variable in args[2]['variables']:
                 variable['decl_type'] = 'variable'
                 if scope.does_decl_id_exist(variable['id']):
-                    raise SemErr(f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\'')
+                    raise SemErr(
+                        f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
+                    )
+                variable['stack_adrs'] = max_stack_used + 1
+                max_stack_used += 4
                 scope.decls[variable['id']] = variable
             return {
+                'max_stack_used': max_stack_used,
                 'scopes': [scope],
                 'decl_type': 'function',
                 'type': args[0],
@@ -98,13 +106,19 @@ class FirstTraverse(Transformer):
             }
         # if declared function returns void
         else:
+            max_stack_used = args[2]['max_stack_used']
             for variable in args[1]['variables']:
                 variable['decl_type'] = 'variable'
                 if scope.does_decl_id_exist(variable['id']):
-                    raise SemErr(f'duplicate id \'{variable["id"]}\' in formals of function \'{args[0]["value"]}\'')
+                    raise SemErr(
+                        f'duplicate id \'{variable["id"]}\' in formals of function \'{args[0]["value"]}\''
+                    )
+                variable['stack_adrs'] = max_stack_used + 1
+                max_stack_used += 4
                 scope.decls[variable['id']] = variable
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
+                'max_stack_used': max_stack_used,
                 'scopes': [scope],
                 'decl_type': 'function',
                 'type': type_,
@@ -114,13 +128,12 @@ class FirstTraverse(Transformer):
             }
 
     def interface_decl_f(self, args):
-        # TODO scope
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         for prototype in args[1]['prototypes']:
-            # TODO is it an error?
+            # TODO is it an error? (it seems it is)
             if scope.does_decl_id_exist(prototype['id']):
                 raise SemErr(f'duplicate id for prototypes')
             scope.decls[prototype['id']] = prototype
@@ -136,6 +149,8 @@ class FirstTraverse(Transformer):
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
+        decls = [field['declaration'] for field in fields]
+        max_stack_used_list = [decl['max_stack_used'] for decl in decls if decl['decl_type'] == 'function']
         for field in fields:
             decl = field['declaration']
             decl['access_mode'] = field_access_mode
@@ -151,6 +166,7 @@ class FirstTraverse(Transformer):
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
+            'max_stack_used': max(max_stack_used_list)
             'scopes': [scope],
             'id': args[0]['value'],
             'parent_class': args[1]['parent_class'],
@@ -159,16 +175,30 @@ class FirstTraverse(Transformer):
         }
 
     def stmt_block_f(self, args):
-        # TODO scope 
         scope = Scope()
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
+        max_stack_used = None
+        max_stack_used_list = [
+            stmt['max_stack_used'] for stmt in args[1]['stmt']
+        ]
+        if len(max_stack_used_list) == 0:
+            max_stack_used = 0
+        else:
+            max_stack_used = max(
+                [stmt['max_stack_used'] for stmt in args[1]['stmt']])
+        max_stack_used += 1
         for variable_decl in args[0]['variable_decls']:
             if scope.does_decl_id_exist(variable_decl['id']):
-                raise SemErr(f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable')
+                raise SemErr(
+                    f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable'
+                )
+            variable_decl['stack_adrs'] = max_stack_used
+            max_stack_used += 4
             scope.decls[variable_decl['id']] = variable_decl
         return {
+            'max_stack_used': max_stack_used,
             'scopes': [scope],
             'variable_decls': args[0]['variable_decls'],
             'stmts': args[1]['stmts']
@@ -182,15 +212,24 @@ class FirstTraverse(Transformer):
         scopes = get_scopes_of_children(args)
         res = args[0]
         res['scopes'] = scopes
+        res['max_stack_used'] = args[0]['max_stack_used']
         return res
 
     def stmt_stmt_block_f(self, args):
         scopes = get_scopes_of_children(args)
-        return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
+        return {
+            'max_stack_used': args[0]['max_stack_used'],
+            'scopes': scopes,
+            'stmt_type': 'stmt_block',
+            'stmt': args[0]
+        }
 
     def if_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
+        max_used_stack = max(args[1]['max_stack_used'],
+                             args[2]['max_stack_used'])
         return {
+            'max_stack_used': max_used_stack,
             'scopes': scopes,
             'stmt_type': 'if_else',
             'condition_expr': args[0],
@@ -201,9 +240,13 @@ class FirstTraverse(Transformer):
     def else_prime_f(self, args):
         scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'scopes': [None], 'stmt': None}
+            return {'max_stack_used': 0, 'scopes': [None], 'stmt': None}
         else:
-            return {'scopes': [None], 'stmt': args[0]}
+            return {
+                'max_stack_used': args[0]['max_stack_used'],
+                'scopes': [None],
+                'stmt': args[0]
+            }
 
     def expr_f(self, args):
         res = args[0]
@@ -259,8 +302,9 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'variables': []}
         else:
-            variables_list = args[2]['variables']
-            varialbes_list.append(args[1])
+            variables_list = args[1]
+            for variable in args[2]['variables']:
+                variables_list.append(variable)
             return {'scopes': [None], 'variables': variables_list}
 
     def while_stmt_f(self, args):
@@ -284,13 +328,22 @@ class FirstTraverse(Transformer):
         }
 
     def formals_f(self, args):
+        # NOTE stack adrs looks useless here because it has to recalculated in function_decl_f
         scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'scopes': [None], 'variables': []}
+            return {'max_stack_used': 0, 'scopes': [None], 'variables': []}
         else:
-            variables_list = args[1]['variables']
-            variables_list.append(args[0])
-            return {'scopes': [None], 'variables': variables_list}
+            max_stack_used = args[1]['max_stack_used']
+            variables_list = args[0]
+            for variable in args[1]['variables']:
+                variables_list.append(variable)
+            args[0]['stack_adrs'] = max_stack_used + 1
+            max_stack_used += 4
+            return {
+                'max_stack_used': max_stack_used,
+                'scopes': [None],
+                'variables': variables_list
+            }
 
     def prototype_f(self, args):
         # if prototype returns type
@@ -317,9 +370,10 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'prototypes': []}
         else:
-            prototypes = args[1]['prototypes']
-            prototypes.append(args[0])
-            return {'scopes': [None], 'prototype': prototypes}
+            prototypes = args[0]
+            for prototype in args[1]['prototypes']:
+                prototypes.append(prototype)
+            return {'scopes': [None], 'prototypes': prototypes}
 
     def call_f(self, args):
         # id()
@@ -353,8 +407,9 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'stmts': []}
         else:
-            stmts = args[1]['stmts']
-            stmts.append(args[0])
+            stmts = args[0]
+            for stmt in args[1]['stmts']:
+                stmts.append(stmt)
             return {'scopes': [None], 'stmts': stmts}
 
     def type_int_f(self, args):
@@ -409,8 +464,9 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'interfaces': None}
         else:
-            ids = args[2]['ids']
-            ids.append(args[1]['value'])
+            ids = args[0]['value']
+            for id in args[1]['ids']:
+                ids.append(id)
             return {'scopes': [None], 'interfaces': ids}
 
     def extends_f(self, args):
@@ -426,8 +482,9 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': scopes, 'fields': []}
         else:
-            fields = args[1]['fields']
-            fields.append(args[0])
+            fields = args[0]
+            for field in args[1]['fields']:
+                fields.append(field)
             return {'scopes': scopes, 'fields': fields}
 
     def field_f(self, args):
@@ -624,8 +681,9 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'ids': []}
         else:
-            ids = args[2]['ids']
-            ids.append(args[1]['value'])
+            ids = args[0]['value']
+            for id in args[1]['ids']:
+                ids.append(id)
             return {'scopes': [None], 'ids': ids}
 
     def constant_int_f(self, args):
