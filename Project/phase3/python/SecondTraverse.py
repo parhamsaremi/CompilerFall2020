@@ -250,7 +250,7 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variables': variables_list}
 
     def while_stmt_f(self, while_stmt):
-        start_label = get_label('loop')
+        start_label = get_label('start')
         end_label = get_label('end')
         self.code += f'{start_label}:'
         self.expr_f(while_stmt['condition_expr'])
@@ -261,17 +261,21 @@ class FirstTraverse(Transformer):
         self.code += f'j {start_label}'
         self.code += f'{end_label}:'
 
-    def for_stmt_f(self, args):
-        
-        # scopes = get_scopes_of_children(args)
-        # return {
-            # 'scopes': scopes,
-        #     'stmt_type': 'for',
-        #     'init_expr': args[0]['stmt'],
-        #     'condition_expr': args[1],
-        #     'step_expr': args[2],
-        #     'stmt': args[3]
-        # }
+    def for_stmt_f(self, for_stmt):
+        start_label = get_label('start')
+        end_label = get_label('end')
+        self.expr_f(for_stmt['init_expr'])
+        self.code += 'addi $sp, $sp, 4'  # NOTE to remove init_expr result from stack (is it correct?)
+        self.code += f'{start_label}:'
+        self.expr_f(for_stmt['condition_expr'])
+        self.code += 'lw $t0, 0($sp)'
+        self.code += 'addi $sp, $sp, 4'
+        self.code += f'beq $t0, $zero, {end_label}'
+        self.expr_f(for_stmt['step_expr'])
+        self.code += 'addi $sp, $sp, 4'
+        self.stmt_f(for_stmt['stmt'])
+        self.code += f'j {start_label}'
+        self.code += f'{end_label}:'
 
     def formals_f(self, args):
         scopes = get_scopes_of_children(args)
