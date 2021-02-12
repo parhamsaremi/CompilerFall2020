@@ -23,10 +23,13 @@ class FirstTraverse(Transformer):
     def __init__(self, ast):
         super().__init__()
         self.ast = ast
+        self.code = ''
         self.program_f(self.ast)
-        # self.symbol_table = SymbolTable.get_symbol_table()
+        return self.code
 
     def program_f(self, program):
+        Scope.current_scope_id = Scope.scope_count - 1
+        Scope.scope_stack.append(Scope.scope_dict[Scope.current_scope_id])
         for decl in program['decls']:
             self.decl_f(decl)
 
@@ -41,10 +44,11 @@ class FirstTraverse(Transformer):
     #         return {'scopes': scopes, 'decls': decls}
 
     def decl_f(self, decl):
+        # TODO complete if bodies below
         if decl['decl_type'] == 'variable':
             pass
         elif decl['decl_type'] == 'function':
-            pass
+            function_decl_f(decl)
         elif decl['decl_type'] == 'class':
             pass
         elif decl['decl_type'] == 'interface':

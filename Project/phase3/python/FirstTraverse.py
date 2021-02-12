@@ -150,7 +150,15 @@ class FirstTraverse(Transformer):
         set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
         decls = [field['declaration'] for field in fields]
-        max_stack_used_list = [decl['max_stack_used'] for decl in decls if decl['decl_type'] == 'function']
+        max_stack_used_list = [
+            decl['max_stack_used'] for decl in decls
+            if decl['decl_type'] == 'function'
+        ]
+        max_stack_used = None
+        if len(max_stack_used_list) == 0:
+            max_stack_used = 0
+        else:
+            max_stack_used = max(max_stack_used_list)
         for field in fields:
             decl = field['declaration']
             decl['access_mode'] = field_access_mode
@@ -166,7 +174,7 @@ class FirstTraverse(Transformer):
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
-            'max_stack_used': max(max_stack_used_list)
+            'max_stack_used': max_stack_used,
             'scopes': [scope],
             'id': args[0]['value'],
             'parent_class': args[1]['parent_class'],
@@ -181,13 +189,13 @@ class FirstTraverse(Transformer):
         set_children_of_parent_scope(scope, children_scopes)
         max_stack_used = None
         max_stack_used_list = [
-            stmt['max_stack_used'] for stmt in args[1]['stmt']
+            stmt['max_stack_used'] for stmt in args[1]['stmts']
         ]
         if len(max_stack_used_list) == 0:
             max_stack_used = 0
         else:
             max_stack_used = max(
-                [stmt['max_stack_used'] for stmt in args[1]['stmt']])
+                [stmt['max_stack_used'] for stmt in args[1]['stmts']])
         max_stack_used += 1
         for variable_decl in args[0]['variable_decls']:
             if scope.does_decl_id_exist(variable_decl['id']):
@@ -206,7 +214,12 @@ class FirstTraverse(Transformer):
 
     def stmt_expr_prime_f(self, args):
         scopes = get_scopes_of_children(args)
-        return {'scopes': scopes, 'stmt_type': 'expr_prime', 'stmt': args[0]}
+        return {
+            'max_stack_used': 0,
+            'scopes': scopes,
+            'stmt_type': 'expr_prime',
+            'stmt': args[0]
+        }
 
     def stmt_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -280,22 +293,22 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'exprs': exprs}
 
     def return_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'return'}
+        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return'}
 
     def break_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'break'}
+        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'break'}
 
     def continue_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'continue'}
-
-    def variable_f(self, args):
-        return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
+        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'continue'}
 
     def print_stmt_f(self, args):
         exprs = args[0]
         for expr in args[1]['exprs']:
             exprs.append(expr)
-        return {'scopes': [None], 'exprs': exprs}
+        return {'max_stack_used': 0, 'scopes': [None], 'exprs': exprs}
+
+    def variable_f(self, args):
+        return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
 
     def variable_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -310,6 +323,7 @@ class FirstTraverse(Transformer):
     def while_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
+            'max_stack_used': args[1]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'while',
             'condition_expr': args[0],
@@ -319,6 +333,7 @@ class FirstTraverse(Transformer):
     def for_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
+            'max_stack_used': args[3]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'for',
             'init_expr': args[0]['stmt'],
@@ -407,7 +422,7 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'stmts': []}
         else:
-            stmts = args[0]
+            stmts = [args[0]]
             for stmt in args[1]['stmts']:
                 stmts.append(stmt)
             return {'scopes': [None], 'stmts': stmts}
