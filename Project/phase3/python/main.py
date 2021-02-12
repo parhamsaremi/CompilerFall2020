@@ -3,17 +3,18 @@ from lark import Lark
 from FirstTraverse import FirstTraverse
 import traceback
 
+
 def main(argv):
     inputfile = ''
     outputfile = ''
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
-        print ('main.py -i <inputfile> -o <outputfile>')
+        print('main.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('test.py -i <inputfile> -o <outputfile>')
+            print('test.py -i <inputfile> -o <outputfile>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
@@ -163,13 +164,23 @@ def main(argv):
         %ignore WS
         """
 
-        # code = """
-        #     void main () {
-        #         id.id = 999;
-        #     }
-        # """
+        code = '''
+            void main () {
+                int a;
+                int b;
+                int c;
 
-        parser = Lark(grammar,start="program", transformer=FirstTraverse(),parser='lalr', debug=False)
+                c = a + b;
+
+                Print(c);
+            }
+        '''
+
+        parser = Lark(grammar,
+                      start="program",
+                      transformer=FirstTraverse(),
+                      parser='lalr',
+                      debug=False)
         # print(parser.parse(code))
         try:
             x = input_file.read()
@@ -184,6 +195,7 @@ def main(argv):
             output_file.write("Syntax Error")
         else:
             output_file.write("OK")
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

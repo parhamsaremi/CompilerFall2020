@@ -336,7 +336,7 @@ class FirstTraverse(Transformer):
             'max_stack_used': args[3]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'for',
-            'init_expr': args[0]['stmt'],
+            'init_expr': args[0], # NOTE changed args[0]['stmt'] to args[0]. maybe it's wrong.
             'condition_expr': args[1],
             'step_expr': args[2],
             'stmt': args[3]

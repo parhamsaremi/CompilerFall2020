@@ -48,7 +48,7 @@ class FirstTraverse(Transformer):
         if decl['decl_type'] == 'variable':
             pass
         elif decl['decl_type'] == 'function':
-            function_decl_f(decl)
+            self.function_decl_f(decl)
         elif decl['decl_type'] == 'class':
             pass
         elif decl['decl_type'] == 'interface':
@@ -67,47 +67,8 @@ class FirstTraverse(Transformer):
             variable_decls.append(args[1])
             return {'scopes': [None], 'variable_decls': variable_decls}
 
-    def function_decl_f(self, args):
-        # TODO function scope _ complete its symbol table #
-        scope = Scope()
-        children_scopes = get_scopes_of_children(args)
-        set_parent_of_children_scope(scope, children_scopes)
-        set_children_of_parent_scope(scope, children_scopes)
-        # if declared function returns type
-        if len(args) == 4:
-            for variable in args[2]['variables']:
-                variable['decl_type'] = 'variable'
-                if scope.does_decl_id_exist(variable['id']):
-                    raise SemErr(
-                        f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
-                    )
-                scope.decls[variable['id']] = variable
-            return {
-                'scopes': [scope],
-                'decl_type': 'function',
-                'type': args[0],
-                'id': args[1]['value'],
-                'formals': args[2]['variables'],
-                'stmt_block': args[3]
-            }
-        # if declared function returns void
-        else:
-            for variable in args[1]['variables']:
-                variable['decl_type'] = 'variable'
-                if scope.does_decl_id_exist(variable['id']):
-                    raise SemErr(
-                        f'duplicate id \'{variable["id"]}\' in formals of function \'{args[0]["value"]}\''
-                    )
-                scope.decls[variable['id']] = variable
-            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
-            return {
-                'scopes': [scope],
-                'decl_type': 'function',
-                'type': type_,
-                'id': args[0]['value'],
-                'formals': args[1]['variables'],
-                'stmt_block': args[2]
-            }
+    def function_decl_f(self, function_decl):
+        pass
 
     def interface_decl_f(self, args):
         # TODO scope
@@ -203,7 +164,7 @@ class FirstTraverse(Transformer):
         else:
             return {'scopes': [None], 'stmt': args[0]}
 
-    def expr_f(self, args):
+    def expr_f(self, expr):
         res = args[0]
         res['scopes'] = [None]
         return res
@@ -246,11 +207,38 @@ class FirstTraverse(Transformer):
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
 
-    def print_stmt_f(self, args):
-        exprs = args[0]
-        for expr in args[1]['exprs']:
-            exprs.append(expr)
-        return {'scopes': [None], 'exprs': exprs}
+    def print_stmt_f(self, print_stmt):
+        # TODO isn't implemeted by stack, fix it
+        for expr in print_stmt['exprs']:
+            expr_info = self.expr_f(expr)
+            type_ = expr_info['type']
+            if type_['is_arr']:
+                raise Exception('expr inside Print is string')
+            elif type_['type'] == 'Object':
+                raise Exception('expr inside Print is Object')
+            elif type['type'] == 'string':
+                self.code += 'lw $t0, 0($sp)'
+                self.code += 'li $v0, 4'
+                self.code += 'move $a0, $t0'
+                self.code += 'syscall'
+                self.code += 'addi $sp, $sp, 4'
+            elif type['type'] == 'int':
+                self.code += 'lw $t0, 0($sp)'
+                self.code += 'li $v0, 1'
+                self.code += 'move $a0, $t0'
+                self.code += 'syscall'
+                self.code += 'addi $sp, $sp, 4'
+            elif type['type'] == 'double':
+                # TODO
+                pass
+            elif type['type'] == 'bool':
+                self.code += 'lw $t0, 0($sp)'
+                self.code += 'li $v0, 1'
+                self.code += 'move $a0, $t0'
+                self.code += 'syscall'
+                self.code += 'addi $sp, $sp, 4'
+            else:
+                assert 1 == 2  # type wasn't in expected cases
 
     def variable_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -261,25 +249,29 @@ class FirstTraverse(Transformer):
             varialbes_list.append(args[1])
             return {'scopes': [None], 'variables': variables_list}
 
-    def while_stmt_f(self, args):
-        scopes = get_scopes_of_children(args)
-        return {
-            'scopes': scopes,
-            'stmt_type': 'while',
-            'condition_expr': args[0],
-            'stmt': args[1]
-        }
+    def while_stmt_f(self, while_stmt):
+        start_label = get_label('loop')
+        end_label = get_label('end')
+        self.code += f'{start_label}:'
+        self.expr_f(while_stmt['condition_expr'])
+        self.code += 'lw $t0, 0($sp)'
+        self.code += f'beq $t0, $zero, {end_label}'
+        # TODO I think i should add 4 to $sp, unless stmt_f does it itself
+        self.stmt_f(while_stmt['stmt'])
+        self.code += f'j {start_label}'
+        self.code += f'{end_label}:'
 
     def for_stmt_f(self, args):
-        scopes = get_scopes_of_children(args)
-        return {
-            'scopes': scopes,
-            'stmt_type': 'for',
-            'init_expr': args[0]['stmt'],
-            'condition_expr': args[1],
-            'step_expr': args[2],
-            'stmt': args[3]
-        }
+        
+        # scopes = get_scopes_of_children(args)
+        # return {
+            # 'scopes': scopes,
+        #     'stmt_type': 'for',
+        #     'init_expr': args[0]['stmt'],
+        #     'condition_expr': args[1],
+        #     'step_expr': args[2],
+        #     'stmt': args[3]
+        # }
 
     def formals_f(self, args):
         scopes = get_scopes_of_children(args)
