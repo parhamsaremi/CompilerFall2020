@@ -5,12 +5,14 @@ from Codegen import CG
 
 def main():
     code = """
-        int int int int
+        i * i + i * i
     """
     grammar = r"""
-        s: "int" s -> s_f
-            | -> s_f
-        INT: "int"
+        s: e "+" s -> s_f
+            | e -> s_f
+        e: INT "*" e -> e_f
+            | INT -> e_f
+        INT: "i"
         DELIM: /[ \r\t\n\f]/
         WS: (DELIM)+
         %ignore WS

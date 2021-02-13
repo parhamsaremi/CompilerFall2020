@@ -294,7 +294,12 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'exprs': exprs}
 
     def return_stmt_f(self, args):
-        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return', 'expr': args[0]}
+        return {
+            'max_stack_used': 0,
+            'scopes': [None],
+            'stmt_type': 'return',
+            'expr': args[0]
+        }
 
     def break_stmt_f(self, args):
         return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'break'}
@@ -337,7 +342,8 @@ class FirstTraverse(Transformer):
             'max_stack_used': args[3]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'for',
-            'init_expr': args[0], # NOTE changed args[0]['stmt'] to args[0]. maybe it's wrong.
+            'init_expr': args[
+                0],  # NOTE changed args[0]['stmt'] to args[0]. maybe it's wrong.
             'condition_expr': args[1],
             'step_expr': args[2],
             'stmt': args[3]

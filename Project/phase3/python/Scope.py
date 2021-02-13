@@ -1,6 +1,6 @@
 class Scope:
     scope_count = 0
-    current_scope_id = None
+    # current_scope_id = None
     scope_dict = {}
     scope_stack = []
 
@@ -14,6 +14,18 @@ class Scope:
 
     def does_decl_id_exist(self, id: str):
         return self.decls.keys().__contains__(id)
+
+    # @staticmethod
+    # def push_scope():
+    #     if Scope.current_scope_id is None:
+    #         Scope.current_scope_id = Scope.scope_count - 1
+    #     else:
+    #         Scope.current_scope_id -= 1
+    #     Scope.scope_stack.append(Scope.current_scope_id)
+
+    # @staticmethod
+    # def pop_scope():
+    #     Scope.scope_stack.pop()
 
     @staticmethod
     def get_decl_in_symbol_table(id: str):

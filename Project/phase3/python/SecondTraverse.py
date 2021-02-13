@@ -9,6 +9,7 @@ from Type import Type
 #   because a class name might be 'bool' for example and it causes a bug (these are reserved no need to check :) )
 # remember to pop 'assign' values from stack
 # how to handle output of void function, write in the stack or not?
+# remember to deal with scope stack
 
 cur_loop_start_label = None
 cur_loop_end_label = None
@@ -55,10 +56,13 @@ class SecondTraverse():
         return self.code
 
     def program_f(self, program):
-        Scope.current_scope_id = Scope.scope_count - 1
-        Scope.scope_stack.append(Scope.scope_dict[Scope.current_scope_id])
+        # Scope.current_scope_id = Scope.scope_count - 1
+        # Scope.scope_stack.append(Scope.scope_dict[Scope.current_scope_id])
+        cur_scope = program['scopes'][0]
+        Scope.scope_stack.append(cur_scope)
         for decl in program['decls']:
             self.decl_f(decl)
+        Scope.scope_stack.pop()
 
     def decl_f(self, decl):
         # TODO complete if bodies below
@@ -76,6 +80,7 @@ class SecondTraverse():
             assert 1 == 2  # decl_type wasn't in defined cases
 
     def variable_decl_f(self, args):
+        # TODO looks useless because it is predefined in stack and nothing more is needed
         pass
         # return {
         #     'scopes': [None],
@@ -85,70 +90,85 @@ class SecondTraverse():
         # }
 
     def function_decl_f(self, function_decl):
-        pass
+        cur_scope = function_decl['scopes'][0]
+        Scope.scope_stack.append(cur_scope)
+        # TODO
+        Scope.scope_stack.pop()
 
     def interface_decl_f(self, args):
-        # TODO scope
-        scope = Scope()
-        children_scopes = get_scopes_of_children(args)
-        set_parent_of_children_scope(scope, children_scopes)
-        set_children_of_parent_scope(scope, children_scopes)
-        for prototype in args[1]['prototypes']:
-            # TODO is it an error?
-            if scope.does_decl_id_exist(prototype['id']):
-                raise SemErr(f'duplicate id for prototypes')
-            scope.decls[prototype['id']] = prototype
-        return {
-            'scopes': [scope],
-            'id': args[0]['value'],
-            'prototypes': args[1]['prototypes']
-        }
+        # TODO looks useless 
+        pass
+        # scope = Scope()
+        # children_scopes = get_scopes_of_children(args)
+        # set_parent_of_children_scope(scope, children_scopes)
+        # set_children_of_parent_scope(scope, children_scopes)
+        # for prototype in args[1]['prototypes']:
+        #     # TODO is it an error?
+        #     if scope.does_decl_id_exist(prototype['id']):
+        #         raise SemErr(f'duplicate id for prototypes')
+        #     scope.decls[prototype['id']] = prototype
+        # return {
+        #     'scopes': [scope],
+        #     'id': args[0]['value'],
+        #     'prototypes': args[1]['prototypes']
+        # }
 
-    def class_decl_f(self, args):
-        scope = Scope()
-        children_scopes = get_scopes_of_children(args)
-        set_parent_of_children_scope(scope, children_scopes)
-        set_children_of_parent_scope(scope, children_scopes)
-        fields = args[3]['fields']
-        for field in fields:
-            decl = field['declaration']
-            decl['access_mode'] = field_access_mode
-            if decl['decl_type'] == 'function':
-                scope.decls[decl['id']] = decl
-                decl['scope'].parent = scope
-            elif decl['decl_type'] == 'variable':
-                if scope.does_decl_id_exist(decl['id']):
-                    raise SemErr(
-                        f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
-                    )
-                scope.decls[decl['id']] = decl
-            else:
-                assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
-        return {
-            'scopes': [scope],
-            'id': args[0]['value'],
-            'parent_class': args[1]['parent_class'],
-            'interfaces': args[2]['interfaces'],
-            'fields': args[3]['fields']
-        }
+    def class_decl_f(self, class_decl):
+        cur_scope = class_decl['scopes'][0]
+        Scope.scope_stack.append(cur_scope)
+        # TODO
+        Scope.scope_stack.pop()
+        # scope = Scope()
+        # children_scopes = get_scopes_of_children(args)
+        # set_parent_of_children_scope(scope, children_scopes)
+        # set_children_of_parent_scope(scope, children_scopes)
+        # fields = args[3]['fields']
+        # for field in fields:
+        #     decl = field['declaration']
+        #     decl['access_mode'] = field_access_mode
+        #     if decl['decl_type'] == 'function':
+        #         scope.decls[decl['id']] = decl
+        #         decl['scope'].parent = scope
+        #     elif decl['decl_type'] == 'variable':
+        #         if scope.does_decl_id_exist(decl['id']):
+        #             raise SemErr(
+        #                 f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
+        #             )
+        #         scope.decls[decl['id']] = decl
+        #     else:
+        #         assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
+        # return {
+        #     'scopes': [scope],
+        #     'id': args[0]['value'],
+        #     'parent_class': args[1]['parent_class'],
+        #     'interfaces': args[2]['interfaces'],
+        #     'fields': args[3]['fields']
+        # }
 
-    def stmt_block_f(self, args):
-        # TODO scope
-        scope = Scope()
-        children_scopes = get_scopes_of_children(args)
-        set_parent_of_children_scope(scope, children_scopes)
-        set_children_of_parent_scope(scope, children_scopes)
-        for variable_decl in args[0]['variable_decls']:
-            if scope.does_decl_id_exist(variable_decl['id']):
-                raise SemErr(
-                    f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable'
-                )
-            scope.decls[variable_decl['id']] = variable_decl
-        return {
-            'scopes': [scope],
-            'variable_decls': args[0]['variable_decls'],
-            'stmts': args[1]['stmts']
-        }
+    def stmt_block_f(self, stmt_block):
+        # TODO any thing more?
+        cur_scope = stmt_block['scopes'][0]
+        Scope.scope_stack.append(cur_scope)
+        for variable_decl in stmt_block['variable_decls']:
+            self.variable_decl_f(variable_decl)
+        for stmt in stmt_block['stmts']:
+            self.stmt_f(stmt)
+        Scope.scope_stack.pop()
+        # scope = Scope()
+        # children_scopes = get_scopes_of_children(args)
+        # set_parent_of_children_scope(scope, children_scopes)
+        # set_children_of_parent_scope(scope, children_scopes)
+        # for variable_decl in args[0]['variable_decls']:
+        #     if scope.does_decl_id_exist(variable_decl['id']):
+        #         raise SemErr(
+        #             f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable'
+        #         )
+        #     scope.decls[variable_decl['id']] = variable_decl
+        # return {
+        #     'scopes': [scope],
+        #     'variable_decls': args[0]['variable_decls'],
+        #     'stmts': args[1]['stmts']
+        # }
 
     def stmt_expr_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -192,29 +212,15 @@ class SecondTraverse():
         self.code += f'beq $t0, $zero, {cond_false_label}\n'
         self.stmt_f(if_stmt['if_stmt'])
         self.code += f'j {end_label}\n'
-        self.code += f'{cond_false_label}:'
+        self.code += f'{cond_false_label}:\n
         if if_stmt['else_stmt'] is not None:
             self.stmt_f(if_stmt['else_stmt'])
         self.code += f'{end_label}:\n'
-
-    # def else_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'stmt': None}
-    #     else:
-    #         return {'scopes': [None], 'stmt': args[0]}
 
     def expr_f(self, expr):
         res = args[0]
         res['scopes'] = [None]
         return res
-
-    # def expr_prime_f(self, args):
-    #     # TODO check it
-    #     if len(args) == 0:
-    #         return None
-    #     else:
-    #         return args[0]
 
     def exprs_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -239,7 +245,6 @@ class SecondTraverse():
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
 
     def print_stmt_f(self, print_stmt):
-        # TODO isn't implemeted by stack, fix it
         for expr in print_stmt['exprs']:
             expr_info = self.expr_f(expr)
             type_ = expr_info['type']
@@ -269,7 +274,7 @@ class SecondTraverse():
                 self.code += 'syscall'
                 self.code += 'addi $sp, $sp, 4'
             else:
-                assert 1 == 2  # type wasn't in expected cases
+                assert 1 == 2  # type wasn't correct
 
     def while_stmt_f(self, while_stmt):
         global cur_loop_start_label, cur_loop_end_label
@@ -281,7 +286,7 @@ class SecondTraverse():
         self.expr_f(while_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)'
         self.code += f'beq $t0, $zero, {end_label}'
-        # TODO I think I should add 4 to $sp, unless stmt_f does it itself
+        # TODO I think I should add 4 to $sp, unless stmt_f does it itself (it seems it does)
         self.stmt_f(while_stmt['stmt'])
         self.code += f'j {start_label}'
         self.code += f'{end_label}:'
@@ -293,7 +298,7 @@ class SecondTraverse():
         cur_loop_start_label = start_label
         cur_loop_end_label = end_label
         self.expr_f(for_stmt['init_expr'])
-        self.code += 'addi $sp, $sp, 4'  # NOTE to remove init_expr result from stack (is it correct?)
+        self.code += 'addi $sp, $sp, 4'  # NOTE to remove init_expr result from stack (is it correct?) (looks it is)
         self.code += f'{start_label}:'
         self.expr_f(for_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)'
