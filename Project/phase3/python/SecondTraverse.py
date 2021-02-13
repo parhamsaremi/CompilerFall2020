@@ -17,6 +17,7 @@ count_label = 0
 
 
 def get_label(prefix=''):
+    global count_label
     label = ''
     if prefix == '':
         label = f'label{count_label}'
@@ -29,10 +30,11 @@ def get_label(prefix=''):
 
 str_const_count = 0
 runtime_error_msg = None
-end_label = None
+program_end_label = None
 
 
 def add_str_const_to_data_sec(string: str):
+    global str_const_count
     label = f'str_const{str_const_count}'
     self.data_sec += f'{label}:  .asciiz "{string}"\n'
     str_const_count += 1
@@ -41,12 +43,13 @@ def add_str_const_to_data_sec(string: str):
 
 class SecondTraverse():
     def __init__(self, ast):
+        global runtime_error_msg, program_end_label
         self.ast = ast
-        end_label = get_label('end_or_program')
+        program_end_label = get_label('end_of_program')
         self.data_sec = ''
         runtime_error_msg = add_str_const_to_data_sec('Runtime Error')
         self.code = ''
-        self.code += f'{end_label}:'
+        self.code += f'{program_end_label}:'
         self.program_f(self.ast)
         # TODO concat self.code and self.data_sec (and maybe other parts)
         return self.code
@@ -56,16 +59,6 @@ class SecondTraverse():
         Scope.scope_stack.append(Scope.scope_dict[Scope.current_scope_id])
         for decl in program['decls']:
             self.decl_f(decl)
-
-    # def decl_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     if len(args) == 0:
-    #         return {'scopes': scopes, 'decls': []}
-    #     else:
-    #         decls = [args[0]]
-    #         for decl in args[1]['decls']:
-    #             decls.append(decl)
-    #         return {'scopes': scopes, 'decls': decls}
 
     def decl_f(self, decl):
         # TODO complete if bodies below
@@ -90,14 +83,6 @@ class SecondTraverse():
         #     'type': args[0]['type'],
         #     'id': args[0]['id']
         # }
-
-    # def variable_decl_prime_f(self, args):
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'variable_decls': []}
-    #     else:
-    #         variable_decls = args[0]['variable_decls']
-    #         variable_decls.append(args[1])
-    #         return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, function_decl):
         pass
@@ -286,16 +271,8 @@ class SecondTraverse():
             else:
                 assert 1 == 2  # type wasn't in expected cases
 
-    # def variable_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'variables': []}
-    #     else:
-    #         variables_list = args[2]['variables']
-    #         varialbes_list.append(args[1])
-    #         return {'scopes': [None], 'variables': variables_list}
-
     def while_stmt_f(self, while_stmt):
+        global cur_loop_start_label, cur_loop_end_label
         start_label = get_label('start')
         end_label = get_label('end')
         cur_loop_start_label = start_label
@@ -310,6 +287,7 @@ class SecondTraverse():
         self.code += f'{end_label}:'
 
     def for_stmt_f(self, for_stmt):
+        global cur_loop_start_label, cur_loop_end_label
         start_label = get_label('start')
         end_label = get_label('end')
         cur_loop_start_label = start_label
@@ -376,15 +354,6 @@ class SecondTraverse():
         #         'formals': args[3]['variables']
         #     }
 
-    # def prototype_prime_f(self, args):
-    #     # TODO does prototype have scope
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'prototypes': []}
-    #     else:
-    #         prototypes = args[1]['prototypes']
-    #         prototypes.append(args[0])
-    #         return {'scopes': [None], 'prototype': prototypes}
-
     def call_f(self, args):
         # id()
         if len(args) == 2:
@@ -412,63 +381,6 @@ class SecondTraverse():
             'index': args[1]
         }
 
-    # def stmt_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'stmts': []}
-    #     else:
-    #         stmts = args[1]['stmts']
-    #         stmts.append(args[0])
-    #         return {'scopes': [None], 'stmts': stmts}
-
-    # def type_int_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': False,
-    #         'type': 'int',
-    #         'class': 'Primitive'
-    #     }
-
-    # def type_double_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': False,
-    #         'type': 'double',
-    #         'class': 'Primitive'
-    #     }
-
-    # def type_bool_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': False,
-    #         'type': 'bool',
-    #         'class': 'Primitive'
-    #     }
-
-    # def type_string_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': False,
-    #         'type': 'string',
-    #         'class': 'Primitive'
-    #     }
-
-    # def type_id_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': False,
-    #         'type': 'Object',
-    #         'class': args[0]['value']
-    #     }
-
-    # def type_arr_f(self, args):
-    #     return {
-    #         'scopes': [None],
-    #         'is_arr': True,
-    #         'type': args[0]['type'],
-    #         'class': args[0]['class']
-    #     }
-
     def implements_f(self, args):
         # TODO looks useless
         pass
@@ -489,15 +401,6 @@ class SecondTraverse():
         # else:
         #     return {'scopes': [None], 'parent_class': None}
 
-    # def field_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     if len(args) == 0:
-    #         return {'scopes': scopes, 'fields': []}
-    #     else:
-    #         fields = args[1]['fields']
-    #         fields.append(args[0])
-    #         return {'scopes': scopes, 'fields': fields}
-
     def field_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
@@ -505,15 +408,6 @@ class SecondTraverse():
             'access_mode': args[0]['value'],
             'declaration': args[1]
         }
-
-    # def access_mode_private(self, args):
-    #     return {'scopes': [None], 'value': 'private'}
-
-    # def access_mode_protected(self, args):
-    #     return {'scopes': [None], 'value': 'private'}
-
-    # def access_mode_public(self, args):
-    #     return {'scopes': [None], 'value': 'private'}
 
     def assign_f(self, args):
         if len(args) == 1:
@@ -834,61 +728,6 @@ class SecondTraverse():
             pass
         else:
             assert 1 == 2
-
-    # def others_constant_f(self, args):
-    #     res = args[0]
-    #     res['expr_type'] = 'constant'
-    #     return res
-
-    # def others_this_f(self, args):
-    #     return {'expr_type': 'this'}
-
-    # def others_lvalue_f(self, args):
-    #     res = args[0]
-    #     res['expr_type'] = 'lvalue'
-    #     return res
-
-    # def others_call_f(self, args):
-    #     res = args[0]
-    #     res['expr_type'] = 'call'
-    #     return res
-
-    # def others_p_expr_p_f(self, args):
-    #     res = args[0]
-    #     res['expr_type'] = '(expr)'
-    #     return res
-
-    # def others_read_int_f(self, args):
-    #     return {'expr_type': 'read_int'}
-
-    # def others_read_line_f(self, args):
-    #     return {'expr_type': 'read_line'}
-
-    # def others_new_id_f(self, args):
-    #     return {'expr_type': 'new_id', 'id': args[0]['value']}
-
-    # def others_new_arr_f(self, args):
-    #     return {'expr_type': 'new_arr', 'size': args[0], 'type': args[1]}
-
-    # def others_itod_f(self, args):
-    #     return {'expr_type': 'itod', 'expr': args[0]}
-
-    # def others_dtoi_f(self, args):
-    #     return {'expr_type': 'dtoi', 'expr': args[0]}
-
-    # def others_itob_f(self, args):
-    #     return {'expr_type': 'itob', 'expr': args[0]}
-
-    # def others_btoi_f(self, args):
-    #     return {'expr_type': 'btoi', 'expr': args[0]}
-
-    # def id_prime_f(self, args):
-    #     if len(args) == 0:
-    #         return {'scopes': [None], 'ids': []}
-    #     else:
-    #         ids = args[2]['ids']
-    #         ids.append(args[1]['value'])
-    #         return {'scopes': [None], 'ids': ids}
 
     def constant_int_f(self, constant_int):
         self.code += 'addi $sp, $sp, -4'

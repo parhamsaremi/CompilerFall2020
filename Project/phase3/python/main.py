@@ -1,6 +1,9 @@
 import sys, getopt
 from lark import Lark
+# import FirstTraverse as _ft
 from FirstTraverse import FirstTraverse
+# import SecondTraverse as _st
+from SecondTraverse import SecondTraverse
 import traceback
 
 
@@ -164,16 +167,7 @@ def main(argv):
         %ignore WS
         """
 
-        # code = '''
-        #     void main () {
-        #         int a;
-        #         int b;
-        #         int c;
-        #         c = a + b;
-        #         Print(c);
-        #     }
-        # '''
-
+        first_traverse_dict = None
         parser = Lark(grammar,
                       start="program",
                       transformer=FirstTraverse(),
@@ -183,18 +177,25 @@ def main(argv):
         try:
             x = input_file.read()
             print(x)
-            print(parser.parse(x))
-            # parser.parse(x)
+            # print(parser.parse(x))
+            first_traverse_dict = parser.parse(x)
         except Exception as e:
             traceback.print_exc()
             has_error = True
-    with open("out/" + outputfile, "w") as output_file:
+    with open('out/' + outputfile, 'w') as output_file:
         if has_error:
-            output_file.write("Syntax Error")
+            output_file.write('Syntax Error')
         else:
-            output_file.write("OK")
+            second_traverse = None
+            try:
+                second_traverse = SecondTraverse(first_traverse_dict)
+                output_file.write(second_traverse.code)
+                print('-------------------------')
+                print(second_traverse.code)
+                print('-------------------------')
+            except Exception as e:
+                traceback.print_exc()
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    # main(None)
