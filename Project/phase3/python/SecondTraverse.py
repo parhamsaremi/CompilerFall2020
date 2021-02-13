@@ -19,11 +19,22 @@ def get_label(prefix=''):
     return label
 
 
+str_const_count = 0
+
+
+def add_str_const_to_data_sec(string: str):
+    label = f'str_const{str_const_count}'
+    self.data_sec += f'{label}:  .asciiz "{string}"'
+    str_const_count += 1
+    return label
+
+
 class FirstTraverse(Transformer):
     def __init__(self, ast):
         super().__init__()
         self.ast = ast
         self.code = ''
+        self.data_sec = ''
         self.program_f(self.ast)
         return self.code
 
@@ -256,7 +267,7 @@ class FirstTraverse(Transformer):
         self.expr_f(while_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)'
         self.code += f'beq $t0, $zero, {end_label}'
-        # TODO I think i should add 4 to $sp, unless stmt_f does it itself
+        # TODO I think I should add 4 to $sp, unless stmt_f does it itself
         self.stmt_f(while_stmt['stmt'])
         self.code += f'j {start_label}'
         self.code += f'{end_label}:'
@@ -622,20 +633,46 @@ class FirstTraverse(Transformer):
             ids.append(args[1]['value'])
             return {'scopes': [None], 'ids': ids}
 
-    def constant_int_f(self, args):
-        return {'scopes': [None], 'type': 'int', 'value': args[0]}
+    def constant_int_f(self, constant_int):
+        self.code += 'addi $sp, $sp, -4'
+        self.code += f'move $t0, {constant_int["value"]}'
+        self.code += 'sw $t0, 0($sp)'
+        return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+        # return {'scopes': [None], 'type': 'int', 'value': args[0]}
 
     def constant_double_f(self, args):
-        return {'scopes': [None], 'type': 'double', 'value': args[0]}
+        # TODO
+        pass
+        # return {'scopes': [None], 'type': 'double', 'value': args[0]}
 
-    def constant_bool_f(self, args):
-        return {'scopes': [None], 'type': 'bool', 'value': args[0]}
+    def constant_bool_f(self, constant_bool):
+        self.code += 'addi $sp, $sp, -4'
+        if constant_bool['value']:
+            self.code += 'addi $t0, $zero, 1'
+        else:
+            self.code += 'move $t0, $zero'
+        self.code += 'sw $t0, 0($sp)'
+        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        # return {'scopes': [None], 'type': 'bool', 'value': args[0]}
 
-    def constant_string_f(self, args):
-        return {'scopes': [None], 'type': 'string', 'value': args[0]}
+    def constant_string_f(self, constant_string):
+        self.code += 'addi $sp, $sp, -4'
+        label = add_str_const_to_data_sec(constant_string['value'])
+        self.code += f'la $t0, {label}'
+        self.code += 'sw $t0, 0($sp)'
+        return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
+        # return {'scopes': [None], 'type': 'string', 'value': args[0]}
 
     def constant_null_f(self, args):
-        return {'scopes': [None], 'type': 'null', 'value': None}
+        self.code += 'addi $sp, $sp, -4'
+        return {'is_arr': False, 'type': 'null', 'class': 'Primitive'}
+        # return {'scopes': [None], 'type': 'null', 'value': None}
 
-    def identifier_f(self, args):
-        return {'scopes': [None], 'value': args[0]}
+    def identifier_f(self, identifier):
+        decl = Scope.get_decl_with_id(identifier['value'])
+        fp_offset = Scope.get_fp_offset_of_variable(identifier['value'])
+        self.code += 'addi $sp, $sp, -4'
+        self.code += f'lw $t0, {str(fp_offset)}($fp)'
+        self.code += 'sw $t0, 0($sp)'
+        return decl['type']
+        # return {'scopes': [None], 'value': args[0]}
