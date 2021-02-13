@@ -2,10 +2,16 @@ from lark import Transformer
 from SymbolTable import SymbolTable
 from Scope import Scope
 from SemanticError import SemanticError as SemErr
+from Type import Type
 
 # TODO:
 # check every thing during type checking, not just types,
-#   because a class name might be 'bool' for example and it causes a bug
+#   because a class name might be 'bool' for example and it causes a bug (these are reserved no need to check :) )
+# remember to pop 'assign' values from stack
+# how to handle output of void function, write in the stack or not?
+
+cur_loop_start_label = None
+cur_loop_end_label = None
 
 count_label = 0
 
@@ -22,61 +28,25 @@ def get_label(prefix=''):
 
 
 str_const_count = 0
+runtime_error_msg = None
+end_label = None
 
 
 def add_str_const_to_data_sec(string: str):
     label = f'str_const{str_const_count}'
-    self.data_sec += f'{label}:  .asciiz "{string}"'
+    self.data_sec += f'{label}:  .asciiz "{string}"\n'
     str_const_count += 1
     return label
-
-
-class Type:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def is_bool(type: dict):
-        if type['class'] == 'Primitive' and type['type'] == 'bool':
-            return True
-        return False
-
-    @staticmethod
-    def is_int(type: dict):
-        if type['class'] == 'Primitive' and type['type'] == 'int':
-            return True
-        return False
-
-    @staticmethod
-    def is_double(type: dict):
-        if type['class'] == 'Primitive' and type['type'] == 'double':
-            return True
-        return False
-
-    @staticmethod
-    def is_string(type: dict):
-        if type['class'] == 'Primitive' and type['type'] == 'string':
-            return True
-        return False
-
-    @staticmethod
-    def is_object(type: dict):
-        if type['type'] == 'Object':
-            return True
-        return False
-
-    @staticmethod
-    def is_arr(type: dict):
-        if type['is_arr']:
-            return True
-        return False
 
 
 class SecondTraverse():
     def __init__(self, ast):
         self.ast = ast
-        self.code = ''
+        end_label = get_label('end_or_program')
         self.data_sec = ''
+        runtime_error_msg = add_str_const_to_data_sec('Runtime Error')
+        self.code = ''
+        self.code += f'{end_label}:'
         self.program_f(self.ast)
         # TODO concat self.code and self.data_sec (and maybe other parts)
         return self.code
@@ -114,14 +84,20 @@ class SecondTraverse():
 
     def variable_decl_f(self, args):
         pass
+        # return {
+        #     'scopes': [None],
+        #     'decl_type': 'variable',
+        #     'type': args[0]['type'],
+        #     'id': args[0]['id']
+        # }
 
-    def variable_decl_prime_f(self, args):
-        if len(args) == 0:
-            return {'scopes': [None], 'variable_decls': []}
-        else:
-            variable_decls = args[0]['variable_decls']
-            variable_decls.append(args[1])
-            return {'scopes': [None], 'variable_decls': variable_decls}
+    # def variable_decl_prime_f(self, args):
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'variable_decls': []}
+    #     else:
+    #         variable_decls = args[0]['variable_decls']
+    #         variable_decls.append(args[1])
+    #         return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, function_decl):
         pass
@@ -193,44 +169,67 @@ class SecondTraverse():
         scopes = get_scopes_of_children(args)
         return {'scopes': scopes, 'stmt_type': 'expr_prime', 'stmt': args[0]}
 
-    def stmt_f(self, args):
-        scopes = get_scopes_of_children(args)
-        res = args[0]
-        res['scopes'] = scopes
-        return res
+    def stmt_f(self, stmt):
+        if stmt['stmt_type'] == 'for_stmt':
+            self.for_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'while_stmt':
+            self.while_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'if_stmt':
+            self.if_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'print_stmt':
+            self.print_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'return':
+            self.return_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'break':
+            self.break_stmt_f(stmt)
+        elif stmt['stmt_type'] == 'continue':
+            self.continue_stmt_f(stmt)
+        else:
+            assert 1 == 2
+        # scopes = get_scopes_of_children(args)
+        # res = args[0]
+        # res['scopes'] = scopes
+        # return res
 
     def stmt_stmt_block_f(self, args):
         scopes = get_scopes_of_children(args)
         return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
 
-    def if_stmt_f(self, args):
-        scopes = get_scopes_of_children(args)
-        return {
-            'scopes': scopes,
-            'stmt_type': 'if_else',
-            'condition_expr': args[0],
-            'if_stmt': args[1],
-            'else_stmt': args[2]['stmt']
-        }
+    def if_stmt_f(self, if_stmt):
+        cond_false_label = get_label('cond_false')
+        end_label = get_label('end_label')
+        expr = self.expr_f(if_stmt['condition_expr'])
+        # NOTE condition expr must be bool
+        if not Type.is_bool(expr):
+            raise SemErr('condition expr is not boolean')
+        self.code += 'move $t0, 0($sp)\n'
+        self.code += 'addi $sp, $sp, 4\n'
+        self.code += f'beq $t0, $zero, {cond_false_label}\n'
+        self.stmt_f(if_stmt['if_stmt'])
+        self.code += f'j {end_label}\n'
+        self.code += f'{cond_false_label}:'
+        if if_stmt['else_stmt'] is not None:
+            self.stmt_f(if_stmt['else_stmt'])
+        self.code += f'{end_label}:\n'
 
-    def else_prime_f(self, args):
-        scopes = get_scopes_of_children(args)
-        if len(args) == 0:
-            return {'scopes': [None], 'stmt': None}
-        else:
-            return {'scopes': [None], 'stmt': args[0]}
+    # def else_prime_f(self, args):
+    #     scopes = get_scopes_of_children(args)
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'stmt': None}
+    #     else:
+    #         return {'scopes': [None], 'stmt': args[0]}
 
     def expr_f(self, expr):
         res = args[0]
         res['scopes'] = [None]
         return res
 
-    def expr_prime_f(self, args):
-        # TODO check it
-        if len(args) == 0:
-            return None
-        else:
-            return args[0]
+    # def expr_prime_f(self, args):
+    #     # TODO check it
+    #     if len(args) == 0:
+    #         return None
+    #     else:
+    #         return args[0]
 
     def exprs_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -251,15 +250,6 @@ class SecondTraverse():
                 exprs.append(expr)
             return {'scopes': [None], 'exprs': exprs}
 
-    def return_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'return'}
-
-    def break_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'break'}
-
-    def continue_stmt_f(self, args):
-        return {'scopes': [None], 'stmt_type': 'continue'}
-
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
 
@@ -268,26 +258,26 @@ class SecondTraverse():
         for expr in print_stmt['exprs']:
             expr_info = self.expr_f(expr)
             type_ = expr_info['type']
-            if type_['is_arr']:
+            if Type.is_arr(type_):
                 raise Exception('expr inside Print is string')
-            elif type_['type'] == 'Object':
+            elif Type.is_object(type_):
                 raise Exception('expr inside Print is Object')
-            elif type['type'] == 'string':
+            elif Type.is_string(type_):
                 self.code += 'lw $t0, 0($sp)'
                 self.code += 'li $v0, 4'
                 self.code += 'move $a0, $t0'
                 self.code += 'syscall'
                 self.code += 'addi $sp, $sp, 4'
-            elif type['type'] == 'int':
+            elif Type.is_int(type_):
                 self.code += 'lw $t0, 0($sp)'
                 self.code += 'li $v0, 1'
                 self.code += 'move $a0, $t0'
                 self.code += 'syscall'
                 self.code += 'addi $sp, $sp, 4'
-            elif type['type'] == 'double':
+            elif Type.is_double(type_):
                 # TODO
                 pass
-            elif type['type'] == 'bool':
+            elif Type.is_bool(type_):
                 self.code += 'lw $t0, 0($sp)'
                 self.code += 'li $v0, 1'
                 self.code += 'move $a0, $t0'
@@ -308,6 +298,8 @@ class SecondTraverse():
     def while_stmt_f(self, while_stmt):
         start_label = get_label('start')
         end_label = get_label('end')
+        cur_loop_start_label = start_label
+        cur_loop_end_label = end_label
         self.code += f'{start_label}:'
         self.expr_f(while_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)'
@@ -320,6 +312,8 @@ class SecondTraverse():
     def for_stmt_f(self, for_stmt):
         start_label = get_label('start')
         end_label = get_label('end')
+        cur_loop_start_label = start_label
+        cur_loop_end_label = end_label
         self.expr_f(for_stmt['init_expr'])
         self.code += 'addi $sp, $sp, 4'  # NOTE to remove init_expr result from stack (is it correct?)
         self.code += f'{start_label}:'
@@ -333,14 +327,32 @@ class SecondTraverse():
         self.code += f'j {start_label}'
         self.code += f'{end_label}:'
 
-    def formals_f(self, args):
-        scopes = get_scopes_of_children(args)
-        if len(args) == 0:
-            return {'scopes': [None], 'variables': []}
+    def return_stmt_f(self, return_stmt):
+        # TODO check type of return
+        if return_stmt['expr'] is None:
+            self.code += 'jr $ra\n'
         else:
-            variables_list = args[1]['variables']
-            variables_list.append(args[0])
-            return {'scopes': [None], 'variables': variables_list}
+            self.code += 'lw $t0, 0($sp)\n'
+            self.code += 'addi $sp, $sp, 4\n'
+            self.code += 'move $v0, $t0\n'
+            self.code += 'jr $ra\n'
+
+    def break_stmt_f(self, break_stmt):
+        self.code += f'j {cur_loop_end_label}\n'
+
+    def continue_stmt_f(self, continue_stmt):
+        self.code += f'j {cur_loop_start_label}\n'
+
+    def formals_f(self, args):
+        # TODO look useless
+        pass
+        # scopes = get_scopes_of_children(args)
+        # if len(args) == 0:
+        #     return {'scopes': [None], 'variables': []}
+        # else:
+        #     variables_list = args[1]['variables']
+        #     variables_list.append(args[0])
+        #     return {'scopes': [None], 'variables': variables_list}
 
     def prototype_f(self, args):
         # TODO looks useless
@@ -477,14 +489,14 @@ class SecondTraverse():
         # else:
         #     return {'scopes': [None], 'parent_class': None}
 
-    def field_prime_f(self, args):
-        scopes = get_scopes_of_children(args)
-        if len(args) == 0:
-            return {'scopes': scopes, 'fields': []}
-        else:
-            fields = args[1]['fields']
-            fields.append(args[0])
-            return {'scopes': scopes, 'fields': fields}
+    # def field_prime_f(self, args):
+    #     scopes = get_scopes_of_children(args)
+    #     if len(args) == 0:
+    #         return {'scopes': scopes, 'fields': []}
+    #     else:
+    #         fields = args[1]['fields']
+    #         fields.append(args[0])
+    #         return {'scopes': scopes, 'fields': fields}
 
     def field_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -494,14 +506,14 @@ class SecondTraverse():
             'declaration': args[1]
         }
 
-    def access_mode_private(self, args):
-        return {'scopes': [None], 'value': 'private'}
+    # def access_mode_private(self, args):
+    #     return {'scopes': [None], 'value': 'private'}
 
-    def access_mode_protected(self, args):
-        return {'scopes': [None], 'value': 'private'}
+    # def access_mode_protected(self, args):
+    #     return {'scopes': [None], 'value': 'private'}
 
-    def access_mode_public(self, args):
-        return {'scopes': [None], 'value': 'private'}
+    # def access_mode_public(self, args):
+    #     return {'scopes': [None], 'value': 'private'}
 
     def assign_f(self, args):
         if len(args) == 1:
@@ -751,82 +763,138 @@ class SecondTraverse():
             not_neg_1 = not_neg_2
         # TODO is returned value correct
         return not_neg_1
-        # if len(args) == 1:
-        #     return {'expr_type': 'not_neg', 'op_list': [], 'others': args[0]}
-        # else:
-        #     op_list = args[1]['op_list']
-        #     op_list.append(args[0].value)
-        #     return {
-        #         'expr_type': 'not_neg',
-        #         'op_list': op_list,
-        #         'others': args[1]['others']
-        #     }
 
     def others_f(self, others):
-        # TODO new function, it isn't in first traverse. 
-        pass
-
-    def others_constant_f(self, args):
-        res = args[0]
-        res['expr_type'] = 'constant'
-        return res
-
-    def others_this_f(self, args):
-        return {'expr_type': 'this'}
-
-    def others_lvalue_f(self, args):
-        res = args[0]
-        res['expr_type'] = 'lvalue'
-        return res
-
-    def others_call_f(self, args):
-        res = args[0]
-        res['expr_type'] = 'call'
-        return res
-
-    def others_p_expr_p_f(self, args):
-        res = args[0]
-        res['expr_type'] = '(expr)'
-        return res
-
-    def others_read_int_f(self, args):
-        return {'expr_type': 'read_int'}
-
-    def others_read_line_f(self, args):
-        return {'expr_type': 'read_line'}
-
-    def others_new_id_f(self, args):
-        return {'expr_type': 'new_id', 'id': args[0]['value']}
-
-    def others_new_arr_f(self, args):
-        return {'expr_type': 'new_arr', 'size': args[0], 'type': args[1]}
-
-    def others_itod_f(self, args):
-        return {'expr_type': 'itod', 'expr': args[0]}
-
-    def others_dtoi_f(self, args):
-        return {'expr_type': 'dtoi', 'expr': args[0]}
-
-    def others_itob_f(self, args):
-        return {'expr_type': 'itob', 'expr': args[0]}
-
-    def others_btoi_f(self, args):
-        return {'expr_type': 'btoi', 'expr': args[0]}
-
-    def id_prime_f(self, args):
-        if len(args) == 0:
-            return {'scopes': [None], 'ids': []}
+        # NOTE new function, it isn't in first traverse.
+        if others['expr_type'] == 'constant':
+            pass
+        elif others['expr_type'] == 'this':
+            # 'this' is stored at $fp - 4 in the stack, because it's the first param of function
+            self.code += 'move $t0, $fp\n'
+            self.code += 'addi $t0, $t0, -4\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $t0, 0($sp)\n'
+            # TODO return type of the obj 'this' is refering to
+            return {}
+        elif others['expr_type'] == 'lvalue':
+            # TODO
+            pass
+        elif others['expr_type'] == 'call':
+            # TODO
+            pass
+        elif others['expr_type'] == '(expr)':
+            del others['expr_type']
+            return others
+        elif others['expr_type'] == 'read_int':
+            # TODO
+            pass
+        elif others['expr_type'] == 'read_line':
+            # TODO
+            pass
+        elif others['expr_type'] == 'new_id':
+            # TODO
+            pass
+        elif others['expr_type'] == 'new_arr':
+            del others['expr_type']
+            size = others['size']
+            if not Type.is_int(size):
+                raise SemErr('arr size cant be non-int')
+            type_ = others['type']
+            if Type.is_void(type_):
+                raise SemErr('arr type cant be void')
+            arr_size_ok_label = get_label('arr_size_ok')
+            self.code += 'lw $t0, 0($sp)\n'
+            self.code += 'addi $sp, $sp, 4\n'
+            self.code += f'bgt $t0, 0, {arr_size_ok_label}\n'
+            self.code += f'la $a0, {runtime_error_msg}\n'
+            self.code += 'li $v0, 4\n'
+            self.code += 'syscall\n'
+            self.code += f'j {end_label}\n'
+            self.code += f'{arr_size_ok_label}:\n'
+            self.code += 'move $t1, $t0'
+            self.code += 'sll $t0, $t0, 2\n'
+            self.code += 'addi $t0, $t0, 4\n'
+            self.code += 'move $a0, $t0\n'
+            self.code += 'li $v0, 9\n'
+            self.code += 'syscall\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $v0, 0($sp)\n'
+            self.code += 'sw $t1, 0($v0)\n'
+        elif others['expr_type'] == 'itod':
+            # TODO
+            pass
+        elif others['expr_type'] == 'dtoi':
+            # TODO
+            pass
+        elif others['expr_type'] == 'itob':
+            # TODO
+            pass
+        elif others['expr_type'] == 'btoi':
+            # TODO
+            pass
         else:
-            ids = args[2]['ids']
-            ids.append(args[1]['value'])
-            return {'scopes': [None], 'ids': ids}
+            assert 1 == 2
+
+    # def others_constant_f(self, args):
+    #     res = args[0]
+    #     res['expr_type'] = 'constant'
+    #     return res
+
+    # def others_this_f(self, args):
+    #     return {'expr_type': 'this'}
+
+    # def others_lvalue_f(self, args):
+    #     res = args[0]
+    #     res['expr_type'] = 'lvalue'
+    #     return res
+
+    # def others_call_f(self, args):
+    #     res = args[0]
+    #     res['expr_type'] = 'call'
+    #     return res
+
+    # def others_p_expr_p_f(self, args):
+    #     res = args[0]
+    #     res['expr_type'] = '(expr)'
+    #     return res
+
+    # def others_read_int_f(self, args):
+    #     return {'expr_type': 'read_int'}
+
+    # def others_read_line_f(self, args):
+    #     return {'expr_type': 'read_line'}
+
+    # def others_new_id_f(self, args):
+    #     return {'expr_type': 'new_id', 'id': args[0]['value']}
+
+    # def others_new_arr_f(self, args):
+    #     return {'expr_type': 'new_arr', 'size': args[0], 'type': args[1]}
+
+    # def others_itod_f(self, args):
+    #     return {'expr_type': 'itod', 'expr': args[0]}
+
+    # def others_dtoi_f(self, args):
+    #     return {'expr_type': 'dtoi', 'expr': args[0]}
+
+    # def others_itob_f(self, args):
+    #     return {'expr_type': 'itob', 'expr': args[0]}
+
+    # def others_btoi_f(self, args):
+    #     return {'expr_type': 'btoi', 'expr': args[0]}
+
+    # def id_prime_f(self, args):
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'ids': []}
+    #     else:
+    #         ids = args[2]['ids']
+    #         ids.append(args[1]['value'])
+    #         return {'scopes': [None], 'ids': ids}
 
     def constant_int_f(self, constant_int):
         self.code += 'addi $sp, $sp, -4'
         self.code += f'move $t0, {constant_int["value"]}'
         self.code += 'sw $t0, 0($sp)'
         return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
-        # return {'scopes': [None], 'type': 'int', 'value': args[0]}
 
     def constant_double_f(self, args):
         # TODO
@@ -841,7 +909,6 @@ class SecondTraverse():
             self.code += 'move $t0, $zero'
         self.code += 'sw $t0, 0($sp)'
         return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
-        # return {'scopes': [None], 'type': 'bool', 'value': args[0]}
 
     def constant_string_f(self, constant_string):
         self.code += 'addi $sp, $sp, -4'
@@ -849,12 +916,10 @@ class SecondTraverse():
         self.code += f'la $t0, {label}'
         self.code += 'sw $t0, 0($sp)'
         return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
-        # return {'scopes': [None], 'type': 'string', 'value': args[0]}
 
     def constant_null_f(self, args):
         self.code += 'addi $sp, $sp, -4'
         return {'is_arr': False, 'type': 'null', 'class': 'Primitive'}
-        # return {'scopes': [None], 'type': 'null', 'value': None}
 
     def identifier_f(self, identifier):
         decl = Scope.get_decl_with_id(identifier['value'])
@@ -863,4 +928,3 @@ class SecondTraverse():
         self.code += f'lw $t0, {str(fp_offset)}($fp)'
         self.code += 'sw $t0, 0($sp)'
         return decl['type']
-        # return {'scopes': [None], 'value': args[0]}

@@ -7,6 +7,7 @@ from SemanticError import SemanticError as SemErr
 # add '_f' to end of all functions
 # may need to change if_stmt in grammar
 # deleted wrong terminal rules, might need extra work
+# func params must be passed in reverse order (remember)
 
 int_space = 4
 double_space = 4
@@ -293,7 +294,7 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'exprs': exprs}
 
     def return_stmt_f(self, args):
-        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return'}
+        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return', 'expr': args[1]}
 
     def break_stmt_f(self, args):
         return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'break'}
