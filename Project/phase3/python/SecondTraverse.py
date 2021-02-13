@@ -4,6 +4,8 @@ from Scope import Scope
 from SemanticError import SemanticError as SemErr
 
 # TODO:
+# check every thing during type checking, not just types,
+#   because a class name might be 'bool' for example and it causes a bug
 
 count_label = 0
 
@@ -29,13 +31,54 @@ def add_str_const_to_data_sec(string: str):
     return label
 
 
-class FirstTraverse(Transformer):
+class Type:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def is_bool(type: dict):
+        if type['class'] == 'Primitive' and type['type'] == 'bool':
+            return True
+        return False
+
+    @staticmethod
+    def is_int(type: dict):
+        if type['class'] == 'Primitive' and type['type'] == 'int':
+            return True
+        return False
+
+    @staticmethod
+    def is_double(type: dict):
+        if type['class'] == 'Primitive' and type['type'] == 'double':
+            return True
+        return False
+
+    @staticmethod
+    def is_string(type: dict):
+        if type['class'] == 'Primitive' and type['type'] == 'string':
+            return True
+        return False
+
+    @staticmethod
+    def is_object(type: dict):
+        if type['type'] == 'Object':
+            return True
+        return False
+
+    @staticmethod
+    def is_arr(type: dict):
+        if type['is_arr']:
+            return True
+        return False
+
+
+class SecondTraverse():
     def __init__(self, ast):
-        super().__init__()
         self.ast = ast
         self.code = ''
         self.data_sec = ''
         self.program_f(self.ast)
+        # TODO concat self.code and self.data_sec (and maybe other parts)
         return self.code
 
     def program_f(self, program):
@@ -57,12 +100,14 @@ class FirstTraverse(Transformer):
     def decl_f(self, decl):
         # TODO complete if bodies below
         if decl['decl_type'] == 'variable':
-            pass
+            # TODO maybe need to pass some args to variable_decl_f
+            self.variable_decl_f(decl)
         elif decl['decl_type'] == 'function':
             self.function_decl_f(decl)
         elif decl['decl_type'] == 'class':
-            pass
+            self.class_decl_f(decl)
         elif decl['decl_type'] == 'interface':
+            # TODO look useless
             pass
         else:
             assert 1 == 2  # decl_type wasn't in defined cases
@@ -251,14 +296,14 @@ class FirstTraverse(Transformer):
             else:
                 assert 1 == 2  # type wasn't in expected cases
 
-    def variable_prime_f(self, args):
-        scopes = get_scopes_of_children(args)
-        if len(args) == 0:
-            return {'scopes': [None], 'variables': []}
-        else:
-            variables_list = args[2]['variables']
-            varialbes_list.append(args[1])
-            return {'scopes': [None], 'variables': variables_list}
+    # def variable_prime_f(self, args):
+    #     scopes = get_scopes_of_children(args)
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'variables': []}
+    #     else:
+    #         variables_list = args[2]['variables']
+    #         varialbes_list.append(args[1])
+    #         return {'scopes': [None], 'variables': variables_list}
 
     def while_stmt_f(self, while_stmt):
         start_label = get_label('start')
@@ -298,33 +343,35 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variables': variables_list}
 
     def prototype_f(self, args):
-        # if prototype returns type
-        if len(args) == 3:
-            return {
-                'scopes': [None],
-                'decl_type': 'prototype',
-                'type': args[0],
-                'id': args[1]['value'],
-                'formals': args[3]['variables']
-            }
-        # if prototype returns void
-        else:
-            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
-            return {
-                'scopes': [None],
-                'type': type_,
-                'id': args[1]['value'],
-                'formals': args[3]['variables']
-            }
+        # TODO looks useless
+        pass
+        # # if prototype returns type
+        # if len(args) == 3:
+        #     return {
+        #         'scopes': [None],
+        #         'decl_type': 'prototype',
+        #         'type': args[0],
+        #         'id': args[1]['value'],
+        #         'formals': args[3]['variables']
+        #     }
+        # # if prototype returns void
+        # else:
+        #     type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
+        #     return {
+        #         'scopes': [None],
+        #         'type': type_,
+        #         'id': args[1]['value'],
+        #         'formals': args[3]['variables']
+        #     }
 
-    def prototype_prime_f(self, args):
-        # TODO does prototype have scope
-        if len(args) == 0:
-            return {'scopes': [None], 'prototypes': []}
-        else:
-            prototypes = args[1]['prototypes']
-            prototypes.append(args[0])
-            return {'scopes': [None], 'prototype': prototypes}
+    # def prototype_prime_f(self, args):
+    #     # TODO does prototype have scope
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'prototypes': []}
+    #     else:
+    #         prototypes = args[1]['prototypes']
+    #         prototypes.append(args[0])
+    #         return {'scopes': [None], 'prototype': prototypes}
 
     def call_f(self, args):
         # id()
@@ -353,78 +400,82 @@ class FirstTraverse(Transformer):
             'index': args[1]
         }
 
-    def stmt_prime_f(self, args):
-        scopes = get_scopes_of_children(args)
-        if len(args) == 0:
-            return {'scopes': [None], 'stmts': []}
-        else:
-            stmts = args[1]['stmts']
-            stmts.append(args[0])
-            return {'scopes': [None], 'stmts': stmts}
+    # def stmt_prime_f(self, args):
+    #     scopes = get_scopes_of_children(args)
+    #     if len(args) == 0:
+    #         return {'scopes': [None], 'stmts': []}
+    #     else:
+    #         stmts = args[1]['stmts']
+    #         stmts.append(args[0])
+    #         return {'scopes': [None], 'stmts': stmts}
 
-    def type_int_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': False,
-            'type': 'int',
-            'class': 'Primitive'
-        }
+    # def type_int_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': False,
+    #         'type': 'int',
+    #         'class': 'Primitive'
+    #     }
 
-    def type_double_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': False,
-            'type': 'double',
-            'class': 'Primitive'
-        }
+    # def type_double_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': False,
+    #         'type': 'double',
+    #         'class': 'Primitive'
+    #     }
 
-    def type_bool_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': False,
-            'type': 'bool',
-            'class': 'Primitive'
-        }
+    # def type_bool_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': False,
+    #         'type': 'bool',
+    #         'class': 'Primitive'
+    #     }
 
-    def type_string_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': False,
-            'type': 'string',
-            'class': 'Primitive'
-        }
+    # def type_string_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': False,
+    #         'type': 'string',
+    #         'class': 'Primitive'
+    #     }
 
-    def type_id_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': False,
-            'type': 'Object',
-            'class': args[0]['value']
-        }
+    # def type_id_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': False,
+    #         'type': 'Object',
+    #         'class': args[0]['value']
+    #     }
 
-    def type_arr_f(self, args):
-        return {
-            'scopes': [None],
-            'is_arr': True,
-            'type': args[0]['type'],
-            'class': args[0]['class']
-        }
+    # def type_arr_f(self, args):
+    #     return {
+    #         'scopes': [None],
+    #         'is_arr': True,
+    #         'type': args[0]['type'],
+    #         'class': args[0]['class']
+    #     }
 
     def implements_f(self, args):
-        if len(args) == 0:
-            return {'scopes': [None], 'interfaces': None}
-        else:
-            ids = args[2]['ids']
-            ids.append(args[1]['value'])
-            return {'scopes': [None], 'interfaces': ids}
+        # TODO looks useless
+        pass
+        # if len(args) == 0:
+        #     return {'scopes': [None], 'interfaces': None}
+        # else:
+        #     ids = args[2]['ids']
+        #     ids.append(args[1]['value'])
+        #     return {'scopes': [None], 'interfaces': ids}
 
     def extends_f(self, args):
-        # if class extends another class
-        if len(args) == 2:
-            return {'scopes': [None], 'parent_class': args[1]['value']}
-        # if class doesn't extend any class
-        else:
-            return {'scopes': [None], 'parent_class': None}
+        # TODO looks useless
+        pass
+        # # if class extends another class
+        # if len(args) == 2:
+        #     return {'scopes': [None], 'parent_class': args[1]['value']}
+        # # if class doesn't extend any class
+        # else:
+        #     return {'scopes': [None], 'parent_class': None}
 
     def field_prime_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -462,121 +513,258 @@ class FirstTraverse(Transformer):
                 'r_value': args[1]
             }
 
-    def or_f(self, args):
-        if len(args) == 1:
-            return {'expr_type': 'or', 'op_list': [], 'and_list': [args[0]]}
-        else:
-            and_list = args[0]['and_list']
-            and_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append('||')
-            return {
-                'expr_type': 'or',
-                'op_list': op_list,
-                'and_list': and_list
-            }
+    def or_f(self, or_):
+        if len(or_['and_list']) == 1:
+            return self.and_f(or_['and_list'][0])
+        and_ = self.and_f(or_['and_list'][0])
+        if not Type.is_bool(and_):
+            raise SemErr('operands are not bool')
+        for i in range(1, len(or_['and_list'])):
+            and_ = orـ['and_list'][i]
+            and_ = self.and_f(and_)
+            if not Type.is_bool(and_):
+                raise SemErr('operands are not bool')
+            self.code += 'move $t0, 0($sp)\n'
+            self.code += 'move $t1, 4($sp)\n'
+            self.code += 'or $t0, $t0, $t1\n'
+            self.code += 'addi $sp, $sp, 4'
+            self.code += 'sw $t0, 0($sp)'
+        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
-    def and_f(self, args):
-        if len(args) == 1:
-            return {
-                'expr_type': 'and',
-                'op_list': [],
-                'eq_neq_list': [args[0]]
-            }
-        else:
-            eq_neq_list = args[0]['eq_neq_list']
-            eq_neq_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append('&&')
-            return {
-                'expr_type': 'and',
-                'op_list': op_list,
-                'eq_neq_list': eq_neq_list
-            }
+    def and_f(self, and_):
+        if len(and_['eq_neq_list']) == 1:
+            return self.eq_neq_f(and_['eq_neq_list'][0])
+        eq_neq = self.eq_neq_f(and_['eq_neq_list'][0])
+        if not Type.is_bool(eq_neq):
+            raise SemErr('operands are not bool')
+        for i in range(1, len(and_['eq_neq_list'])):
+            eq_neq = and_['eq_neq_list'][i]
+            eq_neq = self.eq_neq_f(eq_neq)
+            if not Type.is_bool(eq_neq):
+                raise SemErr('operands are not bool')
+            self.code += 'move $t0, 0($sp)\n'
+            self.code += 'move $t1, 4($sp)\n'
+            self.code += 'and $t0, $t0, $t1\n'
+            self.code += 'addi $sp, $sp, 4\n'
+            self.code += 'sw $t0, 0($sp)\n'
+        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
-    def eq_neq_f(self, args):
-        if len(args) == 1:
-            return {
-                'expr_type': 'eq_neq',
-                'op_list': [],
-                'comp_list': [args[0]]
-            }
-        else:
-            comp_list = args[0]['comp_list']
-            comp_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append(args[1].value)
-            return {
-                'expr_type': 'eq_neq',
-                'op_list': op_list,
-                'comp_list': comp_list
-            }
+    def eq_neq_f(self, eq_neq):
+        if len(eq_neq['comp_list']) == 1:
+            return self.comp_f(eq_neq['comp_list'][0])
+        comp_1 = self.comp_f(eq_neq['comp_list'][0])
+        for i in range(1, len(eq_neq['comp_list'])):
+            operator = eq_neq['op_list'][i - 1]
+            comp_2 = eq_neq['comp_list'][i]
+            comp_2 = self.comp_f(comp_2)
+            if (Type.is_bool(comp_1)
+                    and Type.is_bool(comp_2)) or (Type.is_int(comp_1)
+                                                  and Type.is_int(comp_2)):
+                if operator == '==':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'sub $t0, $t0, $t1\n'
+                    self.code += 'slt $t2, $t0, $zero\n'
+                    self.code += 'slt $t3, $zero, $t0\n'
+                    self.code += 'or $t2, $t2, $t3\n'
+                    self.code += 'addi $t3, $zero, 1\n'
+                    self.code += 'sub $t2, $t3, $t2\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t2, 0($sp)\n'
+                elif operator == '!=':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'sub $t0, $t0, $t1\n'
+                    self.code += 'slt $t2, $t0, $zero\n'
+                    self.code += 'slt $t3, $zero, $t0\n'
+                    self.code += 'or $t2, $t2, $t3\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t2, 0($sp)\n'
+                else:
+                    assert 1 == 2
+            elif Type.is_double(comp_1) and Type.is_int(comp_2):
+                # TODO
+                pass
+            elif Type.is_string(comp_1) and Type.is_string(comp_2):
+                # TODO
+                pass
+            else:
+                raise SemErr('operands are obj or arr')
+            comp_1 = comp_2
+        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
-    def comp_f(self, args):
-        if len(args) == 1:
-            return {
-                'expr_type': 'comp',
-                'op_list': [],
-                'add_sub_list': [args[0]]
-            }
-        else:
-            add_sub_list = args[0]['add_sub_list']
-            add_sub_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append(args[1].value)
-            return {
-                'expr_type': 'comp',
-                'op_list': op_list,
-                'add_sub_list': add_sub_list
-            }
+    def comp_f(self, comp):
+        if len(comp['add_sub_list']) == 1:
+            return self.add_sub_f(comp['add_sub_list'][0])
+        add_sub_1 = self.add_sub_f(comp['add_sub_list'][0])
+        for i in range(1, len(comp['add_sub_list'])):
+            operator = comp['op_list'][i - 1]
+            add_sub_2 = comp['add_sub_list'][i]
+            add_sub_2 = self.add_sub_f(comp_2)
+            if Type.is_int(add_sub_1) or Type.is_int(add_sub_1):
+                if operator == '>':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'slt $t0, $t1, $t0\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                elif operator == '<':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'slt $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                elif operator == '>=':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'slt $t0, $t0, $t1\n'
+                    self.code += 'addi $t1, $zero, 1\n'
+                    self.code += 'sub $t0, $t1, $t0\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                elif operator == '<=':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'slt $t0, $t1, $t0\n'
+                    self.code += 'addi $t1, $zero, 1\n'
+                    self.code += 'sub $t0, $t1, $t0\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                else:
+                    assert 1 == 2
+            elif Type.is_double(comp_1) and Type.is_int(comp_2):
+                # TODO
+                pass
+            else:
+                raise SemErr('operands are obj or arr or bool or string')
+            comp_1 = comp_2
+        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
-    def add_sub_f(self, args):
-        if len(args) == 1:
-            return {
-                'expr_type': 'add_sub',
-                'op_list': [],
-                'mul_div_mod_list': [args[0]]
-            }
-        else:
-            mul_div_mod_list = args[0]['mul_div_mod_list']
-            mul_div_mod_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append(args[1].value)
-            return {
-                'expr_type': 'add_sub',
-                'op_list': op_list,
-                'mul_div_mod_list': mul_div_mod_list
-            }
+    def add_sub_f(self, add_sub):
+        if len(add_sub['mul_div_mod_list']) == 1:
+            return self.mul_div_mod_f(add_sub['mul_div_mod_list'][0])
+        mdm_1 = self.mul_div_mod_f(add_sub['mul_div_mod_list'][0])
+        for i in range(1, len(add_sub['add_sub_list'])):
+            operator = add_sub['op_list'][i - 1]
+            mdm_2 = add_sub['mul_div_mode_list'][i]
+            mdm_2 = self.mul_div_mod_f(mdm_2)
+            if Type.is_int(mdm_1) and Type.is_int(mdm_2):
+                if operator == '+':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'add $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                elif operator == '-':
+                    self.code += 'move $t0, 4($sp)\n'
+                    self.code += 'move $t1, 0($sp)\n'
+                    self.code += 'sub $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+            elif Type.is_string(mdm_1) and Type.is_string(mdm_2):
+                if operator == '+':
+                    # TODO concat strings
+                    pass
+                elif operator == '-':
+                    raise SemErr('sub between strings')
+            elif Type.is_double(mdm_1) and Type.is_double(mdm_2):
+                if operator == '+':
+                    # TODO
+                    pass
+                elif operator == '-':
+                    # TODO
+                    pass
+            elif Type.is_arr(mdm_1) and Type.is_arr(mdm_2):
+                if operator == '+':
+                    # TODO append arrs
+                    pass
+                elif operator == '-':
+                    raise SemErr('sub between arrs')
+            else:
+                raise SemErr('operand types are not correct')
+            mdm_1 = mdm_2
+        # TODO is returned value correct
+        return mdm_1
 
-    def mul_div_mod_f(self, args):
-        if len(args) == 1:
-            return {
-                'expr_type': 'mul_div_mod',
-                'op_list': [],
-                'not_neg_list': [args[0]]
-            }
-        else:
-            not_neg_list = args[0]['not_neg_list']
-            not_neg_list.append(args[1])
-            op_list = args[0]['op_list']
-            op_list.append(args[1].value)
-            return {
-                'expr_type': 'mul_div_mod',
-                'op_list': op_list,
-                'not_neg_list': not_neg_list
-            }
+    def mul_div_mod_f(self, mdm):
+        if len(mdm['not_neg_list']) == 1:
+            return self.not_neg_f(mdm['not_neg_list'][0])
+        not_neg_1 = self.not_neg_f(mdm['not_neq_list'][0])
+        for i in range(1, len(mdm['not_neg_list'])):
+            operator = mdm['op_list'][i - 1]
+            not_neg_2 = mdm['not_neg_list'][i]
+            not_neg_2 = self.not_neg_f(not_neg_2)
+            if Type.is_int(not_neg_1) and Type.is_int(not_neg_2):
+                if operator == '*':
+                    # TODO
+                    pass
+                elif operator == '/':
+                    # TODO
+                    pass
+                elif operator == '%':
+                    # TODO
+                    pass
+            elif Type.is_double(not_neg_1) and Type.is_double(not_neg_2):
+                if operator == '*':
+                    # TODO
+                    pass
+                elif operator == '/':
+                    # TODO
+                    pass
+                elif operator == '%':
+                    raise SemErr('mod between doubles')
+            else:
+                raise SemErr('operand types are not correct')
+            not_neg_1 = not_neg_2
+        # TODO is returned value correct
+        return not_neg_1
 
-    def not_neg_f(self, args):
-        if len(args) == 1:
-            return {'expr_type': 'not_neg', 'op_list': [], 'others': args[0]}
-        else:
-            op_list = args[1]['op_list']
-            op_list.append(args[0].value)
-            return {
-                'expr_type': 'not_neg',
-                'op_list': op_list,
-                'others': args[1]['others']
-            }
+    def not_neg_f(self, not_neg):
+        if len(not_neg['op_list']) == 0:
+            return self.others_f(not_neg['others'])
+        others = self.others_f(not_neg['others'])
+        for i in range(0, len(not_neg['op_list'])):
+            operator = not_neg['op_list'][i]
+            if Type.is_bool(others):
+                if operator == '!':
+                    self.code += 'move $t0, 0($sp)\n'
+                    self.code += 'addi $t1, $zero, 1\n'
+                    self.code += 'sub $t0, $t1, $t0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                elif operator == '-':
+                    raise SemErr('- behind bool operand')
+            elif Type.is_int(others):
+                if operator == '!':
+                    raise SemErr('! behind int operand')
+                elif operator == '-':
+                    self.code += 'move $t0, 0($sp)\n'
+                    self.code += 'move $t0, $zero, $t0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+            elif Type.is_double(others):
+                if operator == '!':
+                    raise SemErr('! behind double operand')
+                elif operator == '-':
+                    # TODO
+                    pass
+            else:
+                raise SemErr('operand types are not correct')
+            not_neg_1 = not_neg_2
+        # TODO is returned value correct
+        return not_neg_1
+        # if len(args) == 1:
+        #     return {'expr_type': 'not_neg', 'op_list': [], 'others': args[0]}
+        # else:
+        #     op_list = args[1]['op_list']
+        #     op_list.append(args[0].value)
+        #     return {
+        #         'expr_type': 'not_neg',
+        #         'op_list': op_list,
+        #         'others': args[1]['others']
+        #     }
+
+    def others_f(self, others):
+        # TODO new function, it isn't in first traverse. 
+        pass
 
     def others_constant_f(self, args):
         res = args[0]

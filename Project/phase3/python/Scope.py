@@ -36,3 +36,5 @@ class Scope:
     @staticmethod
     def get_global_scope():
         return Scope.scope_dict[Scope.scope_count - 1]
+
+    
