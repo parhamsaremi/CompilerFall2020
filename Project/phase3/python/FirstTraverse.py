@@ -294,7 +294,7 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'exprs': exprs}
 
     def return_stmt_f(self, args):
-        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return', 'expr': args[1]}
+        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'return', 'expr': args[0]}
 
     def break_stmt_f(self, args):
         return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'break'}

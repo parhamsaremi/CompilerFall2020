@@ -31,10 +31,18 @@ class Scope:
         if variable_decl['decl_type'] != 'variable':
             raise Exception('decl_type isnt variable')
         return variable_decl['fp_offset']
-    raise Exception('variable id wasn\'t found in scope stack')
 
     @staticmethod
     def get_global_scope():
         return Scope.scope_dict[Scope.scope_count - 1]
+
+    @staticmethod
+    def get_all_classes_decls():
+        global_scope = Scope.get_global_scope()
+        res = []
+        for decl in global_scope:
+            if decl['decl_type'] == 'class':
+                res.append(decl)
+        return res
 
     

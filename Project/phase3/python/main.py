@@ -164,17 +164,15 @@ def main(argv):
         %ignore WS
         """
 
-        code = '''
-            void main () {
-                int a;
-                int b;
-                int c;
-
-                c = a + b;
-
-                Print(c);
-            }
-        '''
+        # code = '''
+        #     void main () {
+        #         int a;
+        #         int b;
+        #         int c;
+        #         c = a + b;
+        #         Print(c);
+        #     }
+        # '''
 
         parser = Lark(grammar,
                       start="program",
