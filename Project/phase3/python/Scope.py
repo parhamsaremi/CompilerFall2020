@@ -4,28 +4,17 @@ class Scope:
     scope_dict = {}
     scope_stack = []
 
-    def __init__(self):
+    def __init__(self, type_: str):
         self.parent = None
         self.id = Scope.scope_count
         Scope.scope_dict[self.id] = self
         Scope.scope_count += 1
+        self.type = type_
         self.children = []
         self.decls = {}
 
     def does_decl_id_exist(self, id: str):
         return self.decls.keys().__contains__(id)
-
-    # @staticmethod
-    # def push_scope():
-    #     if Scope.current_scope_id is None:
-    #         Scope.current_scope_id = Scope.scope_count - 1
-    #     else:
-    #         Scope.current_scope_id -= 1
-    #     Scope.scope_stack.append(Scope.current_scope_id)
-
-    # @staticmethod
-    # def pop_scope():
-    #     Scope.scope_stack.pop()
 
     @staticmethod
     def get_decl_in_symbol_table(id: str):
@@ -109,3 +98,8 @@ class Scope:
             if decl['decl_type'] == 'interface' and decl['id'] == interface_id:
                 return decl
         return None
+
+    @staticmethod
+    def get_interface_prototypes(interface_id: str):
+        interface = Scope.get_interface(interface_id)
+        return interface_id['prototypes']

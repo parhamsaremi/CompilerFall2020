@@ -9,11 +9,6 @@ from SemanticError import SemanticError as SemErr
 # deleted wrong terminal rules, might need extra work
 # func params must be passed in reverse order (remember)
 
-int_space = 4
-double_space = 4
-bool_space = 4
-pointer_space = 4
-
 
 def get_scopes_of_children(args):
     res = []
@@ -42,6 +37,7 @@ class FirstTraverse(Transformer):
 
     def program_f(self, args):
         scope = Scope()
+        scope.type = 'global'
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -81,23 +77,21 @@ class FirstTraverse(Transformer):
 
     def function_decl_f(self, args):
         scope = Scope()
+        scope.type = 'function'
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         # if declared function returns type
         if len(args) == 4:
-            max_stack_used = args[3]['max_stack_used']
             for variable in args[2]['variables']:
                 variable['decl_type'] = 'variable'
                 if scope.does_decl_id_exist(variable['id']):
                     raise SemErr(
                         f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
                     )
-                variable['stack_adrs'] = max_stack_used + 1
-                max_stack_used += 4
                 scope.decls[variable['id']] = variable
             return {
-                'max_stack_used': max_stack_used,
+                'parent': '_global',
                 'scopes': [scope],
                 'decl_type': 'function',
                 'type': args[0],
@@ -107,19 +101,16 @@ class FirstTraverse(Transformer):
             }
         # if declared function returns void
         else:
-            max_stack_used = args[2]['max_stack_used']
             for variable in args[1]['variables']:
                 variable['decl_type'] = 'variable'
                 if scope.does_decl_id_exist(variable['id']):
                     raise SemErr(
                         f'duplicate id \'{variable["id"]}\' in formals of function \'{args[0]["value"]}\''
                     )
-                variable['stack_adrs'] = max_stack_used + 1
-                max_stack_used += 4
                 scope.decls[variable['id']] = variable
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
             return {
-                'max_stack_used': max_stack_used,
+                'parent': '_global',
                 'scopes': [scope],
                 'decl_type': 'function',
                 'type': type_,
@@ -130,6 +121,7 @@ class FirstTraverse(Transformer):
 
     def interface_decl_f(self, args):
         scope = Scope()
+        scope.type = 'interface'
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -146,26 +138,19 @@ class FirstTraverse(Transformer):
 
     def class_decl_f(self, args):
         scope = Scope()
+        scope.type = 'class'
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
         decls = [field['declaration'] for field in fields]
-        max_stack_used_list = [
-            decl['max_stack_used'] for decl in decls
-            if decl['decl_type'] == 'function'
-        ]
-        max_stack_used = None
-        if len(max_stack_used_list) == 0:
-            max_stack_used = 0
-        else:
-            max_stack_used = max(max_stack_used_list)
         for field in fields:
             decl = field['declaration']
             decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 scope.decls[decl['id']] = decl
                 decl['scope'].parent = scope
+                decl['parent'] = args[0]['value']
             elif decl['decl_type'] == 'variable':
                 if scope.does_decl_id_exist(decl['id']):
                     raise SemErr(
@@ -175,7 +160,6 @@ class FirstTraverse(Transformer):
             else:
                 assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         return {
-            'max_stack_used': max_stack_used,
             'scopes': [scope],
             'id': args[0]['value'],
             'parent_class': args[1]['parent_class'],
@@ -185,29 +169,17 @@ class FirstTraverse(Transformer):
 
     def stmt_block_f(self, args):
         scope = Scope()
+        scope.type = 'stmt_block'
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
-        max_stack_used = None
-        max_stack_used_list = [
-            stmt['max_stack_used'] for stmt in args[1]['stmts']
-        ]
-        if len(max_stack_used_list) == 0:
-            max_stack_used = 0
-        else:
-            max_stack_used = max(
-                [stmt['max_stack_used'] for stmt in args[1]['stmts']])
-        max_stack_used += 1
         for variable_decl in args[0]['variable_decls']:
             if scope.does_decl_id_exist(variable_decl['id']):
                 raise SemErr(
                     f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable'
                 )
-            variable_decl['stack_adrs'] = max_stack_used
-            max_stack_used += 4
             scope.decls[variable_decl['id']] = variable_decl
         return {
-            'max_stack_used': max_stack_used,
             'scopes': [scope],
             'variable_decls': args[0]['variable_decls'],
             'stmts': args[1]['stmts']
@@ -216,7 +188,6 @@ class FirstTraverse(Transformer):
     def stmt_expr_prime_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
-            'max_stack_used': 0,
             'scopes': scopes,
             'stmt_type': 'expr_prime',
             'stmt': args[0]
@@ -226,13 +197,11 @@ class FirstTraverse(Transformer):
         scopes = get_scopes_of_children(args)
         res = args[0]
         res['scopes'] = scopes
-        res['max_stack_used'] = args[0]['max_stack_used']
         return res
 
     def stmt_stmt_block_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
-            'max_stack_used': args[0]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'stmt_block',
             'stmt': args[0]
@@ -240,10 +209,7 @@ class FirstTraverse(Transformer):
 
     def if_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
-        max_used_stack = max(args[1]['max_stack_used'],
-                             args[2]['max_stack_used'])
         return {
-            'max_stack_used': max_used_stack,
             'scopes': scopes,
             'stmt_type': 'if_else',
             'condition_expr': args[0],
@@ -254,10 +220,9 @@ class FirstTraverse(Transformer):
     def else_prime_f(self, args):
         scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'max_stack_used': 0, 'scopes': [None], 'stmt': None}
+            return {'scopes': [None], 'stmt': None}
         else:
             return {
-                'max_stack_used': args[0]['max_stack_used'],
                 'scopes': [None],
                 'stmt': args[0]
             }
@@ -295,23 +260,22 @@ class FirstTraverse(Transformer):
 
     def return_stmt_f(self, args):
         return {
-            'max_stack_used': 0,
             'scopes': [None],
             'stmt_type': 'return',
             'expr': args[0]
         }
 
     def break_stmt_f(self, args):
-        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'break'}
+        return {'scopes': [None], 'stmt_type': 'break'}
 
     def continue_stmt_f(self, args):
-        return {'max_stack_used': 0, 'scopes': [None], 'stmt_type': 'continue'}
+        return {'scopes': [None], 'stmt_type': 'continue'}
 
     def print_stmt_f(self, args):
         exprs = args[0]
         for expr in args[1]['exprs']:
             exprs.append(expr)
-        return {'max_stack_used': 0, 'scopes': [None], 'exprs': exprs}
+        return {'scopes': [None], 'exprs': exprs}
 
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
@@ -329,7 +293,6 @@ class FirstTraverse(Transformer):
     def while_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
-            'max_stack_used': args[1]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'while',
             'condition_expr': args[0],
@@ -339,7 +302,6 @@ class FirstTraverse(Transformer):
     def for_stmt_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
-            'max_stack_used': args[3]['max_stack_used'],
             'scopes': scopes,
             'stmt_type': 'for',
             'init_expr': args[
@@ -350,19 +312,15 @@ class FirstTraverse(Transformer):
         }
 
     def formals_f(self, args):
-        # NOTE stack adrs looks useless here because it has to recalculated in function_decl_f
+        # NOTE stack adrs looks useless here because it has to be recalculated in function_decl_f
         scopes = get_scopes_of_children(args)
         if len(args) == 0:
-            return {'max_stack_used': 0, 'scopes': [None], 'variables': []}
+            return {'scopes': [None], 'variables': []}
         else:
-            max_stack_used = args[1]['max_stack_used']
             variables_list = args[0]
             for variable in args[1]['variables']:
                 variables_list.append(variable)
-            args[0]['stack_adrs'] = max_stack_used + 1
-            max_stack_used += 4
             return {
-                'max_stack_used': max_stack_used,
                 'scopes': [None],
                 'variables': variables_list
             }
