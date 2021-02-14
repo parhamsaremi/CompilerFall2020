@@ -8,6 +8,10 @@ import traceback
 
 # TODO bug in l_value : others.identifier -> assign.identifier
 
+def alert(text):
+    print('\033[91m' + str(text) + '\033[0m')
+
+
 def main(argv):
     inputfile = ''
     outputfile = ''
@@ -191,9 +195,9 @@ def main(argv):
             try:
                 second_traverse = SecondTraverse(first_traverse_dict)
                 output_file.write(second_traverse.asm_code)
-                print('-------------------------')
+                alert('-------------------------')
                 print(second_traverse.asm_code)
-                print('-------------------------')
+                alert('-------------------------')
             except Exception as e:
                 traceback.print_exc()
 

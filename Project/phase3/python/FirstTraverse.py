@@ -268,10 +268,10 @@ class FirstTraverse(Transformer):
         return {'scopes': [None], 'stmt_type': 'continue'}
 
     def print_stmt_f(self, args):
-        exprs = args[0]
+        exprs = [args[0]]
         for expr in args[1]['exprs']:
             exprs.append(expr)
-        return {'scopes': [None], 'exprs': exprs}
+        return {'scopes': [None], 'stmt_type': 'print', 'exprs': exprs}
 
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
