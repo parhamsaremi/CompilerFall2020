@@ -72,7 +72,11 @@ class SecondTraverse():
         self.asm_code = '.text\n'
         self.asm_code += f'.globl {self.asm_start_label}\n\n'
         self.asm_code += f'{self.asm_start_label}:\n'
-        self.asm_code += f'jal {self.main_func_label}\n'  # TODO
+        self.asm_code += 'addi $sp, $sp -4\n'
+        self.asm_code += 'sw $ra, 0($sp)\n'
+        self.asm_code += f'jal {self.main_func_label}\n'
+        self.asm_code += 'lw $ra, 0($sp)\n'
+        self.asm_code += 'addi $sp, $sp, 4\n'
         self.asm_code += f'jr $ra\n\n'
         self.asm_code += self.code
         # self.asm_code += f'{self.asm_end_label}:\n\n'
@@ -325,7 +329,6 @@ class SecondTraverse():
 
     def print_stmt_f(self, print_stmt):
         global runtime_error_msg, next_line, space
-        alert(print_stmt)
         for expr in print_stmt['exprs']:
             expr_info = self.expr_f(expr)
             # TODO maybe it's needed to calc expr_info['type'] for some cases, if it is, fix it
@@ -531,7 +534,6 @@ class SecondTraverse():
         }
 
     def assign_f(self, assign):
-        alert(assign)
         if assign['expr_type'] == 'assign':
             l_value = self.l_value_f(assign['l_value'])
             r_value = self.assign_f(assign['r_value'])
@@ -795,8 +797,6 @@ class SecondTraverse():
 
     def others_f(self, others):
         # NOTE new function, it isn't in first traverse.
-        # alert(others)
-        # alert(others['value'])
         if others['expr_type'] == 'constant':
             self.code += 'addi $sp, $sp, -4\n'
             self.code += f'li $t0, {others["value"]}\n'

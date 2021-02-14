@@ -2,7 +2,11 @@
 .globl main
 
 main:
+addi $sp, $sp -4
+sw $ra, 0($sp)
 jal GLOBAL_main_label1
+lw $ra, 0($sp)
+addi $sp, $sp, 4
 jr $ra
 
 GLOBAL_main_label1:

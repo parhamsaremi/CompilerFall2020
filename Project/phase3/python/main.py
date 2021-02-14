@@ -195,7 +195,7 @@ def main(argv):
             try:
                 second_traverse = SecondTraverse(first_traverse_dict)
                 output_file.write(second_traverse.asm_code)
-                alert('-------------------------')
+                alert('ASM_CODE-------------------------')
                 print(second_traverse.asm_code)
                 alert('-------------------------')
             except Exception as e:
