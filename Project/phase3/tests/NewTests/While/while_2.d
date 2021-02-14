@@ -1,8 +1,8 @@
 int main(){
     while(ReadInteger()){
-        Print("hey");
+        Print("sara");
     }
     while(ReadInteger()){
-        Print("hoy");
+        Print("hanie");
     }
 }

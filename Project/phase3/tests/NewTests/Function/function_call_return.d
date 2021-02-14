@@ -1,23 +1,23 @@
-
-bool k() {
-    return true;
-}
-int h() {
-    return 2;
+bool func1() {
+    return false;
 }
 
-double g() {
-    return 5.1234;
+int func2() {
+    return 0;
 }
 
-string f(){
-    return "f";
+double func3() {
+    return 0.1234;
+}
+
+string func4(){
+    return "hi";
 }
 
 
 int main()  {
-    Print(f());
-    Print(g());
-    Print(h());
-    Print(k());
+    Print(func4());
+    Print(func3());
+    Print(func2());
+    Print(func1());
 }

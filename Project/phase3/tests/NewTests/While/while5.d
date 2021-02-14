@@ -1,6 +1,6 @@
 int main() {
   while (false) {
-    Print(0);
+    Print("khodafez");
   }
-  Print(1);
+  Print("salam");
 }

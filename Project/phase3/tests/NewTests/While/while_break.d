@@ -1,6 +1,6 @@
 int main(){
     while(true){
-        if(ReadInteger() == 2){
+        if(ReadInteger() == 5){
             Print(2);
             break;
         }
@@ -8,7 +8,7 @@ int main(){
     }
     while(true){
         while(true){
-            if(ReadInteger() == 2){
+            if(ReadInteger() == 5){
                 Print(4);
                 break;
             }
@@ -19,11 +19,9 @@ int main(){
             }else{
                 break;
             }
-            Print("holy");
+            Print("bashe");
         }
 	break;
-
-
     }
-    Print("goody goody");
+    Print("bashe bashe");
 }

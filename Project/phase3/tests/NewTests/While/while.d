@@ -1,6 +1,6 @@
 int main()	{
 	while(ReadInteger()){
-		Print("ok");
+		Print("reval");
 	}
-	Print("done");
+	Print("bashe");
 }

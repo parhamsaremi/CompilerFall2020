@@ -1,12 +1,12 @@
 
     int main(){
         while(ReadInteger()){
-            Print("hey");
+            Print("sara");
             while (ReadInteger()){
-                Print("huy");
+                Print("hanie");
             }
         }
         while(ReadInteger()){
-            Print("hoy");
+            Print("matina");
         }
     }

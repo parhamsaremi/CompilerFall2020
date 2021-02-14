@@ -4,7 +4,7 @@ class Cow {
     }
 
     void Method(int a) {
-	if (false) Moo(a, a, a, a, a, a);// make sure params not pushed/popped strangely
+	if (false) Moo(a, a, a, a, a, a);
       Print(3);
       Print(4);
    }
