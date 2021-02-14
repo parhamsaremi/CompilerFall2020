@@ -4,24 +4,23 @@ class Animal {
   }
 }
 
-class Cow extends Animal {
+class Khar extends Animal {
    void Method1() {
-    Print("Cow");
+    Print("Khar");
   }
 }
-class Jersey extends Cow {
+class khar extends Khar {
    void Method1() {
-      Print("Jersey");
+      Print("khar");
    }
 }
 
 int main() {
   Animal a;
-
-   a = new Animal;
-   a.Method1();
-  a = new Cow;
+  a = new Animal;
   a.Method1();
-  a = new Jersey;
+  a = new Khar;
+  a.Method1();
+  a = new khar;
   a.Method1();
 }

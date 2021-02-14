@@ -1,4 +1,4 @@
-class Barn
+class Goone
 {
    void AddCow(Cow cow) {
       cow.Method1();
@@ -8,32 +8,32 @@ class Barn
 
 int main() {
   Cow a;
-  Jersey j;
+  Pishi p;
   Cow[] c;
-  Barn b;
+  Goone g;
 
   c = NewArray(1, Cow);
-  b = new Barn;
+  g = new Goone;
   a = new Cow;
   a.Init(24);
   a.Method2();
-  j = new Jersey;
-  j.Init(33);
-  a = j;
+  p = new Pishi;
+  p.Init(33);
+  a = p;
   a.Method2();
-  j.Method2();
-  j.Method3();
- b.AddCow(a);
- b.AddCow(j);
+  p.Method2();
+  p.Method3();
+  g.AddCow(a);
+  g.AddCow(p);
 }
 
-class Jersey extends Cow {
+class Pishi extends Cow {
    void Method3() {
-	Print("Jersey3");
+	Print("Pishi3");
       Method2();
    }
    void Method1() {
-      Print("Jersey");
+      Print("Pishi");
 	PrintSelf();
    }
 }
@@ -48,18 +48,18 @@ class Animal {
 	  }	
 	  void PrintSelf()
 	{
-	    Print("num1 = ", num1, "\n");
+	  Print("num1 = ", num1, "\n");
 	}	
 }
 
 class Cow extends Animal {
    void Method2() {
       Print("Cow2");
-	Method1();
+	  Method1();
    }
    void Method1() {
-    Print("Cow");
-    PrintSelf();
+      Print("Cow");
+      PrintSelf();
   }
 }
 

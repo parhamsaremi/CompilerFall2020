@@ -22,28 +22,28 @@ class Cow extends Animal {
 
    void AMethod() {}
 }
-class Jersey extends Cow {
+class Mew extends Cow {
 
-   void Method() { Print("Hello from Jersey."); }
+   void Method() { Print("Hello from Mew."); }
 
    void Method3() {
-	Print("Jersey3");
+	Print("Mew3");
       Method2();
    }
    void Method1() {
-      Print("Jersey");
+      Print("Mew");
    }
 }
 
 int main() {
   Cow a;
-  Jersey j;
+  Mew m;
 
   a = new Cow;
   a.Method2();
-  j = new Jersey;
-  a = j;
+  m = new Mew;
+  a = m;
   a.Method2();
-  j.Method3();
+  m.Method3();
   a.Method();
 }
