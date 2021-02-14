@@ -10,22 +10,22 @@ syscall
 li $v0,8
 la $a0,str1
 addi $a1,$zero,500
-syscall   #got string 1
+syscall
 li $v0,8
 la $a0,str2
 addi $a1,$zero,500
-syscall   #got string 2
+syscall
 
-la $a0,str1  #address of str1
-la $a1,str2  #address of str2
-jal strcmp  #call strcmp
+la $a0,str1
+la $a1,str2
+jal compare
 
-beq $v0,$zero,ok #check result
+beq $v0,$zero,match
 li $v0,4
 la $a0,truemsg
 syscall
 j exit
-ok:
+match:
 li $v0,4
 la $a0,falsemsg
 syscall
@@ -33,12 +33,13 @@ exit:
 li $v0,10
 syscall
 
-strcmp:
+compare:
 add $t0,$zero,$zero
 add $t1,$zero,$a0
 add $t2,$zero,$a1
+
 loop:
-lb $t3($t1)  #load a byte from each string
+lb $t3($t1) 
 lb $t4($t2)
 beqz $t3,checkt2 #str1 end
 beqz $t4,missmatch
@@ -50,10 +51,10 @@ j loop
 
 missmatch:
 addi $v0,$zero,1
-j endfunction
+j exit
 checkt2:
 bnez $t4,missmatch
 add $v0,$zero,$zero
 
-endfunction:
+exit:
 jr $ra
