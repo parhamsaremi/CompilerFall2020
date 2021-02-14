@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="Tests">
+      <change beforePath="$PROJECT_DIR$/Project/Mips/CompareStrings" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Mips/CompareStrings" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="58f3c894-a798-405a-80dc-08038010f179" />
+  <component name="ProjectId" id="1oTIhvkKU94W8bBnU064Ai6KInG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Project/phase3" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project\phase3\tests" />
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project\phase3" />
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project" />
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project\QueraTests" />
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020\Project\NewTests" />
+      <recent name="C:\Users\s.kh\PycharmProjects\CompilerFall2020" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="" />
+      <created>1613304275680</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1613304275680</updated>
+      <workItem from="1613304276690" duration="12674000" />
+    </task>
+    <task id="LOCAL-00001" summary="Tests">
+      <created>1613313720169</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1613313720169</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Tests">
+      <created>1613314404163</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1613314404163</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Tests">
+      <created>1613328065426</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1613328065426</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tests" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1613327979346">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1613327979346" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1613328131760">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1613328131760" />
+    <state x="535" y="314" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1613304341562">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="535" y="314" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1536.824@0.0.1536.824" timestamp="1613304341562" />
+  </component>
+</project>
