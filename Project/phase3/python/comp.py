@@ -1,4 +1,4 @@
-
+import os
 import sys, getopt
 def main(argv):
 
@@ -41,7 +41,6 @@ def main(argv):
 	with open(inputfile1, "w") as input_file:
 		input_file.write(back_str)
 		input_file.close()
-
 
 	with open(inputfile2, "r") as input_file:
 		for line in input_file:

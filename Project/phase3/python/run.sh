@@ -1,14 +1,12 @@
 #!/bin/bash
 mkdir -p out
 mkdir -p report
-echo $PWD
 cd ./tests
-echo $PWD
 
 prefix="t" ;
 dirlist=(`ls ${prefix}*.d`) ;
 OUTPUT_DIRECTORY="out/"
-TEST_DIRECTORY="tests/"
+TEST_DIRECTORY="./tests/"
 REPORT_DIRECTORY="report/"
 NUMBER_OF_PASSED=0
 NUMBER_OF_FAILED=0
