@@ -36,8 +36,7 @@ class FirstTraverse(Transformer):
         super().__init__()
 
     def program_f(self, args):
-        scope = Scope()
-        scope.type = 'global'
+        scope = Scope('global')
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -76,8 +75,7 @@ class FirstTraverse(Transformer):
             return {'scopes': [None], 'variable_decls': variable_decls}
 
     def function_decl_f(self, args):
-        scope = Scope()
-        scope.type = 'function'
+        scope = Scope('function')
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -118,8 +116,7 @@ class FirstTraverse(Transformer):
         }
 
     def interface_decl_f(self, args):
-        scope = Scope()
-        scope.type = 'interface'
+        scope = Scope('interface')
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -135,8 +132,7 @@ class FirstTraverse(Transformer):
         }
 
     def class_decl_f(self, args):
-        scope = Scope()
-        scope.type = 'class'
+        scope = Scope('class')
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -181,8 +177,7 @@ class FirstTraverse(Transformer):
         }
 
     def stmt_block_f(self, args):
-        scope = Scope()
-        scope.type = 'stmt_block'
+        scope = Scope('stmt_block')
         children_scopes = get_scopes_of_children(args)
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
@@ -381,8 +376,8 @@ class FirstTraverse(Transformer):
         return {
             'scopes': [None],
             'l_value_type': 'array',
-            'arr': args[0],
-            'index': args[1]
+            'arr_id': args[0],
+            'index_expr': args[1]
         }
 
     def stmt_prime_f(self, args):

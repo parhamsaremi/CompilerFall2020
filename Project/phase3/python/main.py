@@ -6,6 +6,7 @@ from FirstTraverse import FirstTraverse
 from SecondTraverse import SecondTraverse
 import traceback
 
+# TODO bug in l_value : others.identifier -> assign.identifier
 
 def main(argv):
     inputfile = ''

@@ -45,3 +45,9 @@ class Type:
             return True
         return False
 
+    @staticmethod
+    def are_types_equal(type_1: dict, type_2: dict):
+        if type_1['is_arr'] == type_2['is_arr'] and \
+            type_1['type'] == type_2['type'] and type_1['class'] == type_2['class']:
+            return True
+        return False

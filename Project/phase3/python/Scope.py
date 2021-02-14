@@ -1,3 +1,5 @@
+from SemanticError import SemanticError as SemErr
+
 class Scope:
     scope_count = 0
     # current_scope_id = None
@@ -24,14 +26,21 @@ class Scope:
                 return scope.decls[id]
         return None
 
+    # @staticmethod
+    # def get_fp_offset_of_variable(id: str):
+    #     variable_decl = Scope.get_decl_in_symbol_table(id)
+    #     if variable_decl is None:
+    #         raise Exception('variable_decl wasnt found')
+    #     if variable_decl['decl_type'] != 'variable':
+    #         raise Exception('decl_type isnt variable')
+    #     return variable_decl['fp_offset']
+
     @staticmethod
-    def get_fp_offset_of_variable(id: str):
+    def get_variable_decl_in_symbol_table(id: str):
         variable_decl = Scope.get_decl_in_symbol_table(id)
-        if variable_decl is None:
-            raise Exception('variable_decl wasnt found')
         if variable_decl['decl_type'] != 'variable':
-            raise Exception('decl_type isnt variable')
-        return variable_decl['fp_offset']
+            raise SemErr('decl type is not variable')
+        return variable_decl
 
     @staticmethod
     def get_global_scope():
@@ -85,7 +94,7 @@ class Scope:
     def get_functions_of_class(class_id: str):
         class_ = Scope.get_class(class_id)
         res = []
-        for field in class['fields']:
+        for field in class_['fields']:
             decl = field['declaration']
             if decl['decl_type'] == 'function':
                 res.append(decl)

@@ -29,43 +29,52 @@ def get_label(prefix=''):
     return label
 
 
-str_const_count = 0
+data_sec_count = 0
 runtime_error_msg = None
 program_end_label = None
 
 
-def add_str_const_to_data_sec(string: str):
-    global str_const_count
-    label = f'str_const{str_const_count}'
-    self.data_sec += f'{label}:  .asciiz "{string}"\n'
-    str_const_count += 1
+def add_str_const_to_data_sec(second_traverse ,string: str):
+    global data_sec_count
+    label = f'str_const_{data_sec_count}'
+    second_traverse.data_sec += f'{label}:  .asciiz "{string}"\n'
+    data_sec_count += 1
     return label
 
+def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
+    global data_sec_count
+    label = f'global_variable_{data_sec_count}'
+    second_traverse.data_sec += f'{label}: .word 0\n'
+    data_sec_count += 1
+    return label
 
 class SecondTraverse():
     def __init__(self, ast):
         global runtime_error_msg, program_end_label
+        self.decaf_start_label = 'DECAF_main'
+        self.decaf_end_label = 'DECAF_end'
         self.ast = ast
         program_end_label = get_label('end_of_program')
         self.data_sec = ''
-        runtime_error_msg = add_str_const_to_data_sec('Runtime Error')
+        runtime_error_msg = add_str_const_to_data_sec(self, 'Runtime Error')
         self.code = ''
         self.code += f'{program_end_label}:'
         self.program_f(self.ast)
         self.asm_code = '.data\n'
         self.asm_code += self.data_sec
         self.asm_code += '\n'
-        self.asm_code += f'.globl {'main'}\n' # TODO 'main' is wrong
+        self.asm_code += f'.globl {self.decaf_start_label}\n'
         self.asm_code += '.text\n'
         self.asm_code += self.code
-        # TODO concat self.code and self.data_sec (and maybe other parts)
+        self.asm_code += f'{self.decaf_end_label}:\n'
 
     def program_f(self, program):
-        # Scope.current_scope_id = Scope.scope_count - 1
-        # Scope.scope_stack.append(Scope.scope_dict[Scope.current_scope_id])
         cur_scope = program['scopes'][0]
         Scope.scope_stack.append(cur_scope)
         for decl in program['decls']:
+            if decl['decl_type'] == 'variable':
+                global_var_label = add_global_variable_to_data_sec(self, decl)
+                decl['data_sec_label'] = global_var_label
             self.decl_f(decl)
         Scope.scope_stack.pop()
 
@@ -267,7 +276,7 @@ class SecondTraverse():
         self.code += f'beq $t0, $zero, {cond_false_label}\n'
         self.stmt_f(if_stmt['if_stmt'])
         self.code += f'j {end_label}\n'
-        self.code += f'{cond_false_label}:\n
+        self.code += f'{cond_false_label}:\n'
         if if_stmt['else_stmt'] is not None:
             self.stmt_f(if_stmt['else_stmt'])
         self.code += f'{end_label}:\n'
@@ -423,8 +432,31 @@ class SecondTraverse():
         else:
             return {'scopes': [None], 'obj_id': args}
 
-    def l_value_id_f(self, args):
-        return {'scopes': [None], 'l_value_type': 'id', 'l_value': args[0]}
+    def l_value_f(self, l_value):
+        if l_value['l_value_type'] == 'id':
+            return self.l_value_id_f(l_value)
+        elif l_value['l_value_type'] == 'obj_field':
+            return self.l_value_obj_f(l_value)
+        elif l_value['l_value_type'] == 'array':
+            return self.l_value_arr_f(l_value)
+
+    def l_value_id_f(self, l_value_id):
+        variable_decl = Scope.get_variable_decl_in_symbol_table(l_value_id['l_value']['value'])
+        type_ variable_decl['type']
+        if variable_decl.keys().__contains__['fp_offset']:
+            fp_offset = variable_decl['fp_offset']
+            self.code += 'move $t0, $fp\n'
+            self.code += f'addi $t0, $t0, {fp_offset}\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $t0, 0($sp)\n'
+            return {'type': type_}
+        elif variable_decl.keys().__contains__['data_sec_label']:
+            data_sec_label = variable_decl['data_sec_label']
+            self.code += f'la $t0, {data_sec_label}\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $t0, 0($sp)\n'
+            return {'type': type_}
+        # return {'scopes': [None], 'l_value_type': 'id', 'l_value': args[0]}
 
     def l_value_obj_f(self, args):
         return {
@@ -438,8 +470,8 @@ class SecondTraverse():
         return {
             'scopes': [None],
             'l_value_type': 'array',
-            'arr': args[0],
-            'index': args[1]
+            'arr_id': args[0],
+            'index_expr': args[1]
         }
 
     def implements_f(self, args):
@@ -472,10 +504,18 @@ class SecondTraverse():
 
     def assign_f(self, assign):
         if assign['expr_type'] == 'assign':
-            # l_value = self. # TODO continue from here...
-            r_value = self.assign(assign['r_value'])
+            l_value = self.l_value_f(assign['l_value'])
+            r_value = self.assign_f(assign['r_value'])
+            self.code += 'lw $t0, 4($sp)\n'
+            self.code += 'lw $t1, 0($sp)\n'
+            self.code += 'sw $t1, 0($t0)\n'
+            self.code += 'sw $t1, 4($sp)\n'
+            self.code += 'addi $sp, $sp, 4\n'
+            if not Type.are_types_equal(l_value['type'], r_value['type']):
+                raise SemErr('l_value and r_value types are not same')
+            
         else:
-            return self.expr_f(assign['expr'])
+            return self.or_f(assign['expr'])
         # if len(args) == 1:
         #     return {'expr_type': args[0]['expr_type'], 'expr': args[0]}
         # else:
@@ -817,7 +857,7 @@ class SecondTraverse():
 
     def constant_string_f(self, constant_string):
         self.code += 'addi $sp, $sp, -4'
-        label = add_str_const_to_data_sec(constant_string['value'])
+        label = add_str_const_to_data_sec(self, constant_string['value'])
         self.code += f'la $t0, {label}'
         self.code += 'sw $t0, 0($sp)'
         return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
