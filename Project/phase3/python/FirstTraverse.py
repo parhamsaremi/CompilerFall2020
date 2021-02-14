@@ -108,7 +108,7 @@ class FirstTraverse(Transformer):
                 )
         stmt_block['base_fp_offset'] = -8
         return {
-            'parent': '_global',
+            'parent': 'GLOBAL',
             'scopes': [scope],
             'decl_type': 'function',
             'type': type_,
@@ -356,10 +356,15 @@ class FirstTraverse(Transformer):
     def call_f(self, args):
         # id()
         if len(args) == 2:
-            return {'scopes': [None], 'id': args[0]}
+            return {'scopes': [None], 'id': args[0], 'actuals': args[1]}
         # obj.field()
         else:
-            return {'scopes': [None], 'obj_id': args}
+            return {
+                'scopes': [None],
+                'others': args[0],
+                'field': args[1],
+                'actuals': args[2]
+            }
 
     def l_value_id_f(self, args):
         return {'scopes': [None], 'l_value_type': 'id', 'l_value': args[0]}

@@ -55,7 +55,7 @@ class SecondTraverse():
         self.asm_code = '.data\n'
         self.asm_code += self.data_sec
         self.asm_code += '\n'
-        self.asm_code += f'.globl {'main'}\n' # TODO
+        self.asm_code += f'.globl {'main'}\n' # TODO 'main' is wrong
         self.asm_code += '.text\n'
         self.asm_code += self.code
         # TODO concat self.code and self.data_sec (and maybe other parts)
@@ -97,8 +97,51 @@ class SecondTraverse():
     def function_decl_f(self, function_decl):
         cur_scope = function_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
-        # TODO
+        func_label = get_label(function_decl['parent']+'_'+function_decl['id'])
+        self.code += f'{func_label}:\n'
+        self.stmt_block_f(function_decl['stmt_block'])
+        # TODO any thing else? like fp and ra (looks it is complete)
         Scope.scope_stack.pop()
+        # scope = Scope()
+        # scope.type = 'function'
+        # children_scopes = get_scopes_of_children(args)
+        # set_parent_of_children_scope(scope, children_scopes)
+        # set_children_of_parent_scope(scope, children_scopes)
+        # type_ = None
+        # id_ = None
+        # formal_variables = None
+        # stmt_block = None
+        # # if declared function returns type
+        # if len(args) == 4:
+        #     type_ = args[0]
+        #     id_ = args[1]
+        #     formal_variables = args[2]['variables']
+        #     stmt_block = args[3]
+        # # if declared function returns void
+        # else:
+        #     type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
+        #     id_ = args[0]
+        #     formal_variables = args[1]['variables']
+        #     stmt_block = args[2]
+        # fp_offset = 4
+        # for variable in formal_variables:
+        #     variable['decl_type'] = 'variable'
+        #     variable['fp_offset'] = fp_offset
+        #     fp_offset += 4
+        #     if scope.does_decl_id_exist(variable['id']):
+        #         raise SemErr(
+        #             f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
+        #         )
+        # stmt_block['base_fp_offset'] = -8
+        # return {
+        #     'parent': '_global',
+        #     'scopes': [scope],
+        #     'decl_type': 'function',
+        #     'type': type_,
+        #     'id': id_,
+        #     'formals': formal_variables,
+        #     'stmt_block': stmt_block
+        # }
 
     def interface_decl_f(self, args):
         # TODO looks useless 
@@ -154,9 +197,14 @@ class SecondTraverse():
         # TODO any thing more?
         cur_scope = stmt_block['scopes'][0]
         Scope.scope_stack.append(cur_scope)
+        fp_offset = 0
         for variable_decl in stmt_block['variable_decls']:
+            variable_decl['fp_offset'] = stmt_block['base_fp_offset'] + fp_offset
+            fp_offset -= 4
             self.variable_decl_f(variable_decl)
+        used_fp_offset = len(stmt_block['variable_decls'])
         for stmt in stmt_block['stmts']:
+            stmt['base_fp_offset'] = stmt_block['base_fp_offset'] - used_fp_offset * 4 
             self.stmt_f(stmt)
         Scope.scope_stack.pop()
         # scope = Scope()
@@ -202,8 +250,10 @@ class SecondTraverse():
         # return res
 
     def stmt_stmt_block_f(self, args):
-        scopes = get_scopes_of_children(args)
-        return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
+        # TODO
+        pass
+        # scopes = get_scopes_of_children(args)
+        # return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
 
     def if_stmt_f(self, if_stmt):
         cond_false_label = get_label('cond_false')
