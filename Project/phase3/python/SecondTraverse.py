@@ -52,8 +52,13 @@ class SecondTraverse():
         self.code = ''
         self.code += f'{program_end_label}:'
         self.program_f(self.ast)
+        self.asm_code = '.data\n'
+        self.asm_code += self.data_sec
+        self.asm_code += '\n'
+        self.asm_code += f'.globl {'main'}\n' # TODO
+        self.asm_code += '.text\n'
+        self.asm_code += self.code
         # TODO concat self.code and self.data_sec (and maybe other parts)
-        return self.code
 
     def program_f(self, program):
         # Scope.current_scope_id = Scope.scope_count - 1
@@ -218,9 +223,10 @@ class SecondTraverse():
         self.code += f'{end_label}:\n'
 
     def expr_f(self, expr):
-        res = args[0]
-        res['scopes'] = [None]
-        return res
+        pass
+        # res = args[0]
+        # res['scopes'] = [None]
+        # return res
 
     def exprs_f(self, args):
         scopes = get_scopes_of_children(args)
@@ -414,15 +420,20 @@ class SecondTraverse():
             'declaration': args[1]
         }
 
-    def assign_f(self, args):
-        if len(args) == 1:
-            return {'expr_type': args[0]['expr_type'], 'expr': args[0]}
+    def assign_f(self, assign):
+        if assign['expr_type'] == 'assign':
+            # l_value = self. # TODO continue from here...
+            r_value = self.assign(assign['r_value'])
         else:
-            return {
-                'expr_type': 'assign',
-                'l_value': args[0],
-                'r_value': args[1]
-            }
+            return self.expr_f(assign['expr'])
+        # if len(args) == 1:
+        #     return {'expr_type': args[0]['expr_type'], 'expr': args[0]}
+        # else:
+        #     return {
+        #         'expr_type': 'assign',
+        #         'l_value': args[0],
+        #         'r_value': args[1]
+        #     }
 
     def or_f(self, or_):
         if len(or_['and_list']) == 1:

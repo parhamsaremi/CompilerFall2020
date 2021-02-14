@@ -189,9 +189,9 @@ def main(argv):
             second_traverse = None
             try:
                 second_traverse = SecondTraverse(first_traverse_dict)
-                output_file.write(second_traverse.code)
+                output_file.write(second_traverse.asm_code)
                 print('-------------------------')
-                print(second_traverse.code)
+                print(second_traverse.asm_code)
                 print('-------------------------')
             except Exception as e:
                 traceback.print_exc()
