@@ -1,1 +1,1 @@
-different line count in these files! : file out/t018-simple.out : #3 , file ./tests/t018-simple.out : #1 
+different line count in these files! : file out/t018-simple.out : #2 , file ./tests/t018-simple.out : #1 

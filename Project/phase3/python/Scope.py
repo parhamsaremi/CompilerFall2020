@@ -21,7 +21,7 @@ class Scope:
     @staticmethod
     def get_decl_in_symbol_table(id: str):
         for i in range(len(Scope.scope_stack) - 1, -1, -1):
-            scope = scope_stack[i]
+            scope = Scope.scope_stack[i]
             if scope.decls.keys().__contains__(id):
                 return scope.decls[id]
         return None

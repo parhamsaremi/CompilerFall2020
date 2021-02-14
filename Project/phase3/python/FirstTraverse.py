@@ -533,7 +533,7 @@ class FirstTraverse(Transformer):
             }
         else:
             comp_list = args[0]['comp_list']
-            comp_list.append(args[1])
+            comp_list.append(args[2])
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
@@ -551,7 +551,7 @@ class FirstTraverse(Transformer):
             }
         else:
             add_sub_list = args[0]['add_sub_list']
-            add_sub_list.append(args[1])
+            add_sub_list.append(args[2])
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
@@ -569,7 +569,7 @@ class FirstTraverse(Transformer):
             }
         else:
             mul_div_mod_list = args[0]['mul_div_mod_list']
-            mul_div_mod_list.append(args[1])
+            mul_div_mod_list.append(args[2])
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {
@@ -587,7 +587,7 @@ class FirstTraverse(Transformer):
             }
         else:
             not_neg_list = args[0]['not_neg_list']
-            not_neg_list.append(args[1])
+            not_neg_list.append(args[2])
             op_list = args[0]['op_list']
             op_list.append(args[1].value)
             return {

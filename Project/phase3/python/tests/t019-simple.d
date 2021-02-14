@@ -1,4 +1,4 @@
 void main(){
-	Print(2);
+	Print(5);
 
 }
