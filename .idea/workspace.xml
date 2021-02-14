@@ -19,8 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="Tests">
-      <change beforePath="$PROJECT_DIR$/Project/Mips/CompareStrings" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Mips/CompareStrings" afterDir="false" />
+    <list default="true" id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="Comparing Strings in MIPS">
+      <change beforePath="$PROJECT_DIR$/Project/Mips/CompareStrings" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Mips/CompareStrings.asm" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +62,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1613304275680</updated>
-      <workItem from="1613304276690" duration="12674000" />
+      <workItem from="1613304276690" duration="12982000" />
     </task>
     <task id="LOCAL-00001" summary="Tests">
       <created>1613313720169</created>
@@ -85,7 +85,14 @@
       <option name="project" value="LOCAL" />
       <updated>1613328065426</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Comparing Strings in MIPS">
+      <created>1613328165007</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1613328165007</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -104,17 +111,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tests" />
+    <MESSAGE value="Comparing Strings in MIPS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Comparing Strings in MIPS" />
   </component>
   <component name="WindowStateProjectService">
     <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1613327979346">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1613327979346" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1613328131760">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1613328167905">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1613328131760" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1613328167905" />
     <state x="535" y="314" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1613304341562">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
