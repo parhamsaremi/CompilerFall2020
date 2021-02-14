@@ -41,11 +41,11 @@ add $t2,$zero,$a1
 loop:
 lb $t3($t1) 
 lb $t4($t2)
-beqz $t3,checkt2 #str1 end
+beqz $t3,checkt2
 beqz $t4,missmatch
-slt $t5,$t3,$t4  #compare two bytes
+slt $t5,$t3,$t4
 bnez $t5,missmatch
-addi $t1,$t1,1  #t1 points to the next byte of str1
+addi $t1,$t1,1
 addi $t2,$t2,1
 j loop
 
