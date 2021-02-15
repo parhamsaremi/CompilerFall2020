@@ -20,8 +20,8 @@ def alert(text):
           '\033[0m')
 
 
-cur_loop_start_label = None
-cur_loop_end_label = None
+cur_loop_start_label_stack = []
+cur_loop_end_label_stack = []
 
 count_label = 0
 
@@ -42,6 +42,8 @@ data_sec_count = 0
 runtime_error_msg = None
 next_line = None
 space = None
+true_str = None
+false_str = None
 
 
 def add_str_const_to_data_sec(second_traverse, string: str):
@@ -62,7 +64,7 @@ def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
 
 class SecondTraverse():
     def __init__(self, ast):
-        global runtime_error_msg, next_line, space
+        global runtime_error_msg, next_line, space, true_str, false_str
         self.asm_start_label = 'main'  # TODO check that this does not cause any bugs
         self.asm_end_label = 'ASM_END'
         self.main_func_label = None
@@ -71,6 +73,8 @@ class SecondTraverse():
         runtime_error_msg = add_str_const_to_data_sec(self, 'Runtime Error')
         next_line = add_str_const_to_data_sec(self, '\\n')
         space = add_str_const_to_data_sec(self, ' ')
+        true_str = add_str_const_to_data_sec(self, 'true')
+        false_str = add_str_const_to_data_sec(self, 'false')
         self.code = ''
         self.program_f(self.ast)
         self.asm_code = '.text\n'
@@ -388,10 +392,20 @@ class SecondTraverse():
                 # TODO
                 pass
             elif Type.is_bool(type_):
+                global true_str, false_str
+                false_label = get_label('print_false')
+                end_label = get_label('print_end')
                 self.code += 'lw $t0, 0($sp)\n'
-                self.code += 'li $v0, 1\n'
-                self.code += 'move $a0, $t0\n'
+                self.code += f'beq $t0, $zero, {false_label}\n'
+                self.code += f'la $a0, {true_str}\n'
+                self.code += 'li $v0, 4\n'
                 self.code += 'syscall\n'
+                self.code += f'j {end_label}\n'
+                self.code += f'{false_label}:\n'
+                self.code += f'la $a0, {false_str}\n'
+                self.code += 'li $v0, 4\n'
+                self.code += 'syscall\n'
+                self.code += f'{end_label}:\n'
                 self.code += 'addi $sp, $sp, 4\n'
             else:
                 assert 1 == 2  # type wasn't correct
@@ -404,11 +418,11 @@ class SecondTraverse():
         self.code += '### END OF PRINT ###\n\n'
 
     def while_stmt_f(self, while_stmt):
-        global cur_loop_start_label, cur_loop_end_label
+        global cur_loop_start_label_stack, cur_loop_end_label_stack
         start_label = get_label('start')
         end_label = get_label('end')
-        cur_loop_start_label = start_label
-        cur_loop_end_label = end_label
+        cur_loop_start_label_stack.append(start_label) 
+        cur_loop_end_label_stack.append(end_label)
         self.code += '#### WHILE ####\n'
         self.code += f'{start_label}:\n'
         self.expr_f(while_stmt['condition_expr'])
@@ -420,13 +434,15 @@ class SecondTraverse():
         self.code += f'j {start_label}\n'
         self.code += f'{end_label}:\n'
         self.code += '#### END OF WHILE ####\n\n'
+        cur_loop_start_label_stack.pop()
+        cur_loop_end_label_stack.pop()
 
     def for_stmt_f(self, for_stmt):
-        global cur_loop_start_label, cur_loop_end_label
+        global cur_loop_start_label_stack, cur_loop_end_label_stack
         start_label = get_label('start')
         end_label = get_label('end')
-        cur_loop_start_label = start_label
-        cur_loop_end_label = end_label
+        cur_loop_start_label_stack.append(start_label)
+        cur_loop_end_label_stack.append(end_label)
         self.code += '#### FOR ####\n'
         self.expr_f(for_stmt['init_expr'])
         self.code += 'addi $sp, $sp, 4\n'  # NOTE to remove init_expr result from stack (is it correct?) (looks it is)
@@ -441,6 +457,8 @@ class SecondTraverse():
         self.code += f'j {start_label}\n'
         self.code += f'{end_label}:\n'
         self.code += '#### END OF FOR ####\n\n'
+        cur_loop_start_label_stack.pop()
+        cur_loop_end_label_stack.pop()
 
     def return_stmt_f(self, return_stmt):
         # TODO check type of return
@@ -455,13 +473,15 @@ class SecondTraverse():
         self.code += '### END OF RETURN ###\n\n'
 
     def break_stmt_f(self, break_stmt):
-        global cur_loop_end_label
+        global cur_loop_end_label_stack
+        cur_loop_end_label = cur_loop_end_label_stack[-1]
         self.code += '### BREAK ###\n'
         self.code += f'j {cur_loop_end_label}\n'
         self.code += '### END OF BREAK ###\n\n'
 
     def continue_stmt_f(self, continue_stmt):
-        global cur_loop_start_label
+        global cur_loop_start_label_stack
+        cur_loop_start_label = cur_loop_start_label_stack[-1]
         self.code += '### CONTINUE ###\n'
         self.code += f'j {cur_loop_start_label}\n'
         self.code += '### END OF CONTINUE ###\n\n'
@@ -1021,7 +1041,7 @@ class SecondTraverse():
         value = constant_bool['value']
         self.code += f'\n### CONSTANT BOOL {value} ###\n'
         self.code += 'addi $sp, $sp, -4\n'
-        if constant_bool['value']:
+        if constant_bool['value'] == 'true':
             self.code += 'addi $t0, $zero, 1\n'
         else:
             self.code += 'move $t0, $zero\n'

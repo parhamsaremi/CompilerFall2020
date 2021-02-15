@@ -1,0 +1,1 @@
+different line count in these files! : file out1/t100-while.out : #10 , file ./tests1/t100-while.out : #4 

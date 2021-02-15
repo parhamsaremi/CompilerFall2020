@@ -1,0 +1,1 @@
+different line count in these files! : file out/Compare/compare2.out : #3 , file tests/Compare/compare2.out : #4 

@@ -8,6 +8,7 @@ import traceback
 
 # TODO bug in l_value : others.identifier -> assign.identifier
 
+
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
 
@@ -31,7 +32,8 @@ def main(argv):
 
     parser = None
     has_error = False
-    with open("tests/" + inputfile, "r") as input_file:
+    postfix = '1'
+    with open("tests" + postfix + "/" + inputfile, "r") as input_file:
         grammar = r"""
         program : decl decl_prime -> program_f
         decl_prime: decl decl_prime -> decl_prime_f
@@ -184,13 +186,13 @@ def main(argv):
             # alert('TEST_CODE--------------------')
             # print(x)
             # alert('-----------------------------')
-            
+
             # print(parser.parse(x))
             first_traverse_dict = parser.parse(x)
         except Exception as e:
             traceback.print_exc()
             has_error = True
-    with open('out/' + outputfile, 'w') as output_file:
+    with open('out' + postfix + '/' + outputfile, 'w') as output_file:
         if has_error:
             output_file.write('Syntax Error')
         else:

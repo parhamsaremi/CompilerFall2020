@@ -12,6 +12,7 @@ For:
 
 While:
     while with cond, no control stmt (break, continue)
+    hard break in while body
 
 If:
     if with else stmt
