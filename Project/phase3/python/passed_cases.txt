@@ -15,3 +15,9 @@ While:
 
 If:
     if with else stmt
+
+Global Variable:
+    int x; in global scope
+
+Function:
+    simple print function, no recurrence

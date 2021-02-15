@@ -11,7 +11,8 @@ from Type import Type
 # how to handle output of void function, write in the stack or not?
 # remember to deal with scope stack
 # fix auto return at the end of functions (it must return something in the stack unless it returns void)
-
+# func label must be defined at the start, otherwise func calls might not be able to jal to desired label
+# classes can be upcast in func calls and assignments, they don't always have same type. handle this.
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
@@ -79,17 +80,21 @@ class SecondTraverse():
         self.asm_code += 'addi $sp, $sp, -4\n'
         self.asm_code += 'sw $ra, 0($sp)\n'
         self.asm_code += f'jal {self.main_func_label}\n'
+        self.asm_code += 'addi $sp, $sp, 4\n'
         self.asm_code += 'lw $ra, 0($sp)\n'
         self.asm_code += 'addi $sp, $sp, 4\n'
         self.asm_code += f'jr $ra\n\n'
         self.asm_code += self.code
-        # self.asm_code += f'{self.asm_end_label}:\n\n'
         self.asm_code += '.data\n'
         self.asm_code += self.data_sec
 
     def program_f(self, program):
         cur_scope = program['scopes'][0]
         Scope.scope_stack.append(cur_scope)
+        for function_decl in Scope.get_global_functions():
+            id_ = function_decl['id']
+            func_label = get_label(function_decl['parent'] + '_' + id_)
+            function_decl['func_label'] = func_label
         for decl in program['decls']:
             if decl['decl_type'] == 'variable':
                 global_var_label = add_global_variable_to_data_sec(self, decl)
@@ -126,13 +131,23 @@ class SecondTraverse():
         cur_scope = function_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
         id_ = function_decl['id']
-        func_label = get_label(function_decl['parent'] + '_' + id_)
+        # func_label = get_label(function_decl['parent'] + '_' + id_)
+        func_label = function_decl['func_label']
+        function_decl['func_label'] = func_label
         if function_decl['parent'] == 'GLOBAL' and id_ == 'main':
             self.main_func_label = func_label
+        formals_count = len(function_decl['formals'])
         self.code += f'{func_label}:\n'
-        # self.code += 'addi $fp, $sp, -4\n' # NOTE do it in call_f
+        # self.code += '### pushing space to stack for formal vars ###\n'
+        # self.code += f'addi $sp, $sp, {-formals_count * 4}\n\n'
         self.stmt_block_f(function_decl['stmt_block'])
-        # TODO any thing else? like fp and ra (looks it is complete)
+        # self.code += '\n### poping space from stack for formal vars ###\n'
+        # self.code += f'addi $sp, $sp, {formals_count * 4}\n\n'
+        self.code += f'### auto return of func {id_} ###\n'
+        self.code += 'addi $sp, $sp, -4\n'
+        self.code += 'li $t0, -1000\n'
+        self.code += 'sw $t0, 0($sp)\n'
+        self.code += f'### end of auto return of func {id_} ###\n\n'
         self.code += 'jr $ra\n\n'
         Scope.scope_stack.pop()
         # scope = Scope()
@@ -333,13 +348,15 @@ class SecondTraverse():
             return {'scopes': [None], 'exprs': exprs}
 
     def actuals_f(self, args):
-        if len(args) == 0:
-            return {'scopes': [None], 'exprs': []}
-        else:
-            exprs = args[0]
-            for expr in args[1]['exprs']:
-                exprs.append(expr)
-            return {'scopes': [None], 'exprs': exprs}
+        # TODO is it needed?
+        pass
+        # if len(args) == 0:
+        #     return {'scopes': [None], 'exprs': []}
+        # else:
+        #     exprs = args[0]
+        #     for expr in args[1]['exprs']:
+        #         exprs.append(expr)
+        #     return {'scopes': [None], 'exprs': exprs}
 
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
@@ -483,9 +500,31 @@ class SecondTraverse():
         #     }
 
     def call_f(self, call):
-        # id ()
         if call.keys().__contains__('id'):
-            pass
+            id_ = call['id']
+            function_decl = Scope.get_decl_in_symbol_table(id_, 'function')
+            if function_decl is None:
+                raise SemErr('function not declared')
+            self.code += f'#### func call {id_} ####\n'
+            for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
+                actual_type = self.expr_f(call['actuals']['exprs'][i])
+                formal_type = function_decl['formals'][i]['type']
+                if not Type.are_types_equal(actual_type, formal_type):  # TODO this has to handle upcasting too
+                    raise SemErr('formal and actual types are not same')
+            actuals_count = len(call['actuals']['exprs'])
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $fp, 0($sp)\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $ra, 0($sp)\n'
+            self.code += 'addi $fp, $sp, 4\n'
+            self.code += f'jal {function_decl["func_label"]}\n'
+            self.code += 'lw $fp, 8($sp)\n'
+            self.code += 'lw $ra, 4($sp)\n'
+            self.code += 'lw $t0, 0($sp)\n'
+            self.code += f'sw $t0, {actuals_count * 4 + 8}($sp)\n'
+            self.code += f'addi $sp, $sp, {actuals_count * 4 + 8}\n'
+            self.code += f'#### end of func call {id_} ####\n\n'
+            return function_decl['type']
         # obj.field()
         else:
             pass
@@ -512,7 +551,7 @@ class SecondTraverse():
 
     def l_value_id_f(self, l_value_id, option):
         id_ = l_value_id['l_value']['value']
-        variable_decl = Scope.get_variable_decl_in_symbol_table(id_)
+        variable_decl = Scope.get_decl_in_symbol_table(id_, 'variable')
         type_ = variable_decl['type']
         if variable_decl.keys().__contains__('fp_offset'):
             fp_offset = variable_decl['fp_offset']
@@ -912,8 +951,7 @@ class SecondTraverse():
         elif others['expr_type'] == 'lvalue':
             return self.l_value_f(others, 'value')
         elif others['expr_type'] == 'call':
-            # TODO
-            pass
+            return self.call_f(others)
         elif others['expr_type'] == '(expr)':
             del others['expr_type']
             return others

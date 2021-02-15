@@ -3,6 +3,8 @@ from SemanticError import SemanticError as SemErr
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
+    print('\033[91m' + '-----------------------' + '\033[0m')
+
 
 class Scope:
     scope_count = 0
@@ -23,31 +25,13 @@ class Scope:
         return self.decls.keys().__contains__(id)
 
     @staticmethod
-    def get_decl_in_symbol_table(id_: str):
-        # for scope in Scope.scope_dict.values():
-        #     alert('-------')
-        #     alert(scope.id)
-        #     alert(scope.type)
-        #     alert(scope.parent)
-        #     alert(scope.decls)
-        #     alert('----------------')
-        alert(id_)
-        # for scope in Scope.scope_stack:
-        #     print(scope.id,end = ' ')
+    def get_decl_in_symbol_table(id_: str, decl_type: str):
         for i in range(len(Scope.scope_stack) - 1, -1, -1):
             scope = Scope.scope_stack[i]
-            alert(scope.id)
-            alert(scope.decls.keys())
             if scope.decls.keys().__contains__(id_):
-                return scope.decls[id_]
+                if scope.decls[id_]['decl_type'] == decl_type:
+                    return scope.decls[id_]
         return None
-
-    @staticmethod
-    def get_variable_decl_in_symbol_table(id: str):
-        variable_decl = Scope.get_decl_in_symbol_table(id)
-        if variable_decl['decl_type'] != 'variable':
-            raise SemErr('decl type is not variable')
-        return variable_decl
 
     @staticmethod
     def get_global_scope():
@@ -66,8 +50,17 @@ class Scope:
     def get_global_functions():
         global_scope = Scope.get_global_scope()
         res = []
-        for decl in global_scope.decls:
+        for decl in global_scope.decls.values():
             if decl['decl_type'] == 'function':
+                res.append(decl)
+        return res
+
+    @staticmethod
+    def get_global_variables():
+        global_scope = Scope.get_global_scope()
+        res = []
+        for decl in global_scope.decls.values():
+            if decl['decl_type'] == 'variable':
                 res.append(decl)
         return res
 
@@ -82,7 +75,7 @@ class Scope:
     @staticmethod
     def get_class(class_id: str):
         global_scope = Scope.get_global_scope()
-        for decl in global_scope.decls:
+        for decl in global_scope.decls.values():
             if decl['decl_type'] == 'class' and decl['id'] == class_id:
                 return decl
         return None
@@ -106,11 +99,11 @@ class Scope:
             if decl['decl_type'] == 'function':
                 res.append(decl)
         return res
-    
+
     @staticmethod
     def get_interface(interface_id: str):
         global_scope = Scope.get_global_scope()
-        for decl in global_scope.decls:
+        for decl in global_scope.decls.values():
             if decl['decl_type'] == 'interface' and decl['id'] == interface_id:
                 return decl
         return None

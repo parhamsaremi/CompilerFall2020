@@ -181,7 +181,10 @@ def main(argv):
         # print(parser.parse(code))
         try:
             x = input_file.read()
-            print(x)
+            # alert('TEST_CODE--------------------')
+            # print(x)
+            # alert('-----------------------------')
+            
             # print(parser.parse(x))
             first_traverse_dict = parser.parse(x)
         except Exception as e:
@@ -195,9 +198,9 @@ def main(argv):
             try:
                 second_traverse = SecondTraverse(first_traverse_dict)
                 output_file.write(second_traverse.asm_code)
-                alert('ASM_CODE-------------------------')
-                print(second_traverse.asm_code)
-                alert('-------------------------')
+                # alert('ASM_CODE-------------------------')
+                # print(second_traverse.asm_code)
+                # alert('---------------------------------')
             except Exception as e:
                 traceback.print_exc()
 

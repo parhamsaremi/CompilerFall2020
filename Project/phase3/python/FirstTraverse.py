@@ -110,6 +110,7 @@ class FirstTraverse(Transformer):
                 raise SemErr(
                     f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
                 )
+            scope.decls[variable['id']] = variable
         stmt_block['base_fp_offset'] = -8
         return {
             'parent': 'GLOBAL',
@@ -250,7 +251,7 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'exprs': []}
         else:
-            exprs = args[0]
+            exprs = [args[0]]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
             return {'scopes': [None], 'exprs': exprs}
@@ -259,7 +260,7 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'exprs': []}
         else:
-            exprs = args[0]
+            exprs = [args[0]]
             for expr in args[1]['exprs']:
                 exprs.append(expr)
             return {'scopes': [None], 'exprs': exprs}
@@ -287,8 +288,8 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'variables': []}
         else:
-            variables_list = args[1]
-            for variable in args[2]['variables']:
+            variables_list = [args[0]]
+            for variable in args[1]['variables']:
                 variables_list.append(variable)
             return {'scopes': [None], 'variables': variables_list}
 
@@ -319,7 +320,7 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': [None], 'variables': []}
         else:
-            variables_list = args[0]
+            variables_list = [args[0]]
             for variable in args[1]['variables']:
                 variables_list.append(variable)
             return {'scopes': [None], 'variables': variables_list}
@@ -357,7 +358,7 @@ class FirstTraverse(Transformer):
     def call_f(self, args):
         # id()
         if len(args) == 2:
-            return {'scopes': [None], 'id': args[0], 'actuals': args[1]}
+            return {'scopes': [None], 'id': args[0]['value'], 'actuals': args[1]}
         # obj.field()
         else:
             return {
