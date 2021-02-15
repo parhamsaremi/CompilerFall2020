@@ -19,15 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="Comparing Strings in MIPS">
-      <change afterPath="$PROJECT_DIR$/Project/Mips/DoubleToInteger.asm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Project/Mips/IntegerToByte.asm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Project/Mips/IntegerToDouble.asm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Project/Mips/ReadInteger.asm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Project/Mips/ReadLine.asm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Project/Mips/byteToInteger.asm" afterDir="false" />
+    <list default="true" id="b41a0eee-2c9b-4848-afc6-4e673a6d1b10" name="Default Changelist" comment="MIPS Functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/Mips/CompareStrings.asm" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Mips/CompareStrings.asm" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +63,7 @@
       <option name="presentableId" value="Default" />
       <updated>1613304275680</updated>
       <workItem from="1613304276690" duration="17992000" />
-      <workItem from="1613404459121" duration="6085000" />
+      <workItem from="1613404459121" duration="6974000" />
     </task>
     <task id="LOCAL-00001" summary="Tests">
       <created>1613313720169</created>
@@ -121,11 +114,28 @@
       <option name="project" value="LOCAL" />
       <updated>1613328772478</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="MIPS Functions">
+      <created>1613411678107</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1613411678107</updated>
+    </task>
+    <task id="LOCAL-00009" summary="MIPS Functions">
+      <created>1613411944524</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1613411944524</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.asm" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -142,17 +152,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tests" />
     <MESSAGE value="Comparing Strings in MIPS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Comparing Strings in MIPS" />
+    <MESSAGE value="MIPS Functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="MIPS Functions" />
   </component>
   <component name="WindowStateProjectService">
     <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1613407920687">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="533" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1613407920687" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1613328773575">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1613411946056">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1613328773575" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1613411946056" />
     <state x="535" y="314" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1613304341562">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
