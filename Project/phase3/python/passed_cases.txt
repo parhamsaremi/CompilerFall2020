@@ -6,3 +6,9 @@ operations:
 
 Print:
     print int
+
+For:
+    for with init, cond, step, no control stmt (break, continue)
+
+While:
+    while with cond, no control stmt (break, continue)

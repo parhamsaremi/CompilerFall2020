@@ -21,11 +21,11 @@ addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID ADRS OF i ###
 
-### CONSTANT INT 3 ###
+### CONSTANT INT 10 ###
 addi $sp, $sp, -4
-li $t0, 3
+li $t0, 10
 sw $t0, 0($sp)
-### END OF CONSTANT INT 3 ###
+### END OF CONSTANT INT 10 ###
 
 ### ASSIGN ###
 lw $t0, 4($sp)
@@ -38,29 +38,7 @@ addi $sp, $sp, 4
 ### CLOSING ASSIGN ON NEXT LINE ###
 addi $sp, $sp, 4
 
-#### FOR ####
-### LOCAL ID ADRS OF i ###
-move $t0, $fp
-addi $t0, $t0, -8
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-### END OF LOCAL ID ADRS OF i ###
-
-### CONSTANT INT 0 ###
-addi $sp, $sp, -4
-li $t0, 0
-sw $t0, 0($sp)
-### END OF CONSTANT INT 0 ###
-
-### ASSIGN ###
-lw $t0, 4($sp)
-lw $t1, 0($sp)
-sw $t1, 0($t0)
-sw $t1, 4($sp)
-addi $sp, $sp, 4
-### END OF ASSIGN ###
-
-addi $sp, $sp, 4
+#### WHILE ####
 start_label2:
 ### LOCAL ID VALUE OF i ###
 move $t0, $fp
@@ -70,19 +48,19 @@ addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF i ###
 
-### CONSTANT INT 10 ###
+### CONSTANT INT 3 ###
 addi $sp, $sp, -4
-li $t0, 10
+li $t0, 3
 sw $t0, 0($sp)
-### END OF CONSTANT INT 10 ###
+### END OF CONSTANT INT 3 ###
 
-### < ###
+### > ###
 lw $t0, 4($sp)
 lw $t1, 0($sp)
-slt $t0, $t0, $t1
+slt $t0, $t1, $t0
 addi $sp, $sp, 4
 sw $t0, 0($sp)
-### END OF < ###
+### END OF > ###
 
 lw $t0, 0($sp)
 addi $sp, $sp, 4
@@ -133,13 +111,13 @@ li $t0, 1
 sw $t0, 0($sp)
 ### END OF CONSTANT INT 1 ###
 
-## + ##
+## - ##
 lw $t0, 4($sp)
 lw $t1, 0($sp)
-add $t0, $t0, $t1
+sub $t0, $t0, $t1
 addi $sp, $sp, 4
 sw $t0, 0($sp)
-## END OF + ##
+## END OF - ##
 
 ### ASSIGN ###
 lw $t0, 4($sp)
@@ -155,55 +133,17 @@ addi $sp, $sp, 4
 ### poping declared vars from stack ###
 addi $sp, $sp, 0
 
-### LOCAL ID ADRS OF i ###
-move $t0, $fp
-addi $t0, $t0, -8
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-### END OF LOCAL ID ADRS OF i ###
-
-### LOCAL ID VALUE OF i ###
-move $t0, $fp
-addi $t0, $t0, -8
-lw $t0, 0($t0)
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-### END OF LOCAL ID VALUE OF i ###
-
-### CONSTANT INT 2 ###
-addi $sp, $sp, -4
-li $t0, 2
-sw $t0, 0($sp)
-### END OF CONSTANT INT 2 ###
-
-## * ##
-lw $t0, 4($sp)
-lw $t1, 0($sp)
-mul $t0, $t0, $t1
-addi $sp, $sp, 4
-sw $t0, 0($sp)
-## END OF * ##
-
-### ASSIGN ###
-lw $t0, 4($sp)
-lw $t1, 0($sp)
-sw $t1, 0($t0)
-sw $t1, 4($sp)
-addi $sp, $sp, 4
-### END OF ASSIGN ###
-
-addi $sp, $sp, 4
 j start_label2
 end_label3:
-#### END OF FOR ####
+#### END OF WHILE ####
 
 ### PRINT ###
 
-### CONSTANT STRING yes\n ###
+### CONSTANT STRING yes ###
 addi $sp, $sp, -4
 la $t0, str_const_3
 sw $t0, 0($sp)
-### END OF CONSTANT STRING yes\n ###
+### END OF CONSTANT STRING yes ###
 
 lw $t0, 0($sp)
 li $v0, 4
@@ -249,4 +189,4 @@ jr $ra
 str_const_0:  .asciiz "Runtime Error"
 str_const_1:  .asciiz "\n"
 str_const_2:  .asciiz " "
-str_const_3:  .asciiz "yes\n"
+str_const_3:  .asciiz "yes"
