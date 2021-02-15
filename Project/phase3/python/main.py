@@ -1,19 +1,28 @@
 import sys, getopt
 from lark import Lark
+# import FirstTraverse as _ft
 from FirstTraverse import FirstTraverse
+# import SecondTraverse as _st
+from SecondTraverse import SecondTraverse
 import traceback
+
+# TODO bug in l_value : others.identifier -> assign.identifier
+
+def alert(text):
+    print('\033[91m' + str(text) + '\033[0m')
+
 
 def main(argv):
     inputfile = ''
     outputfile = ''
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
-        print ('main.py -i <inputfile> -o <outputfile>')
+        print('main.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('test.py -i <inputfile> -o <outputfile>')
+            print('test.py -i <inputfile> -o <outputfile>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
@@ -163,28 +172,38 @@ def main(argv):
         %ignore WS
         """
 
-        # code = """
-        #     void main () {
-        #         id.id = 999;
-        #     }
-        # """
-
-        parser = Lark(grammar,start="program", transformer=FirstTraverse(),parser='lalr', debug=False)
+        first_traverse_dict = None
+        parser = Lark(grammar,
+                      start="program",
+                      transformer=FirstTraverse(),
+                      parser='lalr',
+                      debug=False)
         # print(parser.parse(code))
         try:
             x = input_file.read()
-            print(x)
-            print(parser.parse(x))
-            # parser.parse(x)
+            # alert('TEST_CODE--------------------')
+            # print(x)
+            # alert('-----------------------------')
+            
+            # print(parser.parse(x))
+            first_traverse_dict = parser.parse(x)
         except Exception as e:
             traceback.print_exc()
             has_error = True
-    with open("out/" + outputfile, "w") as output_file:
+    with open('out/' + outputfile, 'w') as output_file:
         if has_error:
-            output_file.write("Syntax Error")
+            output_file.write('Syntax Error')
         else:
-            output_file.write("OK")
+            second_traverse = None
+            try:
+                second_traverse = SecondTraverse(first_traverse_dict)
+                output_file.write(second_traverse.asm_code)
+                # alert('ASM_CODE-------------------------')
+                # print(second_traverse.asm_code)
+                # alert('---------------------------------')
+            except Exception as e:
+                traceback.print_exc()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    # main(None)
