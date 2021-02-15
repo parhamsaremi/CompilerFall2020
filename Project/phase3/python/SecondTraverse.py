@@ -268,7 +268,7 @@ class SecondTraverse():
         if stmt['stmt_type'] == 'expr_prime':
             if stmt['stmt'] is not None:
                 self.expr_f(stmt['stmt'])
-                self.code += '### CLSOING ASSIGN ON NEXT LINE ###\n'
+                self.code += '### CLOSING ASSIGN ON NEXT LINE ###\n'
                 self.code += 'addi $sp, $sp, 4\n'
                 self.code += '\n'
         elif stmt['stmt_type'] == 'stmt_block':
@@ -486,34 +486,55 @@ class SecondTraverse():
         # else:
         #     return {'scopes': [None], 'obj_id': args}
 
-    def l_value_f(self, l_value):
+    def l_value_f(self, l_value, option):
         if l_value['l_value_type'] == 'id':
-            return self.l_value_id_f(l_value)
+            return self.l_value_id_f(l_value, option)
         elif l_value['l_value_type'] == 'obj_field':
-            return self.l_value_obj_f(l_value)
+            return self.l_value_obj_f(l_value, option)
         elif l_value['l_value_type'] == 'array':
-            return self.l_value_arr_f(l_value)
+            return self.l_value_arr_f(l_value, option)
 
-    def l_value_id_f(self, l_value_id):
+    def l_value_id_f(self, l_value_id, option):
         id_ = l_value_id['l_value']['value']
         variable_decl = Scope.get_variable_decl_in_symbol_table(id_)
         type_ = variable_decl['type']
         if variable_decl.keys().__contains__('fp_offset'):
             fp_offset = variable_decl['fp_offset']
-            self.code += f'### LOCAL ID OF {id_} ###\n'
-            self.code += 'move $t0, $fp\n'
-            self.code += f'addi $t0, $t0, {fp_offset}\n'
-            self.code += 'addi $sp, $sp, -4\n'
-            self.code += 'sw $t0, 0($sp)\n'
-            self.code += f'### END OF LOCAL ID {id_} ###\n\n'
+            if option == 'adrs':
+                self.code += f'### LOCAL ID ADRS OF {id_} ###\n'
+                self.code += 'move $t0, $fp\n'
+                self.code += f'addi $t0, $t0, {fp_offset}\n'
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $t0, 0($sp)\n'
+                self.code += f'### END OF LOCAL ID ADRS OF {id_} ###\n\n'
+            elif option == 'value':
+                self.code += f'### LOCAL ID VALUE OF {id_} ###\n'
+                self.code += 'move $t0, $fp\n'
+                self.code += f'addi $t0, $t0, {fp_offset}\n'
+                self.code += 'lw $t0, 0($t0)\n'
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $t0, 0($sp)\n'
+                self.code += f'### END OF LOCAL ID VALUE OF {id_} ###\n\n'
+            else:
+                assert 1==2
             return type_
         elif variable_decl.keys().__contains__['data_sec_label']:
             data_sec_label = variable_decl['data_sec_label']
-            self.code += f'### GLOB ID OF {id_} ###\n'
-            self.code += f'la $t0, {data_sec_label}\n'
-            self.code += 'addi $sp, $sp, -4\n'
-            self.code += 'sw $t0, 0($sp)\n'
-            self.code += f'### END OF GLOB ID {id_} ###\n\n'
+            if option == 'adrs':
+                self.code += f'### GLOB ID ADRS OF {id_} ###\n'
+                self.code += f'la $t0, {data_sec_label}\n'
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $t0, 0($sp)\n'
+                self.code += f'### END OF GLOB ID ADRS {id_} ###\n\n'
+            elif option == 'value':
+                self.code += f'### GLOB ID VALUE OF {id_} ###\n'
+                self.code += f'la $t0, {data_sec_label}\n'
+                self.code += 'lw $t0, 0($t0)\n'
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $t0, 0($sp)\n'
+                self.code += f'### END OF GLOB ID VALUE {id_} ###\n\n'
+            else:
+                assert 1==2
             return type_
         else:
             assert 1 == 2
@@ -569,7 +590,7 @@ class SecondTraverse():
 
     def assign_f(self, assign):
         if assign['expr_type'] == 'assign':
-            l_value = self.l_value_f(assign['l_value'])
+            l_value = self.l_value_f(assign['l_value'], 'adrs')
             r_value = self.assign_f(assign['r_value'])
             self.code += '### ASSIGN ###\n'
             self.code += 'lw $t0, 4($sp)\n'
@@ -867,7 +888,7 @@ class SecondTraverse():
             # TODO return type of the obj 'this' is refering to
             return {}
         elif others['expr_type'] == 'lvalue':
-            return self.l_value_f(others)
+            return self.l_value_f(others, 'value')
         elif others['expr_type'] == 'call':
             # TODO
             pass

@@ -1,11 +1,7 @@
 int main() {
 	int a;
-	int b;
-	int c;    
+	
+	a = 10;
 
-	a = 2;
-	b = 4;
-	c = a + b;
-
-	Print(c);
+	Print(a);
 }

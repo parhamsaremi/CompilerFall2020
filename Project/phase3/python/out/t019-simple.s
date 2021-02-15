@@ -3,7 +3,7 @@
 
 main:
 move $fp, $sp
-addi $sp, $sp ,-4
+addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal GLOBAL_main_label1
 lw $ra, 0($sp)
