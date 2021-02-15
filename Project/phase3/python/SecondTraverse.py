@@ -10,7 +10,7 @@ from Type import Type
 # remember to pop 'assign' values from stack
 # how to handle output of void function, write in the stack or not?
 # remember to deal with scope stack
-
+# fix auto return at the end of functions (it must return something in the stack unless it returns void)
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
@@ -418,9 +418,9 @@ class SecondTraverse():
         self.code += 'lw $t0, 0($sp)\n'
         self.code += 'addi $sp, $sp, 4\n'
         self.code += f'beq $t0, $zero, {end_label}\n'
+        self.stmt_f(for_stmt['stmt'])
         self.expr_f(for_stmt['step_expr'])
         self.code += 'addi $sp, $sp, 4\n'
-        self.stmt_f(for_stmt['stmt'])
         self.code += f'j {start_label}\n'
         self.code += f'{end_label}:\n'
         self.code += '#### END OF FOR ####\n\n'
@@ -704,7 +704,7 @@ class SecondTraverse():
         for i in range(1, len(comp['add_sub_list'])):
             operator = comp['op_list'][i - 1]
             add_sub_2 = comp['add_sub_list'][i]
-            add_sub_2 = self.add_sub_f(comp_2)
+            add_sub_2 = self.add_sub_f(add_sub_2)
             if Type.is_int(add_sub_1) or Type.is_int(add_sub_1):
                 if operator == '>':
                     self.code += '### > ###\n'
@@ -749,7 +749,7 @@ class SecondTraverse():
                 pass
             else:
                 raise SemErr('operands are obj or arr or bool or string')
-            comp_1 = comp_2
+            add_sub_1 = add_sub_2
         return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
     def add_sub_f(self, add_sub):
@@ -805,14 +805,20 @@ class SecondTraverse():
     def mul_div_mod_f(self, mdm):
         if len(mdm['not_neg_list']) == 1:
             return self.not_neg_f(mdm['not_neg_list'][0])
-        not_neg_1 = self.not_neg_f(mdm['not_neq_list'][0])
+        not_neg_1 = self.not_neg_f(mdm['not_neg_list'][0])
         for i in range(1, len(mdm['not_neg_list'])):
             operator = mdm['op_list'][i - 1]
             not_neg_2 = mdm['not_neg_list'][i]
             not_neg_2 = self.not_neg_f(not_neg_2)
             if Type.is_int(not_neg_1) and Type.is_int(not_neg_2):
                 if operator == '*':
-                    # TODO
+                    self.code += '## * ##\n'
+                    self.code += 'lw $t0, 4($sp)\n'
+                    self.code += 'lw $t1, 0($sp)\n'
+                    self.code += 'mul $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += '## END OF * ##\n\n'
                     pass
                 elif operator == '/':
                     # TODO
@@ -974,13 +980,14 @@ class SecondTraverse():
         return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
     def constant_string_f(self, constant_string):
-        value = constant_string['value']
-        self.code += f'\n### CONSTANT STRING {value} ###\n'
+        alert(constant_string)
+        string_value = constant_string['value'][1:-1]
+        self.code += f'\n### CONSTANT STRING {string_value} ###\n'
         self.code += 'addi $sp, $sp, -4\n'
-        label = add_str_const_to_data_sec(self, constant_string['value'])
+        label = add_str_const_to_data_sec(self, string_value)
         self.code += f'la $t0, {label}\n'
         self.code += 'sw $t0, 0($sp)\n'
-        self.code += f'### END OF CONSTANT STRING {value} ###\n\n'
+        self.code += f'### END OF CONSTANT STRING {string_value} ###\n\n'
         return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
 
     def constant_null_f(self, args):

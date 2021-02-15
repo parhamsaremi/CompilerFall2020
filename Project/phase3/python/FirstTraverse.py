@@ -290,7 +290,7 @@ class FirstTraverse(Transformer):
         scopes = get_scopes_of_children(args)
         return {
             'scopes': scopes,
-            'stmt_type': 'while',
+            'stmt_type': 'while_stmt',
             'condition_expr': args[0],
             'stmt': args[1]
         }
@@ -299,7 +299,7 @@ class FirstTraverse(Transformer):
         scopes = get_scopes_of_children(args)
         return {
             'scopes': scopes,
-            'stmt_type': 'for',
+            'stmt_type': 'for_stmt',
             'init_expr': args[
                 0],  # NOTE changed args[0]['stmt'] to args[0]. maybe it's wrong.
             'condition_expr': args[1],

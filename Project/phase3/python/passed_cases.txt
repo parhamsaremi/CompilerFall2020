@@ -1,0 +1,8 @@
+Variable Decl:
+    local var decl in stmt_block
+
+operations:
+    add int
+
+Print:
+    print int
