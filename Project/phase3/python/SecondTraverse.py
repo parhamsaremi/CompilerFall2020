@@ -236,13 +236,17 @@ class SecondTraverse():
                 'fp_offset'] = stmt_block['base_fp_offset'] + fp_offset
             fp_offset -= 4
             self.variable_decl_f(variable_decl)
-        used_fp_offset = len(stmt_block['variable_decls'])
+        used_fp_offset = len(stmt_block['variable_decls']) * 4
+        self.code += '### pushing space to stack for declared vars ###\n'
+        self.code += f'addi $sp, $sp, -{used_fp_offset}\n\n'
         for stmt in stmt_block['stmts']:
             # TODO just 'stmt_type'?
             if stmt['stmt_type'] == 'stmt_block':
                 stmt['base_fp_offset'] = stmt_block[
-                    'base_fp_offset'] - used_fp_offset * 4
+                    'base_fp_offset'] - used_fp_offset
             self.stmt_f(stmt)
+        self.code += '### poping declared vars from stack ###\n'
+        self.code += f'addi $sp, $sp, {used_fp_offset}\n\n'
         Scope.scope_stack.pop()
         # scope = Scope()
         # children_scopes = get_scopes_of_children(args)
