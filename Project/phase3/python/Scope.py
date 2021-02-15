@@ -1,5 +1,9 @@
 from SemanticError import SemanticError as SemErr
 
+
+def alert(text):
+    print('\033[91m' + str(text) + '\033[0m')
+
 class Scope:
     scope_count = 0
     # current_scope_id = None
@@ -19,21 +23,24 @@ class Scope:
         return self.decls.keys().__contains__(id)
 
     @staticmethod
-    def get_decl_in_symbol_table(id: str):
+    def get_decl_in_symbol_table(id_: str):
+        # for scope in Scope.scope_dict.values():
+        #     alert('-------')
+        #     alert(scope.id)
+        #     alert(scope.type)
+        #     alert(scope.parent)
+        #     alert(scope.decls)
+        #     alert('----------------')
+        alert(id_)
+        # for scope in Scope.scope_stack:
+        #     print(scope.id,end = ' ')
         for i in range(len(Scope.scope_stack) - 1, -1, -1):
             scope = Scope.scope_stack[i]
-            if scope.decls.keys().__contains__(id):
-                return scope.decls[id]
+            alert(scope.id)
+            alert(scope.decls.keys())
+            if scope.decls.keys().__contains__(id_):
+                return scope.decls[id_]
         return None
-
-    # @staticmethod
-    # def get_fp_offset_of_variable(id: str):
-    #     variable_decl = Scope.get_decl_in_symbol_table(id)
-    #     if variable_decl is None:
-    #         raise Exception('variable_decl wasnt found')
-    #     if variable_decl['decl_type'] != 'variable':
-    #         raise Exception('decl_type isnt variable')
-    #     return variable_decl['fp_offset']
 
     @staticmethod
     def get_variable_decl_in_symbol_table(id: str):

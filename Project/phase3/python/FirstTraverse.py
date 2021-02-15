@@ -10,6 +10,10 @@ from SemanticError import SemanticError as SemErr
 # func params must be passed in reverse order (remember)
 
 
+def alert(text):
+    print('\033[91m' + str(text) + '\033[0m')
+
+
 def get_scopes_of_children(args):
     res = []
     for arg in args:
@@ -43,6 +47,8 @@ class FirstTraverse(Transformer):
         decls = [args[0]]
         for decl in args[1]['decls']:
             decls.append(decl)
+        for decl in decls:
+            scope.decls[decl['id']] = decl
         return {'scopes': [scope], 'decls': decls}
 
     def decl_prime_f(self, args):
@@ -86,13 +92,13 @@ class FirstTraverse(Transformer):
         # if declared function returns type
         if len(args) == 4:
             type_ = args[0]
-            id_ = args[1]
+            id_ = args[1]['value']
             formal_variables = args[2]['variables']
             stmt_block = args[3]
         # if declared function returns void
         else:
             type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
-            id_ = args[0]
+            id_ = args[0]['value']
             formal_variables = args[1]['variables']
             stmt_block = args[2]
         fp_offset = 4

@@ -12,6 +12,7 @@ from Type import Type
 # remember to deal with scope stack
 # fix auto return at the end of functions (it must return something in the stack unless it returns void)
 
+
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
     print('\033[91m' + '---------------------------------------------' +
@@ -124,10 +125,9 @@ class SecondTraverse():
     def function_decl_f(self, function_decl):
         cur_scope = function_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
-        func_label = get_label(function_decl['parent'] + '_' +
-                               function_decl['id']['value'])
-        if function_decl['parent'] == 'GLOBAL' and function_decl['id'][
-                'value'] == 'main':
+        id_ = function_decl['id']
+        func_label = get_label(function_decl['parent'] + '_' + id_)
+        if function_decl['parent'] == 'GLOBAL' and id_ == 'main':
             self.main_func_label = func_label
         self.code += f'{func_label}:\n'
         # self.code += 'addi $fp, $sp, -4\n' # NOTE do it in call_f
@@ -438,11 +438,13 @@ class SecondTraverse():
         self.code += '### END OF RETURN ###\n\n'
 
     def break_stmt_f(self, break_stmt):
+        global cur_loop_end_label
         self.code += '### BREAK ###\n'
         self.code += f'j {cur_loop_end_label}\n'
         self.code += '### END OF BREAK ###\n\n'
 
     def continue_stmt_f(self, continue_stmt):
+        global cur_loop_start_label
         self.code += '### CONTINUE ###\n'
         self.code += f'j {cur_loop_start_label}\n'
         self.code += '### END OF CONTINUE ###\n\n'
@@ -480,15 +482,25 @@ class SecondTraverse():
         #         'formals': args[3]['variables']
         #     }
 
-    def call_f(self, args):
-        pass
+    def call_f(self, call):
+        # id ()
+        if call.keys().__contains__('id'):
+            pass
+        # obj.field()
+        else:
+            pass
         # TODO
         # # id()
         # if len(args) == 2:
-        #     return {'scopes': [None], 'id': args[0]}
+        #     return {'scopes': [None], 'id': args[0], 'actuals': args[1]}
         # # obj.field()
         # else:
-        #     return {'scopes': [None], 'obj_id': args}
+        #     return {
+        #         'scopes': [None],
+        #         'others': args[0],
+        #         'field': args[1],
+        #         'actuals': args[2]
+        #     }
 
     def l_value_f(self, l_value, option):
         if l_value['l_value_type'] == 'id':
@@ -520,9 +532,9 @@ class SecondTraverse():
                 self.code += 'sw $t0, 0($sp)\n'
                 self.code += f'### END OF LOCAL ID VALUE OF {id_} ###\n\n'
             else:
-                assert 1==2
+                assert 1 == 2
             return type_
-        elif variable_decl.keys().__contains__['data_sec_label']:
+        elif variable_decl.keys().__contains__('data_sec_label'):
             data_sec_label = variable_decl['data_sec_label']
             if option == 'adrs':
                 self.code += f'### GLOB ID ADRS OF {id_} ###\n'
@@ -538,7 +550,7 @@ class SecondTraverse():
                 self.code += 'sw $t0, 0($sp)\n'
                 self.code += f'### END OF GLOB ID VALUE {id_} ###\n\n'
             else:
-                assert 1==2
+                assert 1 == 2
             return type_
         else:
             assert 1 == 2
@@ -980,7 +992,6 @@ class SecondTraverse():
         return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
 
     def constant_string_f(self, constant_string):
-        alert(constant_string)
         string_value = constant_string['value'][1:-1]
         self.code += f'\n### CONSTANT STRING {string_value} ###\n'
         self.code += 'addi $sp, $sp, -4\n'

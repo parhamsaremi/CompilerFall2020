@@ -12,3 +12,6 @@ For:
 
 While:
     while with cond, no control stmt (break, continue)
+
+If:
+    if with else stmt
