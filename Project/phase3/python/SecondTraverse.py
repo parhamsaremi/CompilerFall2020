@@ -281,7 +281,7 @@ class SecondTraverse():
             self.for_stmt_f(stmt)
         elif stmt['stmt_type'] == 'while_stmt':
             self.while_stmt_f(stmt)
-        elif stmt['stmt_type'] == 'if_stmt':
+        elif stmt['stmt_type'] == 'if_else':
             self.if_stmt_f(stmt)
         elif stmt['stmt_type'] == 'print':
             self.print_stmt_f(stmt)
