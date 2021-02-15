@@ -5,14 +5,11 @@ from SemanticError import SemanticError as SemErr
 from Type import Type
 
 # TODO:
-# check every thing during type checking, not just types,
-#   because a class name might be 'bool' for example and it causes a bug (these are reserved no need to check :) )
-# remember to pop 'assign' values from stack
-# how to handle output of void function, write in the stack or not?
 # remember to deal with scope stack
 # fix auto return at the end of functions (it must return something in the stack unless it returns void)
 # func label must be defined at the start, otherwise func calls might not be able to jal to desired label
-# classes can be upcast in func calls and assignments, they don't always have same type. handle this.
+# classes can be upcasted in func calls and assignments, they don't always have same type. handle this.
+# it seems printing ' ' is not needed in print() with many args
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
@@ -142,11 +139,7 @@ class SecondTraverse():
             self.main_func_label = func_label
         formals_count = len(function_decl['formals'])
         self.code += f'{func_label}:\n'
-        # self.code += '### pushing space to stack for formal vars ###\n'
-        # self.code += f'addi $sp, $sp, {-formals_count * 4}\n\n'
         self.stmt_block_f(function_decl['stmt_block'])
-        # self.code += '\n### poping space from stack for formal vars ###\n'
-        # self.code += f'addi $sp, $sp, {formals_count * 4}\n\n'
         self.code += f'### auto return of func {id_} ###\n'
         self.code += 'addi $sp, $sp, -4\n'
         self.code += 'li $t0, -1000\n'
@@ -339,6 +332,8 @@ class SecondTraverse():
         self.code += '#### END OF IF ####\n'
 
     def expr_f(self, expr):
+        if expr is None:
+            return None
         return self.assign_f(expr)
 
     def exprs_f(self, args):
@@ -409,9 +404,7 @@ class SecondTraverse():
                 self.code += 'addi $sp, $sp, 4\n'
             else:
                 assert 1 == 2  # type wasn't correct
-            self.code += f'la $a0, {space}\n'
-            self.code += 'li $v0, 4\n'
-            self.code += 'syscall\n'
+            # TODO space was printed here before ...
         self.code += f'la $a0, {next_line}\n'
         self.code += 'li $v0, 4\n'
         self.code += 'syscall\n'
@@ -444,16 +437,18 @@ class SecondTraverse():
         cur_loop_start_label_stack.append(start_label)
         cur_loop_end_label_stack.append(end_label)
         self.code += '#### FOR ####\n'
-        self.expr_f(for_stmt['init_expr'])
-        self.code += 'addi $sp, $sp, 4\n'  # NOTE to remove init_expr result from stack (is it correct?) (looks it is)
+        init_expr = self.expr_f(for_stmt['init_expr'])
+        if init_expr is not None:
+            self.code += 'addi $sp, $sp, 4\n'  # NOTE to remove init_expr result from stack (is it correct?) (looks it is)
         self.code += f'{start_label}:\n'
         self.expr_f(for_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)\n'
         self.code += 'addi $sp, $sp, 4\n'
         self.code += f'beq $t0, $zero, {end_label}\n'
         self.stmt_f(for_stmt['stmt'])
-        self.expr_f(for_stmt['step_expr'])
-        self.code += 'addi $sp, $sp, 4\n'
+        step_expr = self.expr_f(for_stmt['step_expr'])
+        if step_expr is not None:
+            self.code += 'addi $sp, $sp, 4\n'
         self.code += f'j {start_label}\n'
         self.code += f'{end_label}:\n'
         self.code += '#### END OF FOR ####\n\n'
@@ -695,7 +690,7 @@ class SecondTraverse():
         if not Type.is_bool(and_):
             raise SemErr('operands are not bool')
         for i in range(1, len(or_['and_list'])):
-            and_ = orـ['and_list'][i]
+            and_ = or_['and_list'][i]
             and_ = self.and_f(and_)
             if not Type.is_bool(and_):
                 raise SemErr('operands are not bool')
