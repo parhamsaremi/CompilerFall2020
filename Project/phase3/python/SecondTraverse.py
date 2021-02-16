@@ -99,6 +99,9 @@ class SecondTraverse():
         self.asm_code += 'addi $sp, $sp, 4\n'
         self.asm_code += f'jr $ra\n\n'
         self.asm_code += self.code
+        with open('mips_helper_functions/itob.s', 'r') as itob_s:
+            code = itob_s.read()
+            self.asm_code += code 
         self.asm_code += '.data\n'
         self.asm_code += self.data_sec
 
@@ -601,6 +604,8 @@ class SecondTraverse():
     def l_value_id_f(self, l_value_id, option):
         id_ = l_value_id['l_value']['value']
         variable_decl = Scope.get_decl_in_symbol_table(id_, 'variable')
+        if variable_decl is None:
+            raise SemErr('variable not found')
         type_ = variable_decl['type']
         if variable_decl.keys().__contains__('fp_offset'):
             fp_offset = variable_decl['fp_offset']

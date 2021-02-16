@@ -194,7 +194,9 @@ def main(argv):
             has_error = True
     with open('out' + postfix + '/' + outputfile, 'w') as output_file:
         if has_error:
-            output_file.write('Syntax Error')
+            with open('SynErrPrint.s', 'r') as syn_err_print:
+                code = syn_err_print.read()
+                output_file.write(code)
         else:
             second_traverse = None
             try:
@@ -205,6 +207,9 @@ def main(argv):
                 # alert('---------------------------------')
             except Exception as e:
                 traceback.print_exc()
+                with open('SemErrPrint.s', 'r') as sem_err_print:
+                    code = sem_err_print.read()
+                    output_file.write(code)
 
 
 if __name__ == "__main__":

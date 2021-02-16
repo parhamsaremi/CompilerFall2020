@@ -21,6 +21,8 @@ Global Variable:
     int x; in global scope
 
 Function:
+    itob
+    btoi
     simple print function, no recurrence
 
 Array:
