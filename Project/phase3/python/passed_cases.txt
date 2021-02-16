@@ -25,3 +25,4 @@ Function:
 
 Array:
     simple array test
+    array length

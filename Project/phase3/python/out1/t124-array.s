@@ -14,20 +14,46 @@ jr $ra
 
 GLOBAL_main_label1:
 ### pushing space to stack for declared vars ###
-addi $sp, $sp, -4
+addi $sp, $sp, -12
 
-### LOCAL ID ADRS OF a ###
+### LOCAL ID ADRS OF len ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -16
 addi $sp, $sp, -4
 sw $t0, 0($sp)
-### END OF LOCAL ID ADRS OF a ###
+### END OF LOCAL ID ADRS OF len ###
 
 ### CONSTANT INT 5 ###
 addi $sp, $sp, -4
 li $t0, 5
 sw $t0, 0($sp)
 ### END OF CONSTANT INT 5 ###
+
+### ASSIGN ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+sw $t1, 0($t0)
+sw $t1, 4($sp)
+addi $sp, $sp, 4
+### END OF ASSIGN ###
+
+### CLOSING ASSIGN ON NEXT LINE ###
+addi $sp, $sp, 4
+
+### LOCAL ID ADRS OF a ###
+move $t0, $fp
+addi $t0, $t0, -12
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID ADRS OF a ###
+
+### LOCAL ID VALUE OF len ###
+move $t0, $fp
+addi $t0, $t0, -16
+lw $t0, 0($t0)
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID VALUE OF len ###
 
 lw $t0, 0($sp)
 bgt $t0, 0, arr_size_ok_label2
@@ -58,7 +84,7 @@ addi $sp, $sp, 4
 
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
@@ -96,11 +122,11 @@ move $ra, $s0
 jr $ra
 no_runtime_error_label5:
 ### END OF LOCAL ARR ADRS ###
-### CONSTANT INT 10 ###
+### CONSTANT INT 1 ###
 addi $sp, $sp, -4
-li $t0, 10
+li $t0, 1
 sw $t0, 0($sp)
-### END OF CONSTANT INT 10 ###
+### END OF CONSTANT INT 1 ###
 
 ### ASSIGN ###
 lw $t0, 4($sp)
@@ -115,7 +141,7 @@ addi $sp, $sp, 4
 
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
@@ -153,11 +179,11 @@ move $ra, $s0
 jr $ra
 no_runtime_error_label8:
 ### END OF LOCAL ARR ADRS ###
-### CONSTANT INT 20 ###
+### CONSTANT INT 2 ###
 addi $sp, $sp, -4
-li $t0, 20
+li $t0, 2
 sw $t0, 0($sp)
-### END OF CONSTANT INT 20 ###
+### END OF CONSTANT INT 2 ###
 
 ### ASSIGN ###
 lw $t0, 4($sp)
@@ -172,7 +198,7 @@ addi $sp, $sp, 4
 
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
@@ -210,38 +236,21 @@ move $ra, $s0
 jr $ra
 no_runtime_error_label11:
 ### END OF LOCAL ARR ADRS ###
-### CONSTANT INT 30 ###
-addi $sp, $sp, -4
-li $t0, 30
-sw $t0, 0($sp)
-### END OF CONSTANT INT 30 ###
-
-### ASSIGN ###
-lw $t0, 4($sp)
-lw $t1, 0($sp)
-sw $t1, 0($t0)
-sw $t1, 4($sp)
-addi $sp, $sp, 4
-### END OF ASSIGN ###
-
-### CLOSING ASSIGN ON NEXT LINE ###
-addi $sp, $sp, 4
-
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF a ###
 
-### CONSTANT INT 3 ###
+### CONSTANT INT 1 ###
 addi $sp, $sp, -4
-li $t0, 3
+li $t0, 1
 sw $t0, 0($sp)
-### END OF CONSTANT INT 3 ###
+### END OF CONSTANT INT 1 ###
 
-### LOCAL ARR ADRS ###
+### LOCAL ARR VALUE OF ###
 lw $t0, 4($sp)
 lw $t1, 0($t0)
 lw $t2, 0($sp)
@@ -250,6 +259,7 @@ bge $t2, $t1, index_more_size_label13
 addi $t2, $t2, 1
 sll $t2, $t2, 2
 add $t0, $t0, $t2
+lw $t0, 0($t0)
 addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label14
@@ -266,13 +276,7 @@ syscall
 move $ra, $s0
 jr $ra
 no_runtime_error_label14:
-### END OF LOCAL ARR ADRS ###
-### CONSTANT INT 40 ###
-addi $sp, $sp, -4
-li $t0, 40
-sw $t0, 0($sp)
-### END OF CONSTANT INT 40 ###
-
+### END OF LOCAL ARR VALUE ###
 ### ASSIGN ###
 lw $t0, 4($sp)
 lw $t1, 0($sp)
@@ -286,17 +290,17 @@ addi $sp, $sp, 4
 
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF a ###
 
-### CONSTANT INT 4 ###
+### CONSTANT INT 1 ###
 addi $sp, $sp, -4
-li $t0, 4
+li $t0, 1
 sw $t0, 0($sp)
-### END OF CONSTANT INT 4 ###
+### END OF CONSTANT INT 1 ###
 
 ### LOCAL ARR ADRS ###
 lw $t0, 4($sp)
@@ -324,11 +328,11 @@ move $ra, $s0
 jr $ra
 no_runtime_error_label17:
 ### END OF LOCAL ARR ADRS ###
-### CONSTANT INT 50 ###
+### CONSTANT INT 10 ###
 addi $sp, $sp, -4
-li $t0, 50
+li $t0, 10
 sw $t0, 0($sp)
-### END OF CONSTANT INT 50 ###
+### END OF CONSTANT INT 10 ###
 
 ### ASSIGN ###
 lw $t0, 4($sp)
@@ -341,22 +345,21 @@ addi $sp, $sp, 4
 ### CLOSING ASSIGN ON NEXT LINE ###
 addi $sp, $sp, 4
 
-### PRINT ###
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF a ###
 
-### CONSTANT INT 0 ###
+### CONSTANT INT 3 ###
 addi $sp, $sp, -4
-li $t0, 0
+li $t0, 3
 sw $t0, 0($sp)
-### END OF CONSTANT INT 0 ###
+### END OF CONSTANT INT 3 ###
 
-### LOCAL ARR VALUE OF ###
+### LOCAL ARR ADRS ###
 lw $t0, 4($sp)
 lw $t1, 0($t0)
 lw $t2, 0($sp)
@@ -365,7 +368,6 @@ bge $t2, $t1, index_more_size_label19
 addi $t2, $t2, 1
 sll $t2, $t2, 2
 add $t0, $t0, $t2
-lw $t0, 0($t0)
 addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label20
@@ -382,33 +384,39 @@ syscall
 move $ra, $s0
 jr $ra
 no_runtime_error_label20:
-### END OF LOCAL ARR VALUE ###
-lw $t0, 0($sp)
-li $v0, 1
-move $a0, $t0
-syscall
-addi $sp, $sp, 4
-la $a0, str_const_4
-li $v0, 4
-syscall
-### END OF PRINT ###
+### END OF LOCAL ARR ADRS ###
+### CONSTANT INT 4 ###
+addi $sp, $sp, -4
+li $t0, 4
+sw $t0, 0($sp)
+### END OF CONSTANT INT 4 ###
 
-### PRINT ###
+### ASSIGN ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+sw $t1, 0($t0)
+sw $t1, 4($sp)
+addi $sp, $sp, 4
+### END OF ASSIGN ###
+
+### CLOSING ASSIGN ON NEXT LINE ###
+addi $sp, $sp, 4
+
 ### LOCAL ID VALUE OF a ###
 move $t0, $fp
-addi $t0, $t0, -8
+addi $t0, $t0, -12
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF a ###
 
-### CONSTANT INT 2 ###
+### CONSTANT INT 4 ###
 addi $sp, $sp, -4
-li $t0, 2
+li $t0, 4
 sw $t0, 0($sp)
-### END OF CONSTANT INT 2 ###
+### END OF CONSTANT INT 4 ###
 
-### LOCAL ARR VALUE OF ###
+### LOCAL ARR ADRS ###
 lw $t0, 4($sp)
 lw $t1, 0($t0)
 lw $t2, 0($sp)
@@ -417,7 +425,6 @@ bge $t2, $t1, index_more_size_label22
 addi $t2, $t2, 1
 sll $t2, $t2, 2
 add $t0, $t0, $t2
-lw $t0, 0($t0)
 addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label23
@@ -434,58 +441,121 @@ syscall
 move $ra, $s0
 jr $ra
 no_runtime_error_label23:
-### END OF LOCAL ARR VALUE ###
-lw $t0, 0($sp)
-li $v0, 1
-move $a0, $t0
-syscall
-addi $sp, $sp, 4
-la $a0, str_const_4
-li $v0, 4
-syscall
-### END OF PRINT ###
+### END OF LOCAL ARR ADRS ###
+### CONSTANT INT 5 ###
+addi $sp, $sp, -4
+li $t0, 5
+sw $t0, 0($sp)
+### END OF CONSTANT INT 5 ###
 
-### PRINT ###
-### LOCAL ID VALUE OF a ###
+### ASSIGN ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+sw $t1, 0($t0)
+sw $t1, 4($sp)
+addi $sp, $sp, 4
+### END OF ASSIGN ###
+
+### CLOSING ASSIGN ON NEXT LINE ###
+addi $sp, $sp, 4
+
+#### FOR ####
+### LOCAL ID ADRS OF i ###
+move $t0, $fp
+addi $t0, $t0, -8
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID ADRS OF i ###
+
+### CONSTANT INT 0 ###
+addi $sp, $sp, -4
+li $t0, 0
+sw $t0, 0($sp)
+### END OF CONSTANT INT 0 ###
+
+### ASSIGN ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+sw $t1, 0($t0)
+sw $t1, 4($sp)
+addi $sp, $sp, 4
+### END OF ASSIGN ###
+
+addi $sp, $sp, 4
+start_label24:
+### LOCAL ID VALUE OF i ###
 move $t0, $fp
 addi $t0, $t0, -8
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
+### END OF LOCAL ID VALUE OF i ###
+
+### LOCAL ID VALUE OF len ###
+move $t0, $fp
+addi $t0, $t0, -16
+lw $t0, 0($t0)
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID VALUE OF len ###
+
+### < ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+slt $t0, $t0, $t1
+addi $sp, $sp, 4
+sw $t0, 0($sp)
+### END OF < ###
+
+lw $t0, 0($sp)
+addi $sp, $sp, 4
+beq $t0, $zero, end_label25
+### pushing space to stack for declared vars ###
+addi $sp, $sp, -0
+
+### PRINT ###
+### LOCAL ID VALUE OF a ###
+move $t0, $fp
+addi $t0, $t0, -12
+lw $t0, 0($t0)
+addi $sp, $sp, -4
+sw $t0, 0($sp)
 ### END OF LOCAL ID VALUE OF a ###
 
-### CONSTANT INT 4 ###
+### LOCAL ID VALUE OF i ###
+move $t0, $fp
+addi $t0, $t0, -8
+lw $t0, 0($t0)
 addi $sp, $sp, -4
-li $t0, 4
 sw $t0, 0($sp)
-### END OF CONSTANT INT 4 ###
+### END OF LOCAL ID VALUE OF i ###
 
 ### LOCAL ARR VALUE OF ###
 lw $t0, 4($sp)
 lw $t1, 0($t0)
 lw $t2, 0($sp)
-blt $t2, $zero, index_less_zero_label24
-bge $t2, $t1, index_more_size_label25
+blt $t2, $zero, index_less_zero_label26
+bge $t2, $t1, index_more_size_label27
 addi $t2, $t2, 1
 sll $t2, $t2, 2
 add $t0, $t0, $t2
 lw $t0, 0($t0)
 addi $sp, $sp, 4
 sw $t0, 0($sp)
-j no_runtime_error_label26
-index_less_zero_label24:
+j no_runtime_error_label28
+index_less_zero_label26:
 la $a0, str_const_1
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
-index_more_size_label25:
+index_more_size_label27:
 la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
-no_runtime_error_label26:
+no_runtime_error_label28:
 ### END OF LOCAL ARR VALUE ###
 lw $t0, 0($sp)
 li $v0, 1
@@ -498,7 +568,74 @@ syscall
 ### END OF PRINT ###
 
 ### poping declared vars from stack ###
+addi $sp, $sp, 0
+
+### LOCAL ID ADRS OF i ###
+move $t0, $fp
+addi $t0, $t0, -8
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID ADRS OF i ###
+
+### LOCAL ID VALUE OF i ###
+move $t0, $fp
+addi $t0, $t0, -8
+lw $t0, 0($t0)
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID VALUE OF i ###
+
+### CONSTANT INT 1 ###
+addi $sp, $sp, -4
+li $t0, 1
+sw $t0, 0($sp)
+### END OF CONSTANT INT 1 ###
+
+## + ##
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+add $t0, $t0, $t1
 addi $sp, $sp, 4
+sw $t0, 0($sp)
+## END OF + ##
+
+### ASSIGN ###
+lw $t0, 4($sp)
+lw $t1, 0($sp)
+sw $t1, 0($t0)
+sw $t1, 4($sp)
+addi $sp, $sp, 4
+### END OF ASSIGN ###
+
+addi $sp, $sp, 4
+j start_label24
+end_label25:
+#### END OF FOR ####
+
+### PRINT ###
+### LOCAL ID VALUE OF a ###
+move $t0, $fp
+addi $t0, $t0, -12
+lw $t0, 0($t0)
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+### END OF LOCAL ID VALUE OF a ###
+
+lw $t0, 0($sp)
+lw $t0, 0($t0)
+sw $t0, 0($sp)
+lw $t0, 0($sp)
+li $v0, 1
+move $a0, $t0
+syscall
+addi $sp, $sp, 4
+la $a0, str_const_4
+li $v0, 4
+syscall
+### END OF PRINT ###
+
+### poping declared vars from stack ###
+addi $sp, $sp, 12
 
 ### auto return of func main ###
 addi $sp, $sp, -4
@@ -512,7 +649,7 @@ jr $ra
 str_const_0:  .asciiz "Runtime Error"
 str_const_1:  .asciiz "array index is less than zero"
 str_const_2:  .asciiz "array index is more than arr.size-1"
-str_const_3:  .asciiz "array size can' be negative"
+str_const_3:  .asciiz "array size can't be negative"
 str_const_4:  .asciiz "\n"
 str_const_5:  .asciiz " "
 str_const_6:  .asciiz "true"

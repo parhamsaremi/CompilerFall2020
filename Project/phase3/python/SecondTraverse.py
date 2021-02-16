@@ -79,7 +79,7 @@ class SecondTraverse():
         index_more_size_error_msg = add_str_const_to_data_sec(
             self, 'array index is more than arr.size-1')
         arr_size_neg_error_msg = add_str_const_to_data_sec(
-            self, 'array size can\' be negative')
+            self, 'array size can\'t be negative')
         next_line = add_str_const_to_data_sec(self, '\\n')
         space = add_str_const_to_data_sec(self, ' ')
         true_str = add_str_const_to_data_sec(self, 'true')
@@ -565,8 +565,18 @@ class SecondTraverse():
             return function_decl['type']
         # obj.field()
         else:
-            pass
-        # TODO
+            obj_field = self.others_f(call['others'])
+            field_id = call['field']['value']
+            if Type.is_arr(obj_field):
+                if not field_id == 'length':
+                    raise SemErr('array type only supports "length" function')
+                self.code += 'lw $t0, 0($sp)\n'
+                self.code += 'lw $t0, 0($t0)\n'
+                self.code += 'sw $t0, 0($sp)\n'
+                return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+            else:
+                # TODO
+                pass
         # # id()
         # if len(args) == 2:
         #     return {'scopes': [None], 'id': args[0], 'actuals': args[1]}
@@ -996,7 +1006,7 @@ class SecondTraverse():
                     raise SemErr('! behind int operand')
                 elif operator == '-':
                     self.code += 'lw $t0, 0($sp)\n'
-                    self.code += 'lw $t0, $zero, $t0\n'
+                    self.code += 'sub $t0, $zero, $t0\n'
                     self.code += 'sw $t0, 0($sp)\n'
             elif Type.is_double(others):
                 if operator == '!':
@@ -1006,9 +1016,8 @@ class SecondTraverse():
                     pass
             else:
                 raise SemErr('operand types are not correct')
-            not_neg_1 = not_neg_2
         # TODO is returned value correct
-        return not_neg_1
+        return others
 
     def others_f(self, others):
         # NOTE new function, it isn't in first traverse.
