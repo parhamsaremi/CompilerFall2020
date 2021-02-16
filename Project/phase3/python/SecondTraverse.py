@@ -10,6 +10,8 @@ from Type import Type
 # func label must be defined at the start, otherwise func calls might not be able to jal to desired label
 # classes can be upcasted in func calls and assignments, they don't always have same type. handle this.
 # it seems printing ' ' is not needed in print() with many args
+# continue, break and maybe return might have bug, becuase they don't pop declared vars of inner scopes.
+
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
@@ -37,10 +39,14 @@ def get_label(prefix=''):
 
 data_sec_count = 0
 runtime_error_msg = None
+index_less_zero_error_msg = None
+index_more_size_error_msg = None
+arr_size_neg_error_msg = None
 next_line = None
 space = None
 true_str = None
 false_str = None
+cur_function_decl = None
 
 
 def add_str_const_to_data_sec(second_traverse, string: str):
@@ -61,13 +67,19 @@ def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
 
 class SecondTraverse():
     def __init__(self, ast):
-        global runtime_error_msg, next_line, space, true_str, false_str
+        global runtime_error_msg, index_less_zero_error_msg, index_more_size_error_msg, arr_size_neg_error_msg, next_line, space, true_str, false_str
         self.asm_start_label = 'main'  # TODO check that this does not cause any bugs
         self.asm_end_label = 'ASM_END'
         self.main_func_label = None
         self.ast = ast
         self.data_sec = ''
         runtime_error_msg = add_str_const_to_data_sec(self, 'Runtime Error')
+        index_less_zero_error_msg = add_str_const_to_data_sec(
+            self, 'array index is less than zero')
+        index_more_size_error_msg = add_str_const_to_data_sec(
+            self, 'array index is more than arr.size-1')
+        arr_size_neg_error_msg = add_str_const_to_data_sec(
+            self, 'array size can\' be negative')
         next_line = add_str_const_to_data_sec(self, '\\n')
         space = add_str_const_to_data_sec(self, ' ')
         true_str = add_str_const_to_data_sec(self, 'true')
@@ -78,6 +90,7 @@ class SecondTraverse():
         self.asm_code += f'.globl {self.asm_start_label}\n\n'
         self.asm_code += f'{self.asm_start_label}:\n'
         self.asm_code += 'move $fp, $sp\n'
+        self.asm_code += 'move $s0, $ra\n'  # save exiting #ra in $s0 for runtime error handling
         self.asm_code += 'addi $sp, $sp, -4\n'
         self.asm_code += 'sw $ra, 0($sp)\n'
         self.asm_code += f'jal {self.main_func_label}\n'
@@ -129,10 +142,11 @@ class SecondTraverse():
         # }
 
     def function_decl_f(self, function_decl):
+        global cur_function_decl
+        cur_function_decl = function_decl
         cur_scope = function_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
         id_ = function_decl['id']
-        # func_label = get_label(function_decl['parent'] + '_' + id_)
         func_label = function_decl['func_label']
         function_decl['func_label'] = func_label
         if function_decl['parent'] == 'GLOBAL' and id_ == 'main':
@@ -414,7 +428,7 @@ class SecondTraverse():
         global cur_loop_start_label_stack, cur_loop_end_label_stack
         start_label = get_label('start')
         end_label = get_label('end')
-        cur_loop_start_label_stack.append(start_label) 
+        cur_loop_start_label_stack.append(start_label)
         cur_loop_end_label_stack.append(end_label)
         self.code += '#### WHILE ####\n'
         self.code += f'{start_label}:\n'
@@ -457,13 +471,20 @@ class SecondTraverse():
 
     def return_stmt_f(self, return_stmt):
         # TODO check type of return
+        global cur_function_decl
         self.code += '### RETURN ###\n'
         if return_stmt['expr'] is None:
+            if not Type.is_void(cur_function_decl['type']):
+                raise SemErr('returning void but function type is not void')
             self.code += 'jr $ra\n'
         else:
+            expr_type = self.expr_f(return_stmt['expr'])
+            if not Type.are_types_equal(cur_function_decl['type'], expr_type):
+                raise SemErr(
+                    'returned value type is not compatible with function type')
             self.code += 'lw $t0, 0($sp)\n'
-            self.code += 'addi $sp, $sp, 4\n'
-            self.code += 'move $v0, $t0\n'
+            self.code += 'addi $sp, $fp, -8\n'  # place of returned value
+            self.code += 'sw $t0, 0($sp)\n'
             self.code += 'jr $ra\n'
         self.code += '### END OF RETURN ###\n\n'
 
@@ -524,7 +545,9 @@ class SecondTraverse():
             for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                 actual_type = self.expr_f(call['actuals']['exprs'][i])
                 formal_type = function_decl['formals'][i]['type']
-                if not Type.are_types_equal(actual_type, formal_type):  # TODO this has to handle upcasting too
+                if not Type.are_types_equal(
+                        actual_type,
+                        formal_type):  # TODO this has to handle upcasting too
                     raise SemErr('formal and actual types are not same')
             actuals_count = len(call['actuals']['exprs'])
             self.code += 'addi $sp, $sp, -4\n'
@@ -616,17 +639,64 @@ class SecondTraverse():
         # return {
         #     'scopes': [None],
         #     'l_value_type': 'obj_field',
-        #     'obj': args[0],
+        #     'obj_expr': args[0],
         #     'obj_field': args[1]
         # }
 
-    def l_value_arr_f(self, args):
-        # TODO
-        pass
+    def l_value_arr_f(self, l_value_arr, option):
+        global index_less_zero_error_msg, index_more_size_error_msg
+        arr_type = self.others_f(l_value_arr['arr'])  # calc arr expr
+        index_type = self.expr_f(l_value_arr['index_expr'])  # calc index expr
+        if not Type.is_arr(arr_type):
+            raise SemErr('indexed variable is not array')
+        if not Type.is_int(index_type):
+            raise SemErr('index type is not int')
+        index_less_zero = get_label('index_less_zero')
+        index_more_size = get_label('index_more_size')
+        no_runtime_error = get_label('no_runtime_error')
+        if option == 'adrs':
+            self.code += f'### LOCAL ARR ADRS ###\n'
+        elif option == 'value':
+            self.code += f'### LOCAL ARR VALUE OF ###\n'
+        self.code += 'lw $t0, 4($sp)\n'  # arr.size adrs
+        self.code += 'lw $t1, 0($t0)\n'  # arr.size value
+        self.code += 'lw $t2, 0($sp)\n'  # expr value
+        self.code += f'blt $t2, $zero, {index_less_zero}\n'
+        self.code += f'bge $t2, $t1, {index_more_size}\n'
+        self.code += 'addi $t2, $t2, 1\n'
+        self.code += 'sll $t2, $t2, 2\n'
+        self.code += 'add $t0, $t0, $t2\n'
+        if option == 'value':
+            self.code += 'lw $t0, 0($t0)\n'
+        self.code += 'addi $sp, $sp, 4\n'
+        self.code += 'sw $t0, 0($sp)\n'
+        self.code += f'j {no_runtime_error}\n'
+        self.code += f'{index_less_zero}:\n'
+        self.code += f'la $a0, {index_less_zero_error_msg}\n'
+        self.code += 'li $v0, 4\n'
+        self.code += 'syscall\n'
+        self.code += 'move $ra, $s0\n'
+        self.code += 'jr $ra\n'
+        self.code += f'{index_more_size}:\n'
+        self.code += f'la $a0, {index_more_size_error_msg}\n'
+        self.code += 'li $v0, 4\n'
+        self.code += 'syscall\n'
+        self.code += 'move $ra, $s0\n'
+        self.code += 'jr $ra\n'
+        self.code += f'{no_runtime_error}:\n'
+        if option == 'adrs':
+            self.code += f'### END OF LOCAL ARR ADRS ###\n'
+        elif option == 'value':
+            self.code += f'### END OF LOCAL ARR VALUE ###\n'
+        return {
+            'is_arr': False,
+            'type': arr_type['type'],
+            'class': arr_type['class']
+        }
         # return {
         #     'scopes': [None],
         #     'l_value_type': 'array',
-        #     'arr_id': args[0],
+        #     'arr_expr': args[0],
         #     'index_expr': args[1]
         # }
 
@@ -969,7 +1039,7 @@ class SecondTraverse():
             return self.call_f(others)
         elif others['expr_type'] == '(expr)':
             del others['expr_type']
-            return others
+            return self.expr_f(others)
         elif others['expr_type'] == 'read_int':
             # TODO
             pass
@@ -980,20 +1050,22 @@ class SecondTraverse():
             # TODO
             pass
         elif others['expr_type'] == 'new_arr':
+            global arr_size_neg_error_msg
             del others['expr_type']
-            size = others['size']
-            if not Type.is_int(size):
-                raise SemErr('arr size cant be non-int')
+            size_type = self.expr_f(others['size'])
+            if not Type.is_int(size_type):
+                raise SemErr('arr size can\'t be non-int')
             type_ = others['type']
             if Type.is_void(type_):
-                raise SemErr('arr type cant be void')
+                raise SemErr('arr type can\'t be void')
             arr_size_ok_label = get_label('arr_size_ok')
             self.code += 'lw $t0, 0($sp)\n'
             self.code += f'bgt $t0, 0, {arr_size_ok_label}\n'
-            self.code += f'la $a0, {runtime_error_msg}\n'
+            self.code += f'la $a0, {arr_size_neg_error_msg}\n'
             self.code += 'li $v0, 4\n'
             self.code += 'syscall\n'
-            self.code += f'j {end_label}\n'
+            self.code += f'move $ra, $s0\n'
+            self.code += 'jr $ra\n'
             self.code += f'{arr_size_ok_label}:\n'
             self.code += 'move $t1, $t0\n'
             self.code += 'sll $t0, $t0, 2\n'
@@ -1003,6 +1075,11 @@ class SecondTraverse():
             self.code += 'syscall\n'
             self.code += 'sw $v0, 0($sp)\n'
             self.code += 'sw $t1, 0($v0)\n'
+            return {
+                'is_arr': True,
+                'type': type_['type'],
+                'class': type_['class']
+            }
         elif others['expr_type'] == 'itod':
             # TODO
             pass
@@ -1010,11 +1087,20 @@ class SecondTraverse():
             # TODO
             pass
         elif others['expr_type'] == 'itob':
-            # TODO
-            pass
+            expr_type = self.expr_f(others['expr'])
+            if not Type.is_int(expr_type):
+                raise SemErr('itob arg is not int')
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $ra, 0($sp)\n'
+            self.code += 'jal itob\n'  # NOTE itob func label
+            self.code += 'lw $ra, 0($sp)\n'
+            self.code += 'addi $sp, $sp, 4\n'
+            return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
         elif others['expr_type'] == 'btoi':
-            # TODO
-            pass
+            expr_type = self.expr_f(others['expr'])
+            if not Type.is_bool(expr_type):
+                raise SemErr('btoi arg is not bool')
+            return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
         else:
             assert 1 == 2
 
@@ -1061,12 +1147,14 @@ class SecondTraverse():
         return {'is_arr': False, 'type': 'null', 'class': 'Primitive'}
 
     def identifier_f(self, identifier):
-        id_ = identifier['value']
-        decl = Scope.get_decl_with_id(id_)
-        fp_offset = Scope.get_fp_offset_of_variable(id_)
-        self.code += f'\n### ID {id_} ###\n'
-        self.code += 'addi $sp, $sp, -4\n'
-        self.code += f'lw $t0, {str(fp_offset)}($fp)\n'
-        self.code += 'sw $t0, 0($sp)\n'
-        self.code += f'### END OF ID {id_} ###\n\n'
-        return decl['type']
+        # TODO looks useless. below code is code_gen not first traverse.
+        pass
+        # id_ = identifier['value']
+        # decl = Scope.get_decl_with_id(id_)
+        # fp_offset = Scope.get_fp_offset_of_variable(id_)
+        # self.code += f'\n### ID {id_} ###\n'
+        # self.code += 'addi $sp, $sp, -4\n'
+        # self.code += f'lw $t0, {str(fp_offset)}($fp)\n'
+        # self.code += 'sw $t0, 0($sp)\n'
+        # self.code += f'### END OF ID {id_} ###\n\n'
+        # return decl['type']

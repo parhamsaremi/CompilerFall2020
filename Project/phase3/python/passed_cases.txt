@@ -22,3 +22,6 @@ Global Variable:
 
 Function:
     simple print function, no recurrence
+
+Array:
+    simple array test

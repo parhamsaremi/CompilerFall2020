@@ -383,7 +383,7 @@ class FirstTraverse(Transformer):
         return {
             'scopes': [None],
             'l_value_type': 'array',
-            'arr_id': args[0],
+            'arr': args[0],
             'index_expr': args[1]
         }
 
