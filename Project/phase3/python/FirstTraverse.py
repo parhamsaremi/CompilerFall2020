@@ -111,7 +111,7 @@ class FirstTraverse(Transformer):
                     f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
                 )
             scope.decls[variable['id']] = variable
-        stmt_block['base_fp_offset'] = -8
+        # stmt_block['base_fp_offset'] = -8
         return {
             'parent': 'GLOBAL',
             'scopes': [scope],
@@ -195,8 +195,8 @@ class FirstTraverse(Transformer):
                 )
             scope.decls[variable_decl['id']] = variable_decl
         variable_decl_count = len(args[0]['variable_decls'])
-        for stmt in args[1]['stmts']:
-            stmt['base_fp_offset'] = variable_decl_count * 4
+        # for stmt in args[1]['stmts']:
+            # stmt['base_fp_offset'] = variable_decl_count * 4
         return {
             'scopes': [scope],
             'variable_decls': args[0]['variable_decls'],

@@ -21,6 +21,7 @@ def alert(text):
 
 cur_loop_start_label_stack = []
 cur_loop_end_label_stack = []
+base_fp_offset_stack = []
 
 count_label = 0
 
@@ -101,7 +102,7 @@ class SecondTraverse():
         self.asm_code += self.code
         with open('mips_helper_functions/itob.s', 'r') as itob_s:
             code = itob_s.read()
-            self.asm_code += code 
+            self.asm_code += code
         self.asm_code += '.data\n'
         self.asm_code += self.data_sec
 
@@ -145,10 +146,11 @@ class SecondTraverse():
         # }
 
     def function_decl_f(self, function_decl):
-        global cur_function_decl
+        global cur_function_decl, base_fp_offset_stack
         cur_function_decl = function_decl
         cur_scope = function_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
+        base_fp_offset_stack.append(-8)
         id_ = function_decl['id']
         func_label = function_decl['func_label']
         function_decl['func_label'] = func_label
@@ -163,47 +165,8 @@ class SecondTraverse():
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'### end of auto return of func {id_} ###\n\n'
         self.code += 'jr $ra\n\n'
+        base_fp_offset_stack.pop()
         Scope.scope_stack.pop()
-        # scope = Scope()
-        # scope.type = 'function'
-        # children_scopes = get_scopes_of_children(args)
-        # set_parent_of_children_scope(scope, children_scopes)
-        # set_children_of_parent_scope(scope, children_scopes)
-        # type_ = None
-        # id_ = None
-        # formal_variables = None
-        # stmt_block = None
-        # # if declared function returns type
-        # if len(args) == 4:
-        #     type_ = args[0]
-        #     id_ = args[1]
-        #     formal_variables = args[2]['variables']
-        #     stmt_block = args[3]
-        # # if declared function returns void
-        # else:
-        #     type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
-        #     id_ = args[0]
-        #     formal_variables = args[1]['variables']
-        #     stmt_block = args[2]
-        # fp_offset = 4
-        # for variable in formal_variables:
-        #     variable['decl_type'] = 'variable'
-        #     variable['fp_offset'] = fp_offset
-        #     fp_offset += 4
-        #     if scope.does_decl_id_exist(variable['id']):
-        #         raise SemErr(
-        #             f'duplicate id \'{variable["id"]}\' in formals of function \'{args[1]["value"]}\''
-        #         )
-        # stmt_block['base_fp_offset'] = -8
-        # return {
-        #     'parent': '_global',
-        #     'scopes': [scope],
-        #     'decl_type': 'function',
-        #     'type': type_,
-        #     'id': id_,
-        #     'formals': formal_variables,
-        #     'stmt_block': stmt_block
-        # }
 
     def interface_decl_f(self, args):
         # TODO looks useless
@@ -257,45 +220,26 @@ class SecondTraverse():
 
     def stmt_block_f(self, stmt_block):
         # TODO any thing more?
+        global base_fp_offset_stack
+        base_fp_offset = base_fp_offset_stack[-1]
         cur_scope = stmt_block['scopes'][0]
         Scope.scope_stack.append(cur_scope)
         fp_offset = 0
         for variable_decl in stmt_block['variable_decls']:
             variable_decl[
-                'fp_offset'] = stmt_block['base_fp_offset'] + fp_offset
+                'fp_offset'] = base_fp_offset + fp_offset
             fp_offset -= 4
             self.variable_decl_f(variable_decl)
-        used_fp_offset = len(stmt_block['variable_decls']) * 4
+        base_fp_offset_stack.append(base_fp_offset + fp_offset)
         self.code += '### pushing space to stack for declared vars ###\n'
-        self.code += f'addi $sp, $sp, -{used_fp_offset}\n\n'
+        self.code += f'addi $sp, $sp, {fp_offset}\n\n'
         for stmt in stmt_block['stmts']:
             # TODO just 'stmt_type'?
-            if stmt['stmt_type'] == 'stmt_block':
-                stmt['base_fp_offset'] = stmt_block[
-                    'base_fp_offset'] - used_fp_offset
             self.stmt_f(stmt)
         self.code += '### poping declared vars from stack ###\n'
-        self.code += f'addi $sp, $sp, {used_fp_offset}\n\n'
+        self.code += f'addi $sp, $sp, {-fp_offset}\n\n'
+        base_fp_offset_stack.pop()
         Scope.scope_stack.pop()
-        # scope = Scope()
-        # children_scopes = get_scopes_of_children(args)
-        # set_parent_of_children_scope(scope, children_scopes)
-        # set_children_of_parent_scope(scope, children_scopes)
-        # for variable_decl in args[0]['variable_decls']:
-        #     if scope.does_decl_id_exist(variable_decl['id']):
-        #         raise SemErr(
-        #             f'duplicate id \'{variable_decl["id"]}\' declared many times as a variable'
-        #         )
-        #     scope.decls[variable_decl['id']] = variable_decl
-        # return {
-        #     'scopes': [scope],
-        #     'variable_decls': args[0]['variable_decls'],
-        #     'stmts': args[1]['stmts']
-        # }
-
-    # def stmt_expr_prime_f(self, args):
-    #     scopes = get_scopes_of_children(args)
-    #     return {'scopes': scopes, 'stmt_type': 'expr_prime', 'stmt': args[0]}
 
     def stmt_f(self, stmt):
         if stmt['stmt_type'] == 'expr_prime':
@@ -305,7 +249,6 @@ class SecondTraverse():
                 self.code += 'addi $sp, $sp, 4\n'
                 self.code += '\n'
         elif stmt['stmt_type'] == 'stmt_block':
-            stmt['stmt']['base_fp_offset'] = stmt['base_fp_offset']
             self.stmt_block_f(stmt['stmt'])
         elif stmt['stmt_type'] == 'for_stmt':
             self.for_stmt_f(stmt)
@@ -546,6 +489,12 @@ class SecondTraverse():
             if function_decl is None:
                 raise SemErr('function not declared')
             self.code += f'#### func call {id_} ####\n'
+            actual_count = len(call['actuals']['exprs'])
+            formal_count = len(function_decl['formals'])
+            if actual_count != formal_count:
+                raise SemErr(
+                    'actual count and formals count not equal in function call'
+                )
             for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                 actual_type = self.expr_f(call['actuals']['exprs'][i])
                 formal_type = function_decl['formals'][i]['type']
@@ -647,7 +596,6 @@ class SecondTraverse():
             return type_
         else:
             assert 1 == 2
-        # return {'scopes': [None], 'l_value_type': 'id', 'l_value': args[0]}
 
     def l_value_obj_f(self, args):
         # TODO
@@ -1057,7 +1005,11 @@ class SecondTraverse():
             return self.expr_f(others)
         elif others['expr_type'] == 'read_int':
             # TODO
-            pass
+            self.code += 'li $v0, 5\n'
+            self.code += 'syscall\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $v0, 0($sp)\n'
+            return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
         elif others['expr_type'] == 'read_line':
             # TODO
             pass
