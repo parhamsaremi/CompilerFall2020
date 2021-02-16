@@ -57,7 +57,7 @@ sw $t0, 0($sp)
 
 lw $t0, 0($sp)
 bgt $t0, 0, arr_size_ok_label2
-la $a0, str_const_3
+la $a0, str_const_4
 li $v0, 4
 syscall
 move $ra, $s0
@@ -109,13 +109,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label5
 index_less_zero_label3:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label4:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -166,13 +166,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label8
 index_less_zero_label6:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label7:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -223,13 +223,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label11
 index_less_zero_label9:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label10:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -264,13 +264,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label14
 index_less_zero_label12:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label13:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -315,13 +315,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label17
 index_less_zero_label15:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label16:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -372,13 +372,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label20
 index_less_zero_label18:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label19:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -429,13 +429,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label23
 index_less_zero_label21:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label22:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -544,13 +544,13 @@ addi $sp, $sp, 4
 sw $t0, 0($sp)
 j no_runtime_error_label28
 index_less_zero_label26:
-la $a0, str_const_1
+la $a0, str_const_2
 li $v0, 4
 syscall
 move $ra, $s0
 jr $ra
 index_more_size_label27:
-la $a0, str_const_2
+la $a0, str_const_3
 li $v0, 4
 syscall
 move $ra, $s0
@@ -562,7 +562,7 @@ li $v0, 1
 move $a0, $t0
 syscall
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -629,7 +629,7 @@ li $v0, 1
 move $a0, $t0
 syscall
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -658,11 +658,13 @@ sw $t0, 4($sp)
 jr $ra
 
 .data
-str_const_0:  .asciiz "Runtime Error"
-str_const_1:  .asciiz "array index is less than zero"
-str_const_2:  .asciiz "array index is more than arr.size-1"
-str_const_3:  .asciiz "array size can't be negative"
-str_const_4:  .asciiz "\n"
-str_const_5:  .asciiz " "
-str_const_6:  .asciiz "true"
-str_const_7:  .asciiz "false"
+input_buffer__: .space 1000
+str_const_0:  .asciiz ""
+str_const_1:  .asciiz "Runtime Error"
+str_const_2:  .asciiz "array index is less than zero"
+str_const_3:  .asciiz "array index is more than arr.size-1"
+str_const_4:  .asciiz "array size can't be negative"
+str_const_5:  .asciiz "\n"
+str_const_6:  .asciiz " "
+str_const_7:  .asciiz "true"
+str_const_8:  .asciiz "false"

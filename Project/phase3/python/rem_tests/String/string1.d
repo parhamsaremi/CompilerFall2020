@@ -1,4 +1,5 @@
 string s;
+
 int main()
 {
     s = "hi";

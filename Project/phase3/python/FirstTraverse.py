@@ -97,7 +97,7 @@ class FirstTraverse(Transformer):
             stmt_block = args[3]
         # if declared function returns void
         else:
-            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
+            type_ = {'dim': 0, 'class': 'primitive', 'type': 'void'}
             id_ = args[0]['value']
             formal_variables = args[1]['variables']
             stmt_block = args[2]
@@ -156,7 +156,7 @@ class FirstTraverse(Transformer):
                     variable['fp_offset'] += 4
                 this_type = {
                     'scopes': [None],
-                    'is_arr': False,
+                    'dim': 0,
                     'type': 'Object',
                     'class': args[0]['value']
                 }
@@ -337,7 +337,7 @@ class FirstTraverse(Transformer):
             }
         # if prototype returns void
         else:
-            type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
+            type_ = {'dim': 0, 'class': 'primitive', 'type': 'void'}
             return {
                 'scopes': [None],
                 'type': type_,
@@ -400,7 +400,7 @@ class FirstTraverse(Transformer):
     def type_int_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': False,
+            'dim': 0,
             'type': 'int',
             'class': 'Primitive'
         }
@@ -408,7 +408,7 @@ class FirstTraverse(Transformer):
     def type_double_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': False,
+            'dim': 0,
             'type': 'double',
             'class': 'Primitive'
         }
@@ -416,7 +416,7 @@ class FirstTraverse(Transformer):
     def type_bool_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': False,
+            'dim': 0,
             'type': 'bool',
             'class': 'Primitive'
         }
@@ -424,7 +424,7 @@ class FirstTraverse(Transformer):
     def type_string_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': False,
+            'dim': 0,
             'type': 'string',
             'class': 'Primitive'
         }
@@ -432,7 +432,7 @@ class FirstTraverse(Transformer):
     def type_id_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': False,
+            'dim': 0,
             'type': 'Object',
             'class': args[0]['value']
         }
@@ -440,7 +440,7 @@ class FirstTraverse(Transformer):
     def type_arr_f(self, args):
         return {
             'scopes': [None],
-            'is_arr': True,
+            'dim': args[0]['dim'] + 1,
             'type': args[0]['type'],
             'class': args[0]['class']
         }

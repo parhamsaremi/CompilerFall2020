@@ -17,7 +17,7 @@ GLOBAL_main_label1:
 addi $sp, $sp, 0
 
 ### GLOB ID ADRS OF a ###
-la $t0, global_variable_8
+la $t0, global_variable_9
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 ### END OF GLOB ID ADRS a ###
@@ -41,7 +41,7 @@ addi $sp, $sp, 4
 
 ### PRINT ###
 ### GLOB ID VALUE OF a ###
-la $t0, global_variable_8
+la $t0, global_variable_9
 lw $t0, 0($t0)
 addi $sp, $sp, -4
 sw $t0, 0($sp)
@@ -52,7 +52,7 @@ li $v0, 1
 move $a0, $t0
 syscall
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -81,12 +81,14 @@ sw $t0, 4($sp)
 jr $ra
 
 .data
-str_const_0:  .asciiz "Runtime Error"
-str_const_1:  .asciiz "array index is less than zero"
-str_const_2:  .asciiz "array index is more than arr.size-1"
-str_const_3:  .asciiz "array size can't be negative"
-str_const_4:  .asciiz "\n"
-str_const_5:  .asciiz " "
-str_const_6:  .asciiz "true"
-str_const_7:  .asciiz "false"
-global_variable_8: .word 0
+input_buffer__: .space 1000
+str_const_0:  .asciiz ""
+str_const_1:  .asciiz "Runtime Error"
+str_const_2:  .asciiz "array index is less than zero"
+str_const_3:  .asciiz "array index is more than arr.size-1"
+str_const_4:  .asciiz "array size can't be negative"
+str_const_5:  .asciiz "\n"
+str_const_6:  .asciiz " "
+str_const_7:  .asciiz "true"
+str_const_8:  .asciiz "false"
+global_variable_9: .word 0

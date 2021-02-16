@@ -34,7 +34,7 @@ class Type:
 
     @staticmethod
     def is_arr(type_: dict):
-        if type_['is_arr']:
+        if type_['dim'] >= 1:
             return True
         return False
 
@@ -47,7 +47,7 @@ class Type:
 
     @staticmethod
     def are_types_equal(type_1: dict, type_2: dict):
-        if type_1['is_arr'] == type_2['is_arr'] and \
+        if type_1['dim'] == type_2['dim'] and \
             type_1['type'] == type_2['type'] and type_1['class'] == type_2['class']:
             return True
         return False

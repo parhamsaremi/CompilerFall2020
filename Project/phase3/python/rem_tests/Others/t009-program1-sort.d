@@ -1,12 +1,11 @@
 
 void sort(int[] items) {
 
-    /* implementation of bubble sort */
     int i;
     int j;
 
     int n;
-    n = items.length;
+    n = items.length();
 
     for (i = 0; i < n-1; i = i + 1)
         for (j = 0; j < n - i - 1; j = j + 1)

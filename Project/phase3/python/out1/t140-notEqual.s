@@ -39,17 +39,17 @@ addi $sp, $sp, 4
 sw $t2, 0($sp)
 lw $t0, 0($sp)
 beq $t0, $zero, print_false_label2
-la $a0, str_const_6
+la $a0, str_const_7
 li $v0, 4
 syscall
 j print_end_label3
 print_false_label2:
-la $a0, str_const_7
+la $a0, str_const_8
 li $v0, 4
 syscall
 print_end_label3:
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -77,17 +77,17 @@ addi $sp, $sp, 4
 sw $t2, 0($sp)
 lw $t0, 0($sp)
 beq $t0, $zero, print_false_label4
-la $a0, str_const_6
+la $a0, str_const_7
 li $v0, 4
 syscall
 j print_end_label5
 print_false_label4:
-la $a0, str_const_7
+la $a0, str_const_8
 li $v0, 4
 syscall
 print_end_label5:
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -117,17 +117,17 @@ addi $sp, $sp, 4
 sw $t2, 0($sp)
 lw $t0, 0($sp)
 beq $t0, $zero, print_false_label6
-la $a0, str_const_6
+la $a0, str_const_7
 li $v0, 4
 syscall
 j print_end_label7
 print_false_label6:
-la $a0, str_const_7
+la $a0, str_const_8
 li $v0, 4
 syscall
 print_end_label7:
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -157,17 +157,17 @@ addi $sp, $sp, 4
 sw $t2, 0($sp)
 lw $t0, 0($sp)
 beq $t0, $zero, print_false_label8
-la $a0, str_const_6
+la $a0, str_const_7
 li $v0, 4
 syscall
 j print_end_label9
 print_false_label8:
-la $a0, str_const_7
+la $a0, str_const_8
 li $v0, 4
 syscall
 print_end_label9:
 addi $sp, $sp, 4
-la $a0, str_const_4
+la $a0, str_const_5
 li $v0, 4
 syscall
 ### END OF PRINT ###
@@ -196,11 +196,13 @@ sw $t0, 4($sp)
 jr $ra
 
 .data
-str_const_0:  .asciiz "Runtime Error"
-str_const_1:  .asciiz "array index is less than zero"
-str_const_2:  .asciiz "array index is more than arr.size-1"
-str_const_3:  .asciiz "array size can't be negative"
-str_const_4:  .asciiz "\n"
-str_const_5:  .asciiz " "
-str_const_6:  .asciiz "true"
-str_const_7:  .asciiz "false"
+input_buffer__: .space 1000
+str_const_0:  .asciiz ""
+str_const_1:  .asciiz "Runtime Error"
+str_const_2:  .asciiz "array index is less than zero"
+str_const_3:  .asciiz "array index is more than arr.size-1"
+str_const_4:  .asciiz "array size can't be negative"
+str_const_5:  .asciiz "\n"
+str_const_6:  .asciiz " "
+str_const_7:  .asciiz "true"
+str_const_8:  .asciiz "false"

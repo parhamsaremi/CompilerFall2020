@@ -47,6 +47,8 @@ next_line = None
 space = None
 true_str = None
 false_str = None
+input_buffer = None
+
 cur_function_decl = None
 
 
@@ -56,7 +58,6 @@ def add_str_const_to_data_sec(second_traverse, string: str):
     second_traverse.data_sec += f'{label}:  .asciiz "{string}"\n'
     data_sec_count += 1
     return label
-
 
 def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
     global data_sec_count
@@ -68,12 +69,16 @@ def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
 
 class SecondTraverse():
     def __init__(self, ast):
-        global runtime_error_msg, index_less_zero_error_msg, index_more_size_error_msg, arr_size_neg_error_msg, next_line, space, true_str, false_str
+        global runtime_error_msg, index_less_zero_error_msg, index_more_size_error_msg \
+            , arr_size_neg_error_msg, next_line, space, true_str, false_str, input_buffer
         self.asm_start_label = 'main'  # TODO check that this does not cause any bugs
         self.asm_end_label = 'ASM_END'
         self.main_func_label = None
         self.ast = ast
+        input_buffer = 'input_buffer__'
         self.data_sec = ''
+        self.data_sec += f'{input_buffer}: .space 1000\n'
+        input_buffer = add_str_const_to_data_sec(self, '')
         runtime_error_msg = add_str_const_to_data_sec(self, 'Runtime Error')
         index_less_zero_error_msg = add_str_const_to_data_sec(
             self, 'array index is less than zero')
@@ -329,7 +334,7 @@ class SecondTraverse():
             # TODO maybe it's needed to calc expr_info['type'] for some cases, if it is, fix it
             type_ = expr_info
             if Type.is_arr(type_):
-                raise Exception('expr inside Print is string')
+                raise Exception('expr inside Print is array')
             elif Type.is_object(type_):
                 raise Exception('expr inside Print is Object')
             elif Type.is_string(type_):
@@ -526,7 +531,7 @@ class SecondTraverse():
                 self.code += 'lw $t0, 0($sp)\n'
                 self.code += 'lw $t0, 0($t0)\n'
                 self.code += 'sw $t0, 0($sp)\n'
-                return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+                return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
             else:
                 # TODO
                 pass
@@ -653,7 +658,7 @@ class SecondTraverse():
         elif option == 'value':
             self.code += f'### END OF LOCAL ARR VALUE ###\n'
         return {
-            'is_arr': False,
+            'dim': arr_type['dim'] - 1,
             'type': arr_type['type'],
             'class': arr_type['class']
         }
@@ -733,7 +738,7 @@ class SecondTraverse():
             self.code += 'or $t0, $t0, $t1\n'
             self.code += 'addi $sp, $sp, 4\n'
             self.code += 'sw $t0, 0($sp)\n'
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
     def and_f(self, and_):
         if len(and_['eq_neq_list']) == 1:
@@ -751,7 +756,7 @@ class SecondTraverse():
             self.code += 'and $t0, $t0, $t1\n'
             self.code += 'addi $sp, $sp, 4\n'
             self.code += 'sw $t0, 0($sp)\n'
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
     def eq_neq_f(self, eq_neq):
         if len(eq_neq['comp_list']) == 1:
@@ -795,7 +800,7 @@ class SecondTraverse():
             else:
                 raise SemErr('operands are obj or arr')
             comp_1 = comp_2
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
     def comp_f(self, comp):
         if len(comp['add_sub_list']) == 1:
@@ -850,7 +855,7 @@ class SecondTraverse():
             else:
                 raise SemErr('operands are obj or arr or bool or string')
             add_sub_1 = add_sub_2
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
     def add_sub_f(self, add_sub):
         if len(add_sub['mul_div_mod_list']) == 1:
@@ -970,7 +975,7 @@ class SecondTraverse():
                     pass
             else:
                 raise SemErr('operand types are not correct')
-        # TODO is returned value correct
+        # TODO is returned value correct?
         return others
 
     def others_f(self, others):
@@ -1004,15 +1009,20 @@ class SecondTraverse():
             del others['expr_type']
             return self.expr_f(others)
         elif others['expr_type'] == 'read_int':
-            # TODO
             self.code += 'li $v0, 5\n'
             self.code += 'syscall\n'
             self.code += 'addi $sp, $sp, -4\n'
             self.code += 'sw $v0, 0($sp)\n'
-            return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+            return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
         elif others['expr_type'] == 'read_line':
-            # TODO
-            pass
+            global input_buffer
+            self.code += f'la $a0, {input_buffer}\n'
+            self.code += 'la $a1, 1000\n'
+            self.code += 'li $v0, 8\n'
+            self.code += 'syscall\n'
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $a0, 0($sp)\n'
+            return {'dim': 0, 'type': 'string', 'class': 'Primitive'}
         elif others['expr_type'] == 'new_id':
             # TODO
             pass
@@ -1043,7 +1053,7 @@ class SecondTraverse():
             self.code += 'sw $v0, 0($sp)\n'
             self.code += 'sw $t1, 0($v0)\n'
             return {
-                'is_arr': True,
+                'dim': type_['dim'] + 1,
                 'type': type_['type'],
                 'class': type_['class']
             }
@@ -1062,12 +1072,12 @@ class SecondTraverse():
             self.code += 'jal itob\n'  # NOTE itob func label
             self.code += 'lw $ra, 0($sp)\n'
             self.code += 'addi $sp, $sp, 4\n'
-            return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+            return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
         elif others['expr_type'] == 'btoi':
             expr_type = self.expr_f(others['expr'])
             if not Type.is_bool(expr_type):
                 raise SemErr('btoi arg is not bool')
-            return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+            return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
         else:
             assert 1 == 2
 
@@ -1078,7 +1088,7 @@ class SecondTraverse():
         self.code += f'li $t0, {value}\n'
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'### END OF CONSTANT INT {value} ###\n\n'
-        return {'is_arr': False, 'type': 'int', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
 
     def constant_double_f(self, args):
         # TODO
@@ -1095,7 +1105,7 @@ class SecondTraverse():
             self.code += 'move $t0, $zero\n'
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'### END OF CONSTANT BOOL {value} ###\n\n'
-        return {'is_arr': False, 'type': 'bool', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
     def constant_string_f(self, constant_string):
         string_value = constant_string['value'][1:-1]
@@ -1105,13 +1115,13 @@ class SecondTraverse():
         self.code += f'la $t0, {label}\n'
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'### END OF CONSTANT STRING {string_value} ###\n\n'
-        return {'is_arr': False, 'type': 'string', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'string', 'class': 'Primitive'}
 
     def constant_null_f(self, args):
         self.code += '\n### NULL ###\n'
         self.code += 'addi $sp, $sp, -4\n'
         self.code += '### END OF NULL ###\n\n'
-        return {'is_arr': False, 'type': 'null', 'class': 'Primitive'}
+        return {'dim': 0, 'type': 'null', 'class': 'Primitive'}
 
     def identifier_f(self, identifier):
         # TODO looks useless. below code is code_gen not first traverse.
