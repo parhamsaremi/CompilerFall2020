@@ -385,7 +385,13 @@ class SecondTraverse():
                 self.code += 'syscall\n'
                 self.code += 'addi $sp, $sp, 4\n'
             elif Type.is_double(type_):
-                # TODO
+                self.code += 'lw $t0, 0($sp)\n'
+                self.code += 'li $v0, 1\n'
+                self.code += 'move $a0, $t0\n'
+                self.code += 'syscall\n'
+                self.code += 'addi $sp, $sp, 4\n'
+                self.code += "l.s $f12 , 0($sp)\n"
+                self.code += "li $v0 , 2\n"
                 pass
             elif Type.is_bool(type_):
                 self.code += 'lw $t0, 0($sp)\n'
@@ -836,10 +842,22 @@ class SecondTraverse():
                     raise SemErr('sub between strings')
             elif Type.is_double(mdm_1) and Type.is_double(mdm_2):
                 if operator == '+':
-                    # TODO
+                    self.code += '## + ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "add.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF + ##\n\n'
                     pass
                 elif operator == '-':
-                    # TODO
+                    self.code += '## - ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "sub.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF - ##\n\n'
                     pass
             elif Type.is_arr(mdm_1) and Type.is_arr(mdm_2):
                 if operator == '+':
@@ -872,17 +890,39 @@ class SecondTraverse():
                     self.code += '## END OF * ##\n\n'
                     pass
                 elif operator == '/':
-                    # TODO
+                    self.code += '## / ##\n'
+                    self.code += "lw $t0 , 8($sp)\n"
+                    self.code += "lw $t1 , 4($sp)\n"
+                    self.code += "div $t0 , $t0 , $t1\n"
+                    self.code += "sw $t0 , 8($sp)\n"
+                    self.code += '## END OF / ##\n\n'
                     pass
                 elif operator == '%':
-                    # TODO
+                    self.code += '## % ##\n'
+                    self.code += "lw $t0 , 8($sp)\n"
+                    self.code += "lw $t1 , 4($sp)\n"
+                    self.code += "rem $t0 , $t0 , $t1\n"
+                    self.code += "sw $t0, 8($sp)\n"
+                    self.code += "addi $sp, $sp, 4\n"
+                    self.code += '## END OF % ##\n\n'
                     pass
             elif Type.is_double(not_neg_1) and Type.is_double(not_neg_2):
                 if operator == '*':
-                    # TODO
+                    self.code += '## * ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "mul.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += '## END OF * ##\n\n'
                     pass
                 elif operator == '/':
-                    # TODO
+                    self.code += '## / ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "div.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF / ##\n\n'
                     pass
                 elif operator == '%':
                     raise SemErr('mod between doubles')
