@@ -1,6 +1,6 @@
 #!/bin/bash
-subtasks=( "Compare" "Constant" "For" "Function" "IF" "Operand" "Print" "String" "Variable" "While" )
-scores=( 100 100 100 100 100 100 100 100 100 )
+subtasks=( "G1" "G2" "G3" )
+scores=( 10 20 30 )
 mkdir -p out
 mkdir -p report
 cd ./tests

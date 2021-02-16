@@ -59,6 +59,7 @@ def add_str_const_to_data_sec(second_traverse, string: str):
     data_sec_count += 1
     return label
 
+
 def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
     global data_sec_count
     label = f'global_variable_{data_sec_count}'
@@ -231,8 +232,7 @@ class SecondTraverse():
         Scope.scope_stack.append(cur_scope)
         fp_offset = 0
         for variable_decl in stmt_block['variable_decls']:
-            variable_decl[
-                'fp_offset'] = base_fp_offset + fp_offset
+            variable_decl['fp_offset'] = base_fp_offset + fp_offset
             fp_offset -= 4
             self.variable_decl_f(variable_decl)
         base_fp_offset_stack.append(base_fp_offset + fp_offset)
@@ -350,8 +350,10 @@ class SecondTraverse():
                 self.code += 'syscall\n'
                 self.code += 'addi $sp, $sp, 4\n'
             elif Type.is_double(type_):
-                # TODO
-                pass
+                self.code += 'l.s $f12, 0($sp)\n'
+                self.code += 'li $v0, 2\n'
+                self.code += 'syscall\n'
+                self.code += 'addi $sp, $sp, 4\n'
             elif Type.is_bool(type_):
                 global true_str, false_str
                 false_label = get_label('print_false')
@@ -613,7 +615,7 @@ class SecondTraverse():
         # }
 
     def l_value_arr_f(self, l_value_arr, option):
-        global index_less_zero_error_msg, index_more_size_error_msg
+        global index_less_zero_error_msg, index_more_size_error_msg, runtime_error_msg
         arr_type = self.others_f(l_value_arr['arr'])  # calc arr expr
         index_type = self.expr_f(l_value_arr['index_expr'])  # calc index expr
         if not Type.is_arr(arr_type):
@@ -641,13 +643,13 @@ class SecondTraverse():
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'j {no_runtime_error}\n'
         self.code += f'{index_less_zero}:\n'
-        self.code += f'la $a0, {index_less_zero_error_msg}\n'
+        self.code += f'la $a0, {runtime_error_msg}\n'
         self.code += 'li $v0, 4\n'
         self.code += 'syscall\n'
         self.code += 'move $ra, $s0\n'
         self.code += 'jr $ra\n'
         self.code += f'{index_more_size}:\n'
-        self.code += f'la $a0, {index_more_size_error_msg}\n'
+        self.code += f'la $a0, {runtime_error_msg}\n'
         self.code += 'li $v0, 4\n'
         self.code += 'syscall\n'
         self.code += 'move $ra, $s0\n'
@@ -662,12 +664,6 @@ class SecondTraverse():
             'type': arr_type['type'],
             'class': arr_type['class']
         }
-        # return {
-        #     'scopes': [None],
-        #     'l_value_type': 'array',
-        #     'arr_expr': args[0],
-        #     'index_expr': args[1]
-        # }
 
     def implements_f(self, args):
         # TODO looks useless
@@ -713,14 +709,6 @@ class SecondTraverse():
             return r_value
         else:
             return self.or_f(assign['expr'])
-        # if len(args) == 1:
-        #     return {'expr_type': args[0]['expr_type'], 'expr': args[0]}
-        # else:
-        #     return {
-        #         'expr_type': 'assign',
-        #         'l_value': args[0],
-        #         'r_value': args[1]
-        #     }
 
     def or_f(self, or_):
         if len(or_['and_list']) == 1:
@@ -791,9 +779,26 @@ class SecondTraverse():
                     self.code += 'sw $t2, 0($sp)\n'
                 else:
                     assert 1 == 2
-            elif Type.is_double(comp_1) and Type.is_int(comp_2):
-                # TODO
-                pass
+            elif Type.is_double(comp_1) and Type.is_double(comp_2):
+                # TODO correct?
+                if operator == '+':
+                    self.code += '## + ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "add.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF + ##\n\n'
+                    pass
+                elif operator == '-':
+                    self.code += '## - ##\n'
+                    self.code += "l.s $t0 , 8($sp)\n"
+                    self.code += "l.s $t1 , 4($sp)\n"
+                    self.code += "sub.s $t0 , $t0 , $t1\n"
+                    self.code += "s.s $t0 , 8($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF - ##\n\n'
+                    pass
             elif Type.is_string(comp_1) and Type.is_string(comp_2):
                 # TODO
                 pass
@@ -849,9 +854,69 @@ class SecondTraverse():
                     self.code += '### END OF <= ###\n\n'
                 else:
                     assert 1 == 2
-            elif Type.is_double(comp_1) and Type.is_int(comp_2):
-                # TODO
-                pass
+            elif Type.is_double(add_sub_1) and Type.is_double(add_sub_1):
+                if operator == '>':
+                    false_label = get_label('false_label')
+                    end_label = get_label('end_label')
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'c.lt.s $f1, $f0\n'
+                    self.code += f'bc1f {false_label}\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{false_label}:\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
+                elif operator == '<':
+                    false_label = get_label('false_label')
+                    end_label = get_label('end_label')
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'c.lt.s $f0, $f1\n'
+                    self.code += f'bc1f {false_label}\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{false_label}:\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
+                elif operator == '>=':
+                    false_label = get_label('false_label')
+                    end_label = get_label('end_label')
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'c.le.s $f1, $f0\n'
+                    self.code += f'bc1f {false_label}\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{false_label}:\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
+                elif operator == '<=':
+                    false_label = get_label('false_label')
+                    end_label = get_label('end_label')
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'c.le.s $f0, $f1\n'
+                    self.code += f'bc1f {false_label}\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{false_label}:\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
+                else:
+                    assert 1 == 2
             else:
                 raise SemErr('operands are obj or arr or bool or string')
             add_sub_1 = add_sub_2
@@ -890,11 +955,19 @@ class SecondTraverse():
                     raise SemErr('sub between strings')
             elif Type.is_double(mdm_1) and Type.is_double(mdm_2):
                 if operator == '+':
-                    # TODO
-                    pass
+                    self.code += '## + ##\n'
+                    self.code += "l.s $f0 , 4($sp)\n"
+                    self.code += "l.s $f1 , 0($sp)\n"
+                    self.code += "add.s $f0 , $f0 , $f1\n"
+                    self.code += "s.s $f0 , 4($sp)\n"
+                    self.code += '## END OF + ##\n\n'
                 elif operator == '-':
-                    # TODO
-                    pass
+                    self.code += '## - ##\n'
+                    self.code += "l.s $f0 , 4($sp)\n"
+                    self.code += "l.s $f1 , 0($sp)\n"
+                    self.code += "sub.s $f0 , $f0 , $f1\n"
+                    self.code += "s.s $f0 , 4($sp)\n"
+                    self.code += '## END OF - ##\n\n'
             elif Type.is_arr(mdm_1) and Type.is_arr(mdm_2):
                 if operator == '+':
                     # TODO append arrs
@@ -924,20 +997,41 @@ class SecondTraverse():
                     self.code += 'addi $sp, $sp, 4\n'
                     self.code += 'sw $t0, 0($sp)\n'
                     self.code += '## END OF * ##\n\n'
-                    pass
                 elif operator == '/':
-                    # TODO
-                    pass
+                    self.code += '## / ##\n'
+                    self.code += 'lw $t0, 4($sp)\n'
+                    self.code += 'lw $t1, 0($sp)\n'
+                    self.code += 'div $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'mflo $t0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += '## END OF / ##\n\n'
                 elif operator == '%':
-                    # TODO
+                    self.code += '## / ##\n'
+                    self.code += 'lw $t0, 4($sp)\n'
+                    self.code += 'lw $t1, 0($sp)\n'
+                    self.code += 'div $t0, $t0, $t1\n'
+                    self.code += 'addi $sp, $sp, 4\n'
+                    self.code += 'mfhi $t0\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += '## END OF / ##\n\n'
                     pass
             elif Type.is_double(not_neg_1) and Type.is_double(not_neg_2):
                 if operator == '*':
-                    # TODO
-                    pass
+                    self.code += '## * ##\n'
+                    self.code += "l.s $f0 , 4($sp)\n"
+                    self.code += "l.s $f1 , 0($sp)\n"
+                    self.code += "mul.s $f0 , $f0 , $f1\n"
+                    self.code += "s.s $f0 , 4($sp)\n"
+                    self.code += '## END OF * ##\n\n'
                 elif operator == '/':
-                    # TODO
-                    pass
+                    self.code += '## / ##\n'
+                    self.code += "l.s $f0 , 4($sp)\n"
+                    self.code += "l.s $f1 , 0($sp)\n"
+                    self.code += "div.s $f0 , $f0 , $f1\n"
+                    self.code += "s.s $f0 , 4($sp)\n"
+                    self.code += "addi $sp , $sp , 4\n"
+                    self.code += '## END OF / ##\n\n'
                 elif operator == '%':
                     raise SemErr('mod between doubles')
             else:
@@ -971,8 +1065,11 @@ class SecondTraverse():
                 if operator == '!':
                     raise SemErr('! behind double operand')
                 elif operator == '-':
-                    # TODO
-                    pass
+                    self.code += '## - ##\n'
+                    self.code += "l.s $f0 , 0($sp)\n"
+                    self.code += "neg.s $f0, $f0 \n"
+                    self.code += "s.s $f0 , 0($sp)\n"
+                    self.code += '## END OF - ##\n\n'
             else:
                 raise SemErr('operand types are not correct')
         # TODO is returned value correct?
@@ -1006,7 +1103,7 @@ class SecondTraverse():
         elif others['expr_type'] == 'call':
             return self.call_f(others)
         elif others['expr_type'] == '(expr)':
-            del others['expr_type']
+            # del others['expr_type']
             return self.expr_f(others)
         elif others['expr_type'] == 'read_int':
             self.code += 'li $v0, 5\n'
@@ -1027,8 +1124,8 @@ class SecondTraverse():
             # TODO
             pass
         elif others['expr_type'] == 'new_arr':
-            global arr_size_neg_error_msg
-            del others['expr_type']
+            global arr_size_neg_error_msg, runtime_error_msg
+            # del others['expr_type']
             size_type = self.expr_f(others['size'])
             if not Type.is_int(size_type):
                 raise SemErr('arr size can\'t be non-int')
@@ -1038,7 +1135,7 @@ class SecondTraverse():
             arr_size_ok_label = get_label('arr_size_ok')
             self.code += 'lw $t0, 0($sp)\n'
             self.code += f'bgt $t0, 0, {arr_size_ok_label}\n'
-            self.code += f'la $a0, {arr_size_neg_error_msg}\n'
+            self.code += f'la $a0, {runtime_error_msg}\n'
             self.code += 'li $v0, 4\n'
             self.code += 'syscall\n'
             self.code += f'move $ra, $s0\n'
@@ -1090,10 +1187,14 @@ class SecondTraverse():
         self.code += f'### END OF CONSTANT INT {value} ###\n\n'
         return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
 
-    def constant_double_f(self, args):
-        # TODO
-        pass
-        # return {'scopes': [None], 'type': 'double', 'value': args[0]}
+    def constant_double_f(self, constant_double):
+        value = constant_double['value']
+        self.code += f'### CONSTANT FLOAT {value} ###\n'
+        self.code += 'addi $sp, $sp, -4\n'
+        self.code += f'li.s $f0, {value}\n'
+        self.code += 's.s $f0, 0($sp)\n'
+        self.code += f'### END OF CONSTANT FLOAT {value} ###\n\n'
+        return {'dim': 0, 'type': 'double', 'class': 'Primitive'}
 
     def constant_bool_f(self, constant_bool):
         value = constant_bool['value']

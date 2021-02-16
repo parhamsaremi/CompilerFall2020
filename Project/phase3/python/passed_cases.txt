@@ -28,3 +28,8 @@ Function:
 Array:
     simple array test
     array length
+    2 or more dim array
+
+Input:
+    ReadInteger
+    ReadLine
