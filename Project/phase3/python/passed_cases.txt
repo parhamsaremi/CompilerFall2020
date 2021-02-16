@@ -1,0 +1,35 @@
+Variable Decl:
+    local var decl in stmt_block
+
+operations:
+    add int
+
+Print:
+    print int
+
+For:
+    for with init, cond, step, no control stmt (break, continue)
+
+While:
+    while with cond, no control stmt (break, continue)
+    hard break in while body
+
+If:
+    if with else stmt
+
+Global Variable:
+    int x; in global scope
+
+Function:
+    itob
+    btoi
+    simple print function, no recurrence
+
+Array:
+    simple array test
+    array length
+    2 or more dim array
+
+Input:
+    ReadInteger
+    ReadLine

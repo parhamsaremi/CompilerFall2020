@@ -1,0 +1,1 @@
+Print does not print \n. It works in terminal but not in bash :(.
