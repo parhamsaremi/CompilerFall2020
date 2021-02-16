@@ -1,1 +1,0 @@
-different line count in these files! : file out/t006-stmt2.out : #3 , file ./tests/t006-stmt2.out : #1 

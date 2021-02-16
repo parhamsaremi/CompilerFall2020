@@ -1,1 +1,0 @@
-different line count in these files! : file out/Class/class5.out : #3 , file tests/Class/class5.out : #1 

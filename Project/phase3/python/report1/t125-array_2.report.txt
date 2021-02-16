@@ -1,1 +1,0 @@
-different line count in these files! : file out1/t125-array_2.out : #3 , file ./tests1/t125-array_2.out : #27 

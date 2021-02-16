@@ -1,1 +1,0 @@
-different line count in these files! : file out/Array/array2.out : #3 , file tests/Array/array2.out : #2 

@@ -1,2 +1,0 @@
-difference in line #1: file: out/Constant/constants2.out -----> content: 1 <> file: tests/Constant/constants2.out -----> content: true 
-difference in line #2: file: out/Constant/constants2.out -----> content: 1 <> file: tests/Constant/constants2.out -----> content: false 

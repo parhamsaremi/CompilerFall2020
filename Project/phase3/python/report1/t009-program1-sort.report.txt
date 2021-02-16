@@ -1,1 +1,0 @@
-different line count in these files! : file out1/t009-program1-sort.out : #1 , file ./tests1/t009-program1-sort.out : #92 
