@@ -302,6 +302,7 @@ class SecondTraverse():
                 self.code += 'addi $sp, $sp, 4\n'
                 self.code += '\n'
         elif stmt['stmt_type'] == 'stmt_block':
+            stmt['stmt']['base_fp_offset'] = stmt['base_fp_offset']
             self.stmt_block_f(stmt['stmt'])
         elif stmt['stmt_type'] == 'for_stmt':
             self.for_stmt_f(stmt)

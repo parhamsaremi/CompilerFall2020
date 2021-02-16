@@ -1,0 +1,1 @@
+different line count in these files! : file out1/t130-var5.out : #3 , file ./tests1/t130-var5.out : #6 
