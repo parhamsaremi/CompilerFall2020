@@ -1,15 +1,14 @@
 from lark import Transformer
-from SymbolTable import SymbolTable
 from Scope import Scope
 from SemanticError import SemanticError as SemErr
 from Type import Type
+from Class import Class
 
 # TODO:
 # remember to deal with scope stack
 # fix auto return at the end of functions (it must return something in the stack unless it returns void)
 # func label must be defined at the start, otherwise func calls might not be able to jal to desired label
 # classes can be upcasted in func calls and assignments, they don't always have same type. handle this.
-# it seems printing ' ' is not needed in print() with many args
 # continue, break and maybe return might have bug, becuase they don't pop declared vars of inner scopes.
 
 
@@ -38,7 +37,6 @@ def get_label(prefix=''):
     return label
 
 
-data_sec_count = 0
 runtime_error_msg = None
 index_less_zero_error_msg = None
 index_more_size_error_msg = None
@@ -51,6 +49,7 @@ input_buffer = None
 
 cur_function_decl = None
 
+data_sec_count = 0
 
 def add_str_const_to_data_sec(second_traverse, string: str):
     global data_sec_count
@@ -59,6 +58,14 @@ def add_str_const_to_data_sec(second_traverse, string: str):
     data_sec_count += 1
     return label
 
+spcae_count = 0
+
+def add_space_to_data_sec(second_traverse, size: int):
+    global space_count
+    label = f'space_{space_count}'
+    second_traverse.data_sec += f'{label}: .space {size}\n'
+    space_count += 1
+    return label
 
 def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
     global data_sec_count
@@ -95,7 +102,8 @@ class SecondTraverse():
         self.program_f(self.ast)
         self.asm_code = '.text\n'
         self.asm_code += f'.globl {self.asm_start_label}\n\n'
-        self.asm_code += f'{self.asm_start_label}:\n'
+        self.asm_code += f'{self.asm_start_label}:\n\n'
+        self.asm_code += self.class_code
         self.asm_code += 'move $fp, $sp\n'
         self.asm_code += 'move $s0, $ra\n'  # save exiting #ra in $s0 for runtime error handling
         self.asm_code += 'addi $sp, $sp, -4\n'
@@ -115,10 +123,65 @@ class SecondTraverse():
     def program_f(self, program):
         cur_scope = program['scopes'][0]
         Scope.scope_stack.append(cur_scope)
+
+        for class_decl in Scope.get_classes():
+            id_ = class_decl['id']
+            class_ = Class(id_)
+            Class.classes[id_] = class_
+            class_.object_layout['_main_vptr'] = {'offset': 0}
+            class_chain = []
+            parent = id_
+            while parent is not None:
+                class_chain.append(parent)
+                parent = Scope.get_parent_of_class(id_)
+            class_chain = class_chain[::-1]
+
+            # TODO copy dictionaries where a decl may be used in many situations, like prototypes of interfaces
+            offset = 0
+            for class_id in class_chain:
+                for func_field in Class.get_function_fields(Class.get_class(class_id)):
+                    func_field = func_field.copy()
+                    if class_.main_vtable.keys().__contains__((func_field['id'], 'function')):
+                        pass
+                    else:
+                        offset += 4
+                        func_field.update({'offset': offset})
+                    # TODO can add other stuff too, like function label
+                    class_.main_vtable[(func_field['id'], 'function')] = func_field
+
+            offset = 0
+            for class_id in class_chain:
+                for var_field in Class.get_variable_fields(Class.get_class(class_id)):
+                    var_field = var_field.copy()
+                    if class_.object_layout.keys().__contains__((var_field['id'], 'variable')):
+                        pass
+                    else:
+                        offset += 4
+                        var_field.update({'offset': offset})
+                    # TODO can add other stuff too
+                    class_.object_layout[(var_field['id'], 'variable')] = var_field
+
+            offset += 4
+            for interface_id in Scope.get_class[class_id]['interfaces']:
+                interface_decl = Scope.get_interface(interface_id)
+                interface_class_vtable = {}
+                class_.object_layout[(interface_id, 'interface')] = interface_class_vtable
+                interface_class_vtable['_this_offset'] = offset
+                offset += 4
+                vtable_offset = 0
+                for prototype_decl in interface_decl['prototypes']:
+                    prototype_id = prototype_decl['id']
+                    prototype_decl = prototype_decl.copy()
+                    prototype_decl.update({'_offset': vtable_offset})
+                    vtable_offset += 4
+                    interface_class_vtable[(prototype_id, 'function')] = prototype_decl
+                    # TODO can add other stuff too
+
         for function_decl in Scope.get_global_functions():
             id_ = function_decl['id']
             func_label = get_label(function_decl['parent'] + '_' + id_)
             function_decl['func_label'] = func_label
+
         for decl in program['decls']:
             if decl['decl_type'] == 'variable':
                 global_var_label = add_global_variable_to_data_sec(self, decl)
@@ -140,16 +203,6 @@ class SecondTraverse():
             pass
         else:
             assert 1 == 2  # decl_type wasn't in defined cases
-
-    def variable_decl_f(self, args):
-        # TODO looks useless because it is predefined in stack and nothing more is needed
-        pass
-        # return {
-        #     'scopes': [None],
-        #     'decl_type': 'variable',
-        #     'type': args[0]['type'],
-        #     'id': args[0]['id']
-        # }
 
     def function_decl_f(self, function_decl):
         global cur_function_decl, base_fp_offset_stack
@@ -173,24 +226,6 @@ class SecondTraverse():
         self.code += 'jr $ra\n\n'
         base_fp_offset_stack.pop()
         Scope.scope_stack.pop()
-
-    def interface_decl_f(self, args):
-        # TODO looks useless
-        pass
-        # scope = Scope()
-        # children_scopes = get_scopes_of_children(args)
-        # set_parent_of_children_scope(scope, children_scopes)
-        # set_children_of_parent_scope(scope, children_scopes)
-        # for prototype in args[1]['prototypes']:
-        #     # TODO is it an error?
-        #     if scope.does_decl_id_exist(prototype['id']):
-        #         raise SemErr(f'duplicate id for prototypes')
-        #     scope.decls[prototype['id']] = prototype
-        # return {
-        #     'scopes': [scope],
-        #     'id': args[0]['value'],
-        #     'prototypes': args[1]['prototypes']
-        # }
 
     def class_decl_f(self, class_decl):
         cur_scope = class_decl['scopes'][0]
@@ -241,7 +276,7 @@ class SecondTraverse():
         for stmt in stmt_block['stmts']:
             # TODO just 'stmt_type'?
             self.stmt_f(stmt)
-        self.code += '### poping declared vars from stack ###\n'
+        self.code += '### popping declared vars from stack ###\n'
         self.code += f'addi $sp, $sp, {-fp_offset}\n\n'
         base_fp_offset_stack.pop()
         Scope.scope_stack.pop()
@@ -272,19 +307,13 @@ class SecondTraverse():
         else:
             assert 1 == 2
 
-    def stmt_stmt_block_f(self, args):
-        # TODO
-        pass
-        # scopes = get_scopes_of_children(args)
-        # return {'scopes': scopes, 'stmt_type': 'stmt_block', 'stmt': args[0]}
-
     def if_stmt_f(self, if_stmt):
         cond_false_label = get_label('cond_false')
         end_label = get_label('end_label')
         expr = self.expr_f(if_stmt['condition_expr'])
-        # NOTE condition expr must be bool
-        if not Type.is_bool(expr):
-            raise SemErr('condition expr is not boolean')
+        # # NOTE condition expr must be bool
+        # if not Type.is_bool(expr):
+        #     raise SemErr('condition expr is not boolean')
         self.code += '#### IF ####\n'
         self.code += 'lw $t0, 0($sp)\n'
         self.code += 'addi $sp, $sp, 4\n'
@@ -311,17 +340,6 @@ class SecondTraverse():
             for expr in args[1]['exprs']:
                 exprs.append(expr)
             return {'scopes': [None], 'exprs': exprs}
-
-    def actuals_f(self, args):
-        # TODO is it needed?
-        pass
-        # if len(args) == 0:
-        #     return {'scopes': [None], 'exprs': []}
-        # else:
-        #     exprs = args[0]
-        #     for expr in args[1]['exprs']:
-        #         exprs.append(expr)
-        #     return {'scopes': [None], 'exprs': exprs}
 
     def variable_f(self, args):
         return {'scopes': [None], 'type': args[0], 'id': args[1]['value']}
@@ -390,7 +408,6 @@ class SecondTraverse():
         self.code += 'lw $t0, 0($sp)\n'
         self.code += 'addi $sp, $sp, 4\n'
         self.code += f'beq $t0, $zero, {end_label}\n'
-        # TODO I think I should add 4 to $sp, unless stmt_f does it itself (it seems it does)
         self.stmt_f(while_stmt['stmt'])
         self.code += f'j {start_label}\n'
         self.code += f'{end_label}:\n'
@@ -407,7 +424,7 @@ class SecondTraverse():
         self.code += '#### FOR ####\n'
         init_expr = self.expr_f(for_stmt['init_expr'])
         if init_expr is not None:
-            self.code += 'addi $sp, $sp, 4\n'  # NOTE to remove init_expr result from stack (is it correct?) (looks it is)
+            self.code += 'addi $sp, $sp, 4\n'  # to remove init_expr result from stack
         self.code += f'{start_label}:\n'
         self.expr_f(for_stmt['condition_expr'])
         self.code += 'lw $t0, 0($sp)\n'
@@ -456,39 +473,6 @@ class SecondTraverse():
         self.code += f'j {cur_loop_start_label}\n'
         self.code += '### END OF CONTINUE ###\n\n'
 
-    def formals_f(self, args):
-        # TODO look useless
-        pass
-        # scopes = get_scopes_of_children(args)
-        # if len(args) == 0:
-        #     return {'scopes': [None], 'variables': []}
-        # else:
-        #     variables_list = args[1]['variables']
-        #     variables_list.append(args[0])
-        #     return {'scopes': [None], 'variables': variables_list}
-
-    def prototype_f(self, args):
-        # TODO looks useless
-        pass
-        # # if prototype returns type
-        # if len(args) == 3:
-        #     return {
-        #         'scopes': [None],
-        #         'decl_type': 'prototype',
-        #         'type': args[0],
-        #         'id': args[1]['value'],
-        #         'formals': args[3]['variables']
-        #     }
-        # # if prototype returns void
-        # else:
-        #     type_ = {'is_arr': False, 'class': 'primitive', 'type': 'void'}
-        #     return {
-        #         'scopes': [None],
-        #         'type': type_,
-        #         'id': args[1]['value'],
-        #         'formals': args[3]['variables']
-        #     }
-
     def call_f(self, call):
         if call.keys().__contains__('id'):
             id_ = call['id']
@@ -505,11 +489,10 @@ class SecondTraverse():
             for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                 actual_type = self.expr_f(call['actuals']['exprs'][i])
                 formal_type = function_decl['formals'][i]['type']
-                if not Type.are_types_equal(
+                if not Type.are_types_assignable(
                         actual_type,
                         formal_type):  # TODO this has to handle upcasting too
                     raise SemErr('formal and actual types are not same')
-            actuals_count = len(call['actuals']['exprs'])
             self.code += 'addi $sp, $sp, -4\n'
             self.code += 'sw $fp, 0($sp)\n'
             self.code += 'addi $sp, $sp, -4\n'
@@ -519,8 +502,8 @@ class SecondTraverse():
             self.code += 'lw $fp, 8($sp)\n'
             self.code += 'lw $ra, 4($sp)\n'
             self.code += 'lw $t0, 0($sp)\n'
-            self.code += f'sw $t0, {actuals_count * 4 + 8}($sp)\n'
-            self.code += f'addi $sp, $sp, {actuals_count * 4 + 8}\n'
+            self.code += f'sw $t0, {actual_count * 4 + 8}($sp)\n'
+            self.code += f'addi $sp, $sp, {actual_count * 4 + 8}\n'
             self.code += f'#### end of func call {id_} ####\n\n'
             return function_decl['type']
         # obj.field()
@@ -531,23 +514,55 @@ class SecondTraverse():
                 if not field_id == 'length':
                     raise SemErr('array type only supports "length" function')
                 self.code += 'lw $t0, 0($sp)\n'
+                self.code += 'addi $s0, $s0, 4\n'   # popping 'others' value from stack
                 self.code += 'lw $t0, 0($t0)\n'
                 self.code += 'sw $t0, 0($sp)\n'
                 return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
             else:
-                # TODO
-                pass
-        # # id()
-        # if len(args) == 2:
-        #     return {'scopes': [None], 'id': args[0], 'actuals': args[1]}
-        # # obj.field()
-        # else:
-        #     return {
-        #         'scopes': [None],
-        #         'others': args[0],
-        #         'field': args[1],
-        #         'actuals': args[2]
-        #     }
+                others_type = self.others_f(others)
+                if not Type.is_object(others_type):
+                    raise SemErr('calling field func of non-object type')
+                func_field_info = Class.get_func_field_info(others, field)
+                vptr_offset = func_field_info['vptr_offset']
+                func_offset = func_field_info['func_offset']
+                self.code += '#### OBJ FUNC CALL ####\n'
+                actual_count = len(call['actuals']['exprs']) + 1
+                formal_count = len(func_field_info['formals'])
+                if actual_count != formal_count:
+                    raise SemErr(
+                        'actual count and formal count not equal in obj.func call'
+                    )
+                for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
+                    actual_type = self.expr_f(call['actuals']['exprs'][i])
+                    formal_type = func_field_info['formals'][i]['type']
+                    if not Type.are_types_assignable(
+                            actual_type,
+                            formal_type):
+                        raise SemErr('formal and actual types are not same')
+                self.code += 'lw $t0, 0($sp)\n'
+                self.code += 'move $t1, t0\n'
+                self.code += f'addi $t1, $t1, {vptr_offset}\n'
+                self.code += 'lw $t1, 0($t1)\n'
+                self.code += 'lw $t2, 0($t1)\n' # loading delta to $t2
+                self.code += 'addi $t0, $t0, $t2\n' # adding delta to $t0 ('this' pointer)
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $t0, 0($sp)\n' # pushing 'this' to stack
+                self.code += f'addi $t1, $t1, {func_offset}\n'
+                self.code += 'lw $t1, 0($t1)\n' # func label adrs in $t1
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $fp, 0($sp)\n'
+                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'sw $ra, 0($sp)\n'
+                self.code += 'addi $fp, $sp, 4\n'
+                self.code += 'jr $t1\n'
+                return_label = get_label('return')
+                self.code += f'{return_label}:\n'
+                self.code += 'lw $fp, 8($sp)\n'
+                self.code += 'lw $ra, 4($sp)\n'
+                self.code += 'lw $t0, 0($sp)\n'
+                self.code += f'sw $t0, {actual_count * 4 + 8}($sp)\n'
+                self.code += f'addi $sp, $sp, {actual_count * 4 + 8}\n'
+                self.code += '#### END OF OBJ FUNC CALL ####\n\n'
 
     def l_value_f(self, l_value, option):
         if l_value['l_value_type'] == 'id':
@@ -604,15 +619,31 @@ class SecondTraverse():
         else:
             assert 1 == 2
 
-    def l_value_obj_f(self, args):
-        # TODO
-        pass
-        # return {
-        #     'scopes': [None],
-        #     'l_value_type': 'obj_field',
-        #     'obj_expr': args[0],
-        #     'obj_field': args[1]
-        # }
+    def l_value_obj_f(self, l_value_obj, option):
+        obj_others_type = self.others_f(l_value_obj['obj_others'])
+        if not Type.is_object(obj_others_type):
+            raise SemErr('pinter is not object type')
+        class_id = obj_others_type['class']
+        field_id = l_value_obj['obj_field_id']
+        var_field_info = Class.get_var_field(class_id, field_id)
+        if var_field_info is None:
+            raise SemErr('field is not accessible or declared')
+        if option == 'adrs':
+            self.code += '### OBJ FIELD ADRS ###\n'
+        elif option == 'value':
+            self.code += '### OBJ FIELD VALUE ###\n'
+        self.code += 'lw $t0, 0($sp)\n'
+        self.code += f'addi $t0, $t0, {var_field_info["offset"]}\n'
+        if option == 'value':
+            self.code += 'lw $t0, 0($t0)\n'
+        else:
+            assert 1==2
+        self.code += 'sw $t0, 0($sp)\n'
+        if option == 'adrs':
+            self.code += '### OBJ FIELD ADRS ###\n'
+        elif option == 'value':
+            self.code += '### OBJ FIELD VALUE ###\n'
+        return var_field_info['type']
 
     def l_value_arr_f(self, l_value_arr, option):
         global index_less_zero_error_msg, index_more_size_error_msg, runtime_error_msg
@@ -665,26 +696,6 @@ class SecondTraverse():
             'class': arr_type['class']
         }
 
-    def implements_f(self, args):
-        # TODO looks useless
-        pass
-        # if len(args) == 0:
-        #     return {'scopes': [None], 'interfaces': None}
-        # else:
-        #     ids = args[2]['ids']
-        #     ids.append(args[1]['value'])
-        #     return {'scopes': [None], 'interfaces': ids}
-
-    def extends_f(self, args):
-        # TODO looks useless
-        pass
-        # # if class extends another class
-        # if len(args) == 2:
-        #     return {'scopes': [None], 'parent_class': args[1]['value']}
-        # # if class doesn't extend any class
-        # else:
-        #     return {'scopes': [None], 'parent_class': None}
-
     def field_f(self, args):
         scopes = get_scopes_of_children(args)
         return {
@@ -704,8 +715,8 @@ class SecondTraverse():
             self.code += 'sw $t1, 4($sp)\n'
             self.code += 'addi $sp, $sp, 4\n'
             self.code += '### END OF ASSIGN ###\n\n'
-            if not Type.are_types_equal(l_value, r_value):
-                raise SemErr('l_value and r_value types are not same')
+            if not Type.are_types_assignable(l_value, r_value):
+                raise SemErr('l_value and r_value types are not assignable')
             return r_value
         else:
             return self.or_f(assign['expr'])
@@ -780,30 +791,23 @@ class SecondTraverse():
                 else:
                     assert 1 == 2
             elif Type.is_double(comp_1) and Type.is_double(comp_2):
-                # TODO correct?
-                if operator == '+':
-                    self.code += '## + ##\n'
-                    self.code += "l.s $t0 , 8($sp)\n"
-                    self.code += "l.s $t1 , 4($sp)\n"
-                    self.code += "add.s $t0 , $t0 , $t1\n"
-                    self.code += "s.s $t0 , 8($sp)\n"
-                    self.code += "addi $sp , $sp , 4\n"
-                    self.code += '## END OF + ##\n\n'
+                # TODO 
+                if operator == '==':
                     pass
-                elif operator == '-':
-                    self.code += '## - ##\n'
-                    self.code += "l.s $t0 , 8($sp)\n"
-                    self.code += "l.s $t1 , 4($sp)\n"
-                    self.code += "sub.s $t0 , $t0 , $t1\n"
-                    self.code += "s.s $t0 , 8($sp)\n"
-                    self.code += "addi $sp , $sp , 4\n"
-                    self.code += '## END OF - ##\n\n'
+                elif operator == '!=':
                     pass
+                else:
+                    assert 1 == 2
             elif Type.is_string(comp_1) and Type.is_string(comp_2):
-                # TODO
-                pass
+                # TODO 
+                if operator == '==':
+                    pass
+                elif operator == '!=':
+                    pass
+                else:
+                    assert 1 == 2
             else:
-                raise SemErr('operands are obj or arr')
+                raise SemErr('operands\' types are not correct')
             comp_1 = comp_2
         return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
 
@@ -977,7 +981,6 @@ class SecondTraverse():
             else:
                 raise SemErr('operand types are not correct')
             mdm_1 = mdm_2
-        # TODO is returned value correct
         return mdm_1
 
     def mul_div_mod_f(self, mdm):
@@ -1037,7 +1040,6 @@ class SecondTraverse():
             else:
                 raise SemErr('operand types are not correct')
             not_neg_1 = not_neg_2
-        # TODO is returned value correct
         return not_neg_1
 
     def not_neg_f(self, not_neg):
@@ -1072,11 +1074,9 @@ class SecondTraverse():
                     self.code += '## END OF - ##\n\n'
             else:
                 raise SemErr('operand types are not correct')
-        # TODO is returned value correct?
         return others
 
     def others_f(self, others):
-        # NOTE new function, it isn't in first traverse.
         if others['expr_type'] == 'constant':
             if others['type'] == 'int':
                 return self.constant_int_f(others)
@@ -1103,7 +1103,6 @@ class SecondTraverse():
         elif others['expr_type'] == 'call':
             return self.call_f(others)
         elif others['expr_type'] == '(expr)':
-            # del others['expr_type']
             return self.expr_f(others)
         elif others['expr_type'] == 'read_int':
             self.code += 'li $v0, 5\n'
@@ -1121,8 +1120,25 @@ class SecondTraverse():
             self.code += 'sw $a0, 0($sp)\n'
             return {'dim': 0, 'type': 'string', 'class': 'Primitive'}
         elif others['expr_type'] == 'new_id':
-            # TODO
-            pass
+            class_ = Class.get_class(others['id'])
+            needed_heap_space = class_.object_layout['heap_size']
+            self.code += f'### ALLOC NEW ID {class_.id} ###\n'
+            space_label = add_space_to_data_sec(self, needed_heap_space)
+            self.code += f'la $t0, {space_label}\n'
+            heap_label = class_.object_layout[(class_['id'], 'class')]['heap_label']
+            self.code += f'la $t1, {heap_label}\n'
+            self.code += 'sw $t1, 0($t0)\n'
+            variable_count = len(Class.get_variable_fields_with_id(class_['id']))
+            interface_offset = variable_count * 4 + 4
+            for interface in class_.decl['interfaces']:
+                obj_interface = class_.object_layout[(interface['id'], 'interface')]
+                vtable_heap_label = obj_interface['heap_label']
+                self.code += f'la $t1, {vtable_heap_label}\n'
+                self.code += f'sw $t1, {interface_offset}($t0)\n'
+                interface_offset += 4
+            self.code += 'addi $sp, $sp, -4\n'
+            self.code += 'sw $t0, 0($sp)\n'
+            self.code += f'### END OF ALLOC NEW ID {class_.id} ###\n\n'
         elif others['expr_type'] == 'new_arr':
             global arr_size_neg_error_msg, runtime_error_msg
             # del others['expr_type']
@@ -1166,7 +1182,7 @@ class SecondTraverse():
                 raise SemErr('itob arg is not int')
             self.code += 'addi $sp, $sp, -4\n'
             self.code += 'sw $ra, 0($sp)\n'
-            self.code += 'jal itob\n'  # NOTE itob func label
+            self.code += 'jal itob\n'  # itob func label
             self.code += 'lw $ra, 0($sp)\n'
             self.code += 'addi $sp, $sp, 4\n'
             return {'dim': 0, 'type': 'bool', 'class': 'Primitive'}
@@ -1224,15 +1240,3 @@ class SecondTraverse():
         self.code += '### END OF NULL ###\n\n'
         return {'dim': 0, 'type': 'null', 'class': 'Primitive'}
 
-    def identifier_f(self, identifier):
-        # TODO looks useless. below code is code_gen not first traverse.
-        pass
-        # id_ = identifier['value']
-        # decl = Scope.get_decl_with_id(id_)
-        # fp_offset = Scope.get_fp_offset_of_variable(id_)
-        # self.code += f'\n### ID {id_} ###\n'
-        # self.code += 'addi $sp, $sp, -4\n'
-        # self.code += f'lw $t0, {str(fp_offset)}($fp)\n'
-        # self.code += 'sw $t0, 0($sp)\n'
-        # self.code += f'### END OF ID {id_} ###\n\n'
-        # return decl['type']

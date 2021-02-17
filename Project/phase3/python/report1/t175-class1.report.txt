@@ -1,0 +1,1 @@
+difference in line #1: file: out1/t175-class1.out -----> content: Syntax Error <> file: ./tests1/t175-class1.out -----> content: 2 

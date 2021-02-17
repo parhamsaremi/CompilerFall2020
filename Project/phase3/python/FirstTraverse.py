@@ -144,8 +144,7 @@ class FirstTraverse(Transformer):
         set_parent_of_children_scope(scope, children_scopes)
         set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
-        for field in fields:
-            decl = field['declaration']
+        for decl in fields:
             decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 scope.decls[decl['id']] = decl
@@ -375,8 +374,8 @@ class FirstTraverse(Transformer):
         return {
             'scopes': [None],
             'l_value_type': 'obj_field',
-            'obj': args[0],
-            'obj_field': args[1]
+            'obj_others': args[0],
+            'obj_field_id': args[1]
         }
 
     def l_value_arr_f(self, args):
@@ -474,11 +473,14 @@ class FirstTraverse(Transformer):
 
     def field_f(self, args):
         scopes = get_scopes_of_children(args)
-        return {
-            'scopes': scopes,
-            'access_mode': args[0]['value'],
-            'declaration': args[1]
-        }
+        res = args[1]
+        res.update({'scopes': scopes, 'access_mode': args[0]['value']})
+        return res
+        # return {
+        #     'scopes': scopes,
+        #     'access_mode': args[0]['value'],
+        #     'declaration': args[1]
+        # }
 
     def access_mode_private(self, args):
         return {'scopes': [None], 'value': 'private'}

@@ -112,3 +112,24 @@ class Scope:
     def get_interface_prototypes(interface_id: str):
         interface = Scope.get_interface(interface_id)
         return interface_id['prototypes']
+
+    @staticmethod
+    def is_interface(id_: str):
+        global_scope = Scope.get_global_scope()
+        decl = global_scope.decls['id_']
+        if decl['decl_type'] == 'interface':
+            return True
+        return False
+
+    @staticmethod
+    def is_class(id_: str):
+        global_scope = Scope.get_global_scope()
+        decl = global_scope.decls['id_']
+        if decl['decl_type'] == 'class':
+            return True
+        return False
+
+    @staticmethod
+    def get_parent_of_class(id_: str):
+        class_ = Scope.get_class(id_)
+        return class_['parent_class']

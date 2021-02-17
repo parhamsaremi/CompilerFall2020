@@ -1,3 +1,6 @@
+from Scope import Scope
+from Class import Class
+
 class Type:
     def __init__(self):
         pass
@@ -50,4 +53,26 @@ class Type:
         if type_1['dim'] == type_2['dim'] and \
             type_1['type'] == type_2['type'] and type_1['class'] == type_2['class']:
             return True
+        return False
+
+    @staticmethod
+    def are_types_assignable(l_type: dict, r_type: dict):
+        if Type.are_types_equal(l_type, r_type):
+            return True
+        if not Type.is_object(l_type) or not Type.is_object(r_type):
+            return False
+        r_class = Scope.get_class(r_type['class'])
+        for interface in r_class['interfaces']:
+            interface_id = interface['id']
+            if l_type['class'] == interface_id:
+                return True
+        # TODO may be we should check interfaces of parent classes too. java has it, but i'm not sure decaf supports it too ...
+        parent_id = r_class['parent_class']
+        while True:
+            if parent_id is None:
+                break
+            if parent_id == r_class['class']:
+                return True
+            parent = Scope.get_class(parent_id)
+            parent_id = parent['parent_class']
         return False
