@@ -1,1 +1,1 @@
-OK 
+different line count in these files! : file out1/t176-class2.out : #4 , file ./tests1/t176-class2.out : #3 

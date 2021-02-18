@@ -199,8 +199,10 @@ class SecondTraverse():
                 func_offset = func_field['offset']
                 func_label = func_field['func_label']
                 self.class_code += f'la $t1, {func_label}\n'
-                self.class_code += f'sw $t1, {func_offset}($t0)\n'
-                # print_in_class(self, '$t1')
+                print_in_class(self, '$t1')
+                self.code += f'addi $t2, $t0, {func_offset}\n'
+                self.class_code += f'sw $t1, 0($t2)\n'
+                print_in_class(self, '$t2')
             self.class_code += f'#### END OF CREATING VTABLE OF CLASS {id_} ####\n\n'
             # variable fields
             offset = 0
@@ -278,6 +280,7 @@ class SecondTraverse():
             self.main_func_label = func_label
         formals_count = len(function_decl['formals'])
         self.code += f'#### FUNCTION DECL {function_decl["parent"]+"_"+id_} ####\n'
+        print_in_asm(self)
         self.code += f'{func_label}:\n'
         self.stmt_block_f(function_decl['stmt_block'])
         self.code += f'### auto return of func {id_} ###\n'
@@ -588,15 +591,15 @@ class SecondTraverse():
                     if not Type.are_types_assignable(actual_type, formal_type):
                         raise SemErr('formal and actual types are not same')
                 self.code += 'lw $t0, 0($sp)\n'
-                print_in_asm(self,'$t0')
                 self.code += 'move $t1, $t0\n'
                 self.code += f'addi $t1, $t1, {vptr_offset}\n'
                 self.code += 'lw $t1, 0($t1)\n'
                 self.code += 'lw $t2, 0($t1)\n'  # loading delta to $t2
                 self.code += 'add $t0, $t0, $t2\n'  # adding delta to $t0 ('this' pointer)
-                self.code += 'addi $sp, $sp, -4\n'
+                self.code += 'addi $sp, $sp, -4\n' 
                 self.code += 'sw $t0, 0($sp)\n'  # pushing 'this' to stack
                 self.code += f'addi $t1, $t1, {func_offset}\n'
+                print_in_asm(self, '$t1')
                 self.code += 'lw $t1, 0($t1)\n'  # func label adrs in $t1
                 self.code += 'addi $sp, $sp, -4\n'
                 self.code += 'sw $fp, 0($sp)\n'
@@ -605,6 +608,7 @@ class SecondTraverse():
                 return_label = get_label('return')
                 self.code += f'la $ra, {return_label}\n'
                 self.code += 'addi $fp, $sp, 4\n'
+                print_in_asm(self, '$t1')
                 self.code += 'jr $t1\n'
                 self.code += f'{return_label}:\n'
                 self.code += 'lw $fp, 8($sp)\n'
@@ -1266,7 +1270,6 @@ class SecondTraverse():
             main_vtable_heap_label = class_.object_layout['_main_vptr'][
                 'heap_label']
             self.code += f'la $t1, {main_vtable_heap_label}\n'
-            print_in_asm(self, '$t1')
             self.code += 'sw $t1, 0($t0)\n'
             variable_count = len(Class.get_variable_fields_with_id(class_.id))
             interface_offset = variable_count * 4 + 4
