@@ -51,6 +51,7 @@ cur_function_decl = None
 
 data_sec_count = 0
 
+
 def add_str_const_to_data_sec(second_traverse, string: str):
     global data_sec_count
     label = f'str_const_{data_sec_count}'
@@ -58,7 +59,9 @@ def add_str_const_to_data_sec(second_traverse, string: str):
     data_sec_count += 1
     return label
 
+
 space_count = 0
+
 
 def add_space_to_data_sec(second_traverse, size: int):
     global space_count
@@ -66,6 +69,7 @@ def add_space_to_data_sec(second_traverse, size: int):
     second_traverse.data_sec += f'{label}: .space {size}\n'
     space_count += 1
     return label
+
 
 def add_global_variable_to_data_sec(second_traverse, variable_decl: dict):
     global data_sec_count
@@ -125,6 +129,14 @@ class SecondTraverse():
         cur_scope = program['scopes'][0]
         Scope.scope_stack.append(cur_scope)
 
+        # setting starting labels of class functions
+        for class_decl in Scope.get_classes():
+            for func_decl in Scope.get_functions_of_class(class_decl['id']):
+                func_label = get_label(class_decl['id'] + '_' +
+                                       func_decl['id'])
+                func_decl['func_label'] = func_label
+
+        # classes
         for class_decl in Scope.get_classes():
             id_ = class_decl['id']
             class_ = Class(class_decl)
@@ -136,40 +148,51 @@ class SecondTraverse():
             parent = id_
             while parent is not None:
                 class_chain.append(parent)
-                parent = Scope.get_parent_of_class(id_)
+                parent = Scope.get_parent_of_class(parent)
             class_chain = class_chain[::-1]
 
             # TODO copy dictionaries where a decl may be used in many situations, like prototypes of interfaces
+            # function fields
             offset = 0
             for class_id in class_chain:
-                for func_field in Class.get_function_fields(Class.get_class(class_id)):
-                    func_field = func_field.copy()
-                    if class_.main_vtable.keys().__contains__((func_field['id'], 'function')):
+                for func_field in Class.get_function_fields(
+                        Class.get_class(class_id)):
+                    func_field = func_field
+                    if class_.main_vtable.keys().__contains__(
+                        (func_field['id'], 'function')):
                         pass
                     else:
                         offset += 4
                         func_field.update({'offset': offset})
                     # TODO can add other stuff too, like function label
-                    class_.main_vtable[(func_field['id'], 'function')] = func_field
+                    class_.main_vtable[(func_field['id'],
+                                        'function')] = func_field
             main_vtable_heap_label = add_space_to_data_sec(self, offset + 4)
-            class_.object_layout['_main_vptr']['heap_label'] = main_vtable_heap_label
+            class_.object_layout['_main_vptr'][
+                'heap_label'] = main_vtable_heap_label
 
+            # variable fields
             offset = 0
             for class_id in class_chain:
-                for var_field in Class.get_variable_fields(Class.get_class(class_id)):
+                for var_field in Class.get_variable_fields(
+                        Class.get_class(class_id)):
                     var_field = var_field.copy()
-                    if class_.object_layout.keys().__contains__((var_field['id'], 'variable')):
+                    if class_.object_layout.keys().__contains__(
+                        (var_field['id'], 'variable')):
                         pass
                     else:
                         offset += 4
                         var_field.update({'offset': offset})
                     # TODO can add other stuff too
-                    class_.object_layout[(var_field['id'], 'variable')] = var_field
+                    class_.object_layout[(var_field['id'],
+                                          'variable')] = var_field
 
+            # interfaces
             for interface_id in class_.decl['interfaces']:
                 interface_decl = Scope.get_interface(interface_id)
                 interface_class_vtable = {}
-                class_.object_layout[(interface_id, 'interface')] = interface_class_vtable
+                class_.object_layout[(interface_id,
+                                      'interface')] = interface_class_vtable
                 offset += 4
                 interface_class_vtable['_this_offset'] = offset
                 vtable_offset = 0
@@ -178,10 +201,12 @@ class SecondTraverse():
                     prototype_decl = prototype_decl.copy()
                     prototype_decl.update({'_offset': vtable_offset})
                     vtable_offset += 4
-                    interface_class_vtable[(prototype_id, 'function')] = prototype_decl
+                    interface_class_vtable[(prototype_id,
+                                            'function')] = prototype_decl
                     # TODO can add other stuff too
             class_.object_layout['heap_size'] = offset + 4
 
+        # global functions
         for function_decl in Scope.get_global_functions():
             id_ = function_decl['id']
             func_label = get_label(function_decl['parent'] + '_' + id_)
@@ -523,17 +548,17 @@ class SecondTraverse():
                 if not field_id == 'length':
                     raise SemErr('array type only supports "length" function')
                 self.code += 'lw $t0, 0($sp)\n'
-                self.code += 'addi $s0, $s0, 4\n'   # popping 'others' value from stack
+                self.code += 'addi $s0, $s0, 4\n'  # popping 'others' value from stack
                 self.code += 'lw $t0, 0($t0)\n'
                 self.code += 'sw $t0, 0($sp)\n'
                 return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
             else:
-                others_type = self.others_f(others)
+                others_type = self.others_f(call['others'])
                 if not Type.is_object(others_type):
                     raise SemErr('calling field func of non-object type')
-                func_field_info = Class.get_func_field_info(others, field)
-                vptr_offset = func_field_info['vptr_offset']
-                func_offset = func_field_info['func_offset']
+                func_info = Class.get_func_info(others_type['class'], call['field'])
+                vptr_offset = func_info['vptr_offset']
+                func_offset = func_info['func_offset']
                 self.code += '#### OBJ FUNC CALL ####\n'
                 actual_count = len(call['actuals']['exprs']) + 1
                 formal_count = len(func_field_info['formals'])
@@ -543,21 +568,19 @@ class SecondTraverse():
                     )
                 for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                     actual_type = self.expr_f(call['actuals']['exprs'][i])
-                    formal_type = func_field_info['formals'][i]['type']
-                    if not Type.are_types_assignable(
-                            actual_type,
-                            formal_type):
+                    formal_type = func_info['formals'][i]['type']
+                    if not Type.are_types_assignable(actual_type, formal_type):
                         raise SemErr('formal and actual types are not same')
                 self.code += 'lw $t0, 0($sp)\n'
                 self.code += 'move $t1, t0\n'
                 self.code += f'addi $t1, $t1, {vptr_offset}\n'
                 self.code += 'lw $t1, 0($t1)\n'
-                self.code += 'lw $t2, 0($t1)\n' # loading delta to $t2
-                self.code += 'addi $t0, $t0, $t2\n' # adding delta to $t0 ('this' pointer)
+                self.code += 'lw $t2, 0($t1)\n'  # loading delta to $t2
+                self.code += 'addi $t0, $t0, $t2\n'  # adding delta to $t0 ('this' pointer)
                 self.code += 'addi $sp, $sp, -4\n'
-                self.code += 'sw $t0, 0($sp)\n' # pushing 'this' to stack
+                self.code += 'sw $t0, 0($sp)\n'  # pushing 'this' to stack
                 self.code += f'addi $t1, $t1, {func_offset}\n'
-                self.code += 'lw $t1, 0($t1)\n' # func label adrs in $t1
+                self.code += 'lw $t1, 0($t1)\n'  # func label adrs in $t1
                 self.code += 'addi $sp, $sp, -4\n'
                 self.code += 'sw $fp, 0($sp)\n'
                 self.code += 'addi $sp, $sp, -4\n'
@@ -585,7 +608,7 @@ class SecondTraverse():
         id_ = l_value_id['l_value']['value']
         variable_decl = Scope.get_decl_in_symbol_table(id_, 'variable')
         if variable_decl is None:
-            raise SemErr('variable not found')
+            raise SemErr(f'variable "{id_}" not found')
         type_ = variable_decl['type']
         if variable_decl.keys().__contains__('fp_offset'):
             fp_offset = variable_decl['fp_offset']
@@ -636,7 +659,7 @@ class SecondTraverse():
         field_id = l_value_obj['obj_field_id']['value']
         var_field_info = Class.get_var_field(class_id, field_id)
         if var_field_info is None:
-            raise SemErr('field is not accessible or declared')
+            raise SemErr(f'field \'{field_id}\'is not accessible or declared')
         if option == 'adrs':
             self.code += '### OBJ FIELD ADRS ###\n'
         elif option == 'value':
@@ -798,7 +821,7 @@ class SecondTraverse():
                 else:
                     assert 1 == 2
             elif Type.is_double(comp_1) and Type.is_double(comp_2):
-                # TODO 
+                # TODO
                 if operator == '==':
                     pass
                 elif operator == '!=':
@@ -806,7 +829,7 @@ class SecondTraverse():
                 else:
                     assert 1 == 2
             elif Type.is_string(comp_1) and Type.is_string(comp_2):
-                # TODO 
+                # TODO
                 if operator == '==':
                     pass
                 elif operator == '!=':
@@ -1135,13 +1158,15 @@ class SecondTraverse():
             self.code += 'li $v0, 9\n'
             self.code += 'syscall\n'
             self.code += 'move $t0, $v0\n'
-            main_vtable_heap_label = class_.object_layout['_main_vptr']['heap_label']
+            main_vtable_heap_label = class_.object_layout['_main_vptr'][
+                'heap_label']
             self.code += f'la $t1, {main_vtable_heap_label}\n'
             self.code += 'sw $t1, 0($t0)\n'
             variable_count = len(Class.get_variable_fields_with_id(class_.id))
             interface_offset = variable_count * 4 + 4
             for interface in class_.decl['interfaces']:
-                obj_interface = class_.object_layout[(interface['id'], 'interface')]
+                obj_interface = class_.object_layout[(interface['id'],
+                                                      'interface')]
                 vtable_heap_label = obj_interface['heap_label']
                 self.code += f'la $t1, {vtable_heap_label}\n'
                 self.code += f'sw $t1, {interface_offset}($t0)\n'
@@ -1250,4 +1275,3 @@ class SecondTraverse():
         self.code += 'addi $sp, $sp, -4\n'
         self.code += '### END OF NULL ###\n\n'
         return {'dim': 0, 'type': 'null', 'class': 'Primitive'}
-

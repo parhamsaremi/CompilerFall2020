@@ -40,29 +40,24 @@ class Scope:
     @staticmethod
     def get_classes():
         global_scope = Scope.get_global_scope()
-        res = []
-        for decl in global_scope.decls.values():
-            if decl['decl_type'] == 'class':
-                res.append(decl)
-        return res
+        return [decl in global_scope.decls.values() if decl['decl_type'] == 'class']
+
+    @staticmethod
+    def get_interfaces():
+        global_scope = Scope.get_global_scope()
+        return [decl in global_scope.decls.values() if decl['decl_type'] == 'interface']
 
     @staticmethod
     def get_global_functions():
         global_scope = Scope.get_global_scope()
-        res = []
-        for decl in global_scope.decls.values():
-            if decl['decl_type'] == 'function':
-                res.append(decl)
-        return res
+        return [decl in global_scope.decls.values() if decl['decl_type'] == 'function']
+
 
     @staticmethod
     def get_global_variables():
         global_scope = Scope.get_global_scope()
-        res = []
-        for decl in global_scope.decls.values():
-            if decl['decl_type'] == 'variable':
-                res.append(decl)
-        return res
+        return [decl in global_scope.decls.values() if decl['decl_type'] == 'variable']
+
 
     @staticmethod
     def get_main_function():
@@ -83,21 +78,15 @@ class Scope:
     @staticmethod
     def get_variables_of_class(class_id: str):
         class_ = Scope.get_class(class_id)
-        res = []
-        for field in class_['fields']:
-            decl = field['declaration']
-            if decl['decl_type'] == 'variable':
-                res.append(decl)
-        return res
+        return [field for field in class_['field'] if field['decl_type'] == 'variable']
 
     @staticmethod
     def get_functions_of_class(class_id: str):
         class_ = Scope.get_class(class_id)
         res = []
         for field in class_['fields']:
-            decl = field['declaration']
-            if decl['decl_type'] == 'function':
-                res.append(decl)
+            if field['decl_type'] == 'function':
+                res.append(field)
         return res
 
     @staticmethod
@@ -131,6 +120,5 @@ class Scope:
 
     @staticmethod
     def get_parent_of_class(id_: str):
-        # alert('hi')
         class_ = Scope.get_class(id_)
         return class_['parent_class']
