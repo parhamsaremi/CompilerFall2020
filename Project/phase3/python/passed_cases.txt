@@ -33,3 +33,6 @@ Array:
 Input:
     ReadInteger
     ReadLine
+
+Class:
+    simple variable_field in class, no inheritance, no inteface

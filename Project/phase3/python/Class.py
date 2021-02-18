@@ -23,6 +23,7 @@ class Class:
 
     @staticmethod
     def get_variable_fields_with_id(class_id: str):
+
         class_ = Class.get_class(class_id)
         return [
             field for field in class_.decl['fields']
@@ -47,8 +48,13 @@ class Class:
 
     @staticmethod
     def get_func_info(class_id: str, id_: str):
-        class_ = classes[class_id]
-        # TODO
+        # TODO interface?
+        class_ = Class.classes[class_id]
+        if class_.main_vtable.keys().__contains__((id_, 'function')):
+            func_field = class_.main_vtable[(id_, 'function')]
+            func_field.update({'vptr_offset': 0, 'func_offset': func_field['offset']})
+            return func_field
+        return None
 
     @staticmethod
     def get_variable_info(class_id: str, var_id: str):

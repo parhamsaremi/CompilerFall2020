@@ -8,4 +8,4 @@ syscall
 jr $ra
 
 .data
-errorMsg: .asciiz "Syntax Error"
+errorMsg: .asciiz "Semantic Error"

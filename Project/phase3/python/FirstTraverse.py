@@ -132,8 +132,9 @@ class FirstTraverse(Transformer):
             if scope.does_decl_id_exist(prototype['id']):
                 raise SemErr(f'duplicate id for prototypes')
             scope.decls[prototype['id']] = prototype
-        return {
+        return {            
             'scopes': [scope],
+            'decl_type': 'interface',
             'id': args[0]['value'],
             'prototypes': args[1]['prototypes']
         }
@@ -148,7 +149,8 @@ class FirstTraverse(Transformer):
             # decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 scope.decls[decl['id']] = decl
-                decl['scope'].parent = scope
+                decl_scope = decl['scopes'][0]
+                decl_scope.parent = scope
                 decl['parent'] = args[0][
                     'value']  # set parent of field function to class id
                 for variable in decl['formals']:
@@ -456,8 +458,8 @@ class FirstTraverse(Transformer):
 
     def extends_f(self, args):
         # if class extends another class
-        if len(args) == 2:
-            return {'scopes': [None], 'parent_class': args[1]['value']}
+        if len(args) == 1:
+            return {'scopes': [None], 'parent_class': args[0]['value']}
         # if class doesn't extend any class
         else:
             return {'scopes': [None], 'parent_class': None}
