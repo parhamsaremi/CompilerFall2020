@@ -556,12 +556,12 @@ class SecondTraverse():
                 others_type = self.others_f(call['others'])
                 if not Type.is_object(others_type):
                     raise SemErr('calling field func of non-object type')
-                func_info = Class.get_func_info(others_type['class'], call['field'])
+                func_info = Class.get_func_info(others_type['class'], field_id)
                 vptr_offset = func_info['vptr_offset']
                 func_offset = func_info['func_offset']
                 self.code += '#### OBJ FUNC CALL ####\n'
                 actual_count = len(call['actuals']['exprs']) + 1
-                formal_count = len(func_field_info['formals'])
+                formal_count = len(func_info['formals'])
                 if actual_count != formal_count:
                     raise SemErr(
                         'actual count and formal count not equal in obj.func call'
@@ -569,6 +569,8 @@ class SecondTraverse():
                 for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                     actual_type = self.expr_f(call['actuals']['exprs'][i])
                     formal_type = func_info['formals'][i]['type']
+                    alert(actual_type)
+                    alert(formal_type)
                     if not Type.are_types_assignable(actual_type, formal_type):
                         raise SemErr('formal and actual types are not same')
                 self.code += 'lw $t0, 0($sp)\n'

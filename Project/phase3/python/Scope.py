@@ -40,23 +40,23 @@ class Scope:
     @staticmethod
     def get_classes():
         global_scope = Scope.get_global_scope()
-        return [decl in global_scope.decls.values() if decl['decl_type'] == 'class']
+        return [decl for decl in global_scope.decls.values() if decl['decl_type'] == 'class']
 
     @staticmethod
     def get_interfaces():
         global_scope = Scope.get_global_scope()
-        return [decl in global_scope.decls.values() if decl['decl_type'] == 'interface']
+        return [decl for decl in global_scope.decls.values() if decl['decl_type'] == 'interface']
 
     @staticmethod
     def get_global_functions():
         global_scope = Scope.get_global_scope()
-        return [decl in global_scope.decls.values() if decl['decl_type'] == 'function']
+        return [decl for decl in global_scope.decls.values() if decl['decl_type'] == 'function']
 
 
     @staticmethod
     def get_global_variables():
         global_scope = Scope.get_global_scope()
-        return [decl in global_scope.decls.values() if decl['decl_type'] == 'variable']
+        return [decl for decl in global_scope.decls.values() if decl['decl_type'] == 'variable']
 
 
     @staticmethod
