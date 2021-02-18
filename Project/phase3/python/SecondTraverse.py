@@ -1092,7 +1092,35 @@ class SecondTraverse():
                     self.code += '## END OF - ##\n\n'
             elif Type.is_string(mdm_1) and Type.is_string(mdm_2):
                 if operator == '+':
-                    # TODO concat strings
+                    loop1 = get_label()
+                    end_loop1 = get_label()
+                    end_loop2 = get_label()
+                    self.code += '#### START OF STRING APPEND###\n'
+                    self.code += 'lw $t1, 4($sp)\n'
+                    self.code += 'lw $t0, 0($sp)\n'
+                    self.code += 'addi $a0, $zero, 100\n'
+                    self.code += 'li $v0, 9\n'
+                    self.code += 'syscall\n'
+                    self.code += 'move $t2, $v0\n'
+                    self.code += 'move $t5, $t2\n'
+                    self.code += f'{loop1}:\n'
+                    self.code += 'lb $t3, 0($t1)\n'
+                    self.code += f'beqz $t3, {end_loop1}\n'
+                    self.code += 'sb $t3, 0($t2)\n'
+                    self.code += 'add $t2,$t2,1\n'
+                    self.code += 'add $t1,$t1,1\n'
+                    self.code += f'j {loop1}\n'
+                    self.code += f'{end_loop1}:\n'
+                    self.code += 'lb $t3, 0($t0)\n'
+                    self.code += f'beqz $t3, {end_loop2}\n'
+                    self.code += 'sb $t3, 0($t2)\n'
+                    self.code += 'add $t2,$t2,1\n'
+                    self.code += 'add $t0,$t0,1\n'
+                    self.code += f'j {end_loop1}\n'
+                    self.code += f'{end_loop2}:\n'
+                    self.code += 'addi $sp,$sp,4\n'
+                    self.code += 'sw $t5, 0($sp)\n'
+                    self.code += '##END OF String Append\n'
                     pass
                 elif operator == '-':
                     raise SemErr('sub between strings')
