@@ -1,1 +1,1 @@
-difference in line #1: file: out1/t179-class_func.out -----> content: Semantic Error <> file: ./tests1/t179-class_func.out -----> content: 8 
+different line count in these files! : file out1/t179-class_func.out : #7 , file ./tests1/t179-class_func.out : #1 

@@ -11,6 +11,25 @@ from Class import Class
 # classes can be upcasted in func calls and assignments, they don't always have same type. handle this.
 # continue, break and maybe return might have bug, becuase they don't pop declared vars of inner scopes.
 
+def print_in_class(second_traverse, reg=None):
+    if reg is None:
+        second_traverse.class_code += 'li $a0, 12345\n'
+        second_traverse.class_code += 'li $v0, 1\n'
+        second_traverse.class_code += 'syscall\n'
+    else:
+        second_traverse.class_code += f'move $a0, {reg}\n'
+        second_traverse.class_code += 'li $v0, 1\n'
+        second_traverse.class_code += 'syscall\n'
+
+def print_in_asm(second_traverse,reg=None):
+    if reg is None:
+        second_traverse.code += 'li $a0, 12345\n'
+        second_traverse.code += 'li $v0, 1\n'
+        second_traverse.code += 'syscall\n'
+    else:
+        second_traverse.code += f'move $a0, {reg}\n'
+        second_traverse.code += 'li $v0, 1\n'
+        second_traverse.code += 'syscall\n'
 
 def alert(text):
     print('\033[91m' + str(text) + '\033[0m')
@@ -63,9 +82,9 @@ def add_str_const_to_data_sec(second_traverse, string: str):
 space_count = 0
 
 
-def add_space_to_data_sec(second_traverse, size: int):
+def add_space_to_data_sec(second_traverse, size: int, prefix = ''):
     global space_count
-    label = f'space_{space_count}'
+    label = f'SPACE_{prefix}_{space_count}'
     second_traverse.data_sec += f'{label}: .space {size}\n'
     space_count += 1
     return label
@@ -167,10 +186,22 @@ class SecondTraverse():
                     # TODO can add other stuff too, like function label
                     class_.main_vtable[(func_field['id'],
                                         'function')] = func_field
-            main_vtable_heap_label = add_space_to_data_sec(self, offset + 4)
+
+            main_vtable_heap_label = add_space_to_data_sec(self, offset + 4, id_+'_main_vtable')
             class_.object_layout['_main_vptr'][
                 'heap_label'] = main_vtable_heap_label
-
+            self.class_code += f'#### CREATING VTABLE OF CLASS {id_} ####\n'
+            self.class_code += f'la $t0, {main_vtable_heap_label}\n'
+            print_in_class(self, '$t0')
+            self.class_code += 'li $t1, 0\n'
+            self.class_code += 'sw $t1, 0($t0)\n'
+            for func_field in class_.get_main_vtable_functions():
+                func_offset = func_field['offset']
+                func_label = func_field['func_label']
+                self.class_code += f'la $t1, {func_label}\n'
+                self.class_code += f'sw $t1, {func_offset}($t0)\n'
+                # print_in_class(self, '$t1')
+            self.class_code += f'#### END OF CREATING VTABLE OF CLASS {id_} ####\n\n'
             # variable fields
             offset = 0
             for class_id in class_chain:
@@ -246,6 +277,7 @@ class SecondTraverse():
         if function_decl['parent'] == 'GLOBAL' and id_ == 'main':
             self.main_func_label = func_label
         formals_count = len(function_decl['formals'])
+        self.code += f'#### FUNCTION DECL {function_decl["parent"]+"_"+id_} ####\n'
         self.code += f'{func_label}:\n'
         self.stmt_block_f(function_decl['stmt_block'])
         self.code += f'### auto return of func {id_} ###\n'
@@ -254,33 +286,17 @@ class SecondTraverse():
         self.code += 'sw $t0, 0($sp)\n'
         self.code += f'### end of auto return of func {id_} ###\n\n'
         self.code += 'jr $ra\n\n'
+        self.code += f'#### END OF FUNCTION DECL {function_decl["parent"]+"_"+id_} ####\n\n'
         base_fp_offset_stack.pop()
         Scope.scope_stack.pop()
 
     def class_decl_f(self, class_decl):
         cur_scope = class_decl['scopes'][0]
         Scope.scope_stack.append(cur_scope)
-        # TODO
+        func_fields = Scope.get_functions_of_class(class_decl['id'])
+        for func_field in func_fields:
+            self.function_decl_f(func_field)
         Scope.scope_stack.pop()
-        # scope = Scope()
-        # children_scopes = get_scopes_of_children(args)
-        # set_parent_of_children_scope(scope, children_scopes)
-        # set_children_of_parent_scope(scope, children_scopes)
-        # fields = args[3]['fields']
-        # for field in fields:
-        #     decl = field['declaration']
-        #     decl['access_mode'] = field_access_mode
-        #     if decl['decl_type'] == 'function':
-        #         scope.decls[decl['id']] = decl
-        #         decl['scope'].parent = scope
-        #     elif decl['decl_type'] == 'variable':
-        #         if scope.does_decl_id_exist(decl['id']):
-        #             raise SemErr(
-        #                 f'duplicate id \'{decl["id"]}\' in class \'{args[0]["value"]}\''
-        #             )
-        #         scope.decls[decl['id']] = decl
-        #     else:
-        #         assert 1 == 2  # decl_type must be 'function' or 'variable', but it wasn't
         # return {
         #     'scopes': [scope],
         #     'id': args[0]['value'],
@@ -508,6 +524,7 @@ class SecondTraverse():
         self.code += '### END OF CONTINUE ###\n\n'
 
     def call_f(self, call):
+        # id()
         if call.keys().__contains__('id'):
             id_ = call['id']
             function_decl = Scope.get_decl_in_symbol_table(id_, 'function')
@@ -542,9 +559,9 @@ class SecondTraverse():
             return function_decl['type']
         # obj.field()
         else:
-            obj_field = self.others_f(call['others'])
+            others_type = self.others_f(call['others'])
             field_id = call['field']['value']
-            if Type.is_arr(obj_field):
+            if Type.is_arr(others_type):
                 if not field_id == 'length':
                     raise SemErr('array type only supports "length" function')
                 self.code += 'lw $t0, 0($sp)\n'
@@ -553,7 +570,6 @@ class SecondTraverse():
                 self.code += 'sw $t0, 0($sp)\n'
                 return {'dim': 0, 'type': 'int', 'class': 'Primitive'}
             else:
-                others_type = self.others_f(call['others'])
                 if not Type.is_object(others_type):
                     raise SemErr('calling field func of non-object type')
                 func_info = Class.get_func_info(others_type['class'], field_id)
@@ -568,17 +584,16 @@ class SecondTraverse():
                     )
                 for i in range(len(call['actuals']['exprs']) - 1, -1, -1):
                     actual_type = self.expr_f(call['actuals']['exprs'][i])
-                    formal_type = func_info['formals'][i]['type']
-                    alert(actual_type)
-                    alert(formal_type)
+                    formal_type = func_info['formals'][i + 1]['type']
                     if not Type.are_types_assignable(actual_type, formal_type):
                         raise SemErr('formal and actual types are not same')
                 self.code += 'lw $t0, 0($sp)\n'
-                self.code += 'move $t1, t0\n'
+                print_in_asm(self,'$t0')
+                self.code += 'move $t1, $t0\n'
                 self.code += f'addi $t1, $t1, {vptr_offset}\n'
                 self.code += 'lw $t1, 0($t1)\n'
                 self.code += 'lw $t2, 0($t1)\n'  # loading delta to $t2
-                self.code += 'addi $t0, $t0, $t2\n'  # adding delta to $t0 ('this' pointer)
+                self.code += 'add $t0, $t0, $t2\n'  # adding delta to $t0 ('this' pointer)
                 self.code += 'addi $sp, $sp, -4\n'
                 self.code += 'sw $t0, 0($sp)\n'  # pushing 'this' to stack
                 self.code += f'addi $t1, $t1, {func_offset}\n'
@@ -587,9 +602,10 @@ class SecondTraverse():
                 self.code += 'sw $fp, 0($sp)\n'
                 self.code += 'addi $sp, $sp, -4\n'
                 self.code += 'sw $ra, 0($sp)\n'
+                return_label = get_label('return')
+                self.code += f'la $ra, {return_label}\n'
                 self.code += 'addi $fp, $sp, 4\n'
                 self.code += 'jr $t1\n'
-                return_label = get_label('return')
                 self.code += f'{return_label}:\n'
                 self.code += 'lw $fp, 8($sp)\n'
                 self.code += 'lw $ra, 4($sp)\n'
@@ -597,6 +613,7 @@ class SecondTraverse():
                 self.code += f'sw $t0, {actual_count * 4 + 8}($sp)\n'
                 self.code += f'addi $sp, $sp, {actual_count * 4 + 8}\n'
                 self.code += '#### END OF OBJ FUNC CALL ####\n\n'
+                return func_info['type']
 
     def l_value_f(self, l_value, option):
         if l_value['l_value_type'] == 'id':
@@ -1193,6 +1210,7 @@ class SecondTraverse():
             main_vtable_heap_label = class_.object_layout['_main_vptr'][
                 'heap_label']
             self.code += f'la $t1, {main_vtable_heap_label}\n'
+            print_in_asm(self, '$t1')
             self.code += 'sw $t1, 0($t0)\n'
             variable_count = len(Class.get_variable_fields_with_id(class_.id))
             interface_offset = variable_count * 4 + 4

@@ -14,6 +14,9 @@ class Class:
         self.main_vtable = {}
         self.interface_vtables = {}
 
+    def get_main_vtable_functions(self):
+        return self.main_vtable.values()
+
     @staticmethod
     def get_variable_fields(class_: dict):
         return [
