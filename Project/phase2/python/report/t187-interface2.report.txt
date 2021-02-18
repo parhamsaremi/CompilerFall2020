@@ -1,1 +1,1 @@
-difference in line #1: file: out/t187-interface2.out -----> content: OK <> file: tests/t187-interface2.out -----> content: Syntax Error 
+OK 

@@ -800,9 +800,39 @@ class SecondTraverse():
             elif Type.is_double(comp_1) and Type.is_double(comp_2):
                 # TODO 
                 if operator == '==':
-                    pass
+                    eq_label = get_label("eq")
+                    end_label = get_label("neq")
+                    self.code += '### Starting calculation for double equality ###\n'
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'c.eq.s $f0, $f1\n'
+                    self.code += f'bc1t {eq_label}\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{eq_label}:\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
                 elif operator == '!=':
-                    pass
+                    eq_label = get_label("eq")
+                    end_label = get_label("neq")
+                    self.code += '### Starting calculation for double non-equality\n'
+                    self.code += 'l.s $f0, 4($sp)\n'
+                    self.code += 'l.s $f1, 0($sp)\n'
+                    self.code += 'c.eq.s $f0, $f1\n'
+                    self.code += f'bc1t {eq_label}\n'
+                    self.code += 'li $t0, 1\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'j {end_label}\n'
+                    self.code += f'{eq_label}:\n'
+                    self.code += 'li $t0, 0\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'sw $t0, 0($sp)\n'
+                    self.code += f'{end_label}:\n'
                 else:
                     assert 1 == 2
             elif Type.is_string(comp_1) and Type.is_string(comp_2):
