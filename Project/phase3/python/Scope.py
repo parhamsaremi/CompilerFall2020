@@ -41,7 +41,7 @@ class Scope:
     def get_classes():
         global_scope = Scope.get_global_scope()
         res = []
-        for decl in global_scope.decls:
+        for decl in global_scope.decls.values():
             if decl['decl_type'] == 'class':
                 res.append(decl)
         return res
@@ -131,5 +131,6 @@ class Scope:
 
     @staticmethod
     def get_parent_of_class(id_: str):
+        # alert('hi')
         class_ = Scope.get_class(id_)
         return class_['parent_class']

@@ -145,7 +145,7 @@ class FirstTraverse(Transformer):
         set_children_of_parent_scope(scope, children_scopes)
         fields = args[3]['fields']
         for decl in fields:
-            decl['access_mode'] = field_access_mode
+            # decl['access_mode'] = field_access_mode
             if decl['decl_type'] == 'function':
                 scope.decls[decl['id']] = decl
                 decl['scope'].parent = scope
@@ -177,6 +177,7 @@ class FirstTraverse(Transformer):
         return {
             'scopes': [scope],
             'id': args[0]['value'],
+            'decl_type': 'class',
             'parent_class': args[1]['parent_class'],
             'interfaces': args[2]['interfaces'],
             'fields': args[3]['fields']
@@ -446,7 +447,7 @@ class FirstTraverse(Transformer):
 
     def implements_f(self, args):
         if len(args) == 0:
-            return {'scopes': [None], 'interfaces': None}
+            return {'scopes': [None], 'interfaces': []}
         else:
             ids = args[0]['value']
             for id in args[1]['ids']:
@@ -466,7 +467,7 @@ class FirstTraverse(Transformer):
         if len(args) == 0:
             return {'scopes': scopes, 'fields': []}
         else:
-            fields = args[0]
+            fields = [args[0]]
             for field in args[1]['fields']:
                 fields.append(field)
             return {'scopes': scopes, 'fields': fields}
@@ -474,22 +475,18 @@ class FirstTraverse(Transformer):
     def field_f(self, args):
         scopes = get_scopes_of_children(args)
         res = args[1]
-        res.update({'scopes': scopes, 'access_mode': args[0]['value']})
+        res['scopes'] = scopes
+        res['access_mode'] = args[0]['value']
         return res
-        # return {
-        #     'scopes': scopes,
-        #     'access_mode': args[0]['value'],
-        #     'declaration': args[1]
-        # }
 
-    def access_mode_private(self, args):
+    def access_mode_private_f(self, args):
         return {'scopes': [None], 'value': 'private'}
 
-    def access_mode_protected(self, args):
-        return {'scopes': [None], 'value': 'private'}
+    def access_mode_protected_f(self, args):
+        return {'scopes': [None], 'value': 'protected'}
 
-    def access_mode_public(self, args):
-        return {'scopes': [None], 'value': 'private'}
+    def access_mode_public_f(self, args):
+        return {'scopes': [None], 'value': 'public'}
 
     def assign_f(self, args):
         if len(args) == 1:

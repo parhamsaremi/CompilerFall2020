@@ -4,7 +4,8 @@ class Class {
 }
 
 void main(){
-	Class c = new Class;
+	Class c;
+	c = new Class;
 	c.x = 2;
 
 	Print(c.x);
