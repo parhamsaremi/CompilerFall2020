@@ -1,8 +1,6 @@
 class Class{
-	int x;
-
-	int func(int a){
-		return 2 * a;	
+	int func(){
+		return 8;	
 	}
 }
 
@@ -11,8 +9,6 @@ void main(){
 
 	c = new Class;
 
-	c.x = 4;
-
-	Print(c.func(8));
+	Print(c.func());
 }
 
