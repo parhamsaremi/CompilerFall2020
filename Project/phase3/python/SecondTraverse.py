@@ -863,9 +863,65 @@ class SecondTraverse():
             elif Type.is_string(comp_1) and Type.is_string(comp_2):
                 # TODO
                 if operator == '==':
-                    pass
+                    check_string = get_label("check_strings")
+                    start_loop = get_label("start_loop")
+                    eq = get_label("eq")
+                    failed = get_label("failed")
+                    done = get_label("done")
+                    finished = get_label("finished")
+                    self.code += f'{check_string}:\n'
+                    self.code += 'lw $t0, 4($sp)\n'
+                    self.code += 'lw $t1, 0($sp)\n'
+                    self.code += f'{start_loop}:\n'
+                    self.code += 'lb $t2, 0($t0)\n'
+                    self.code += 'lb $t3, 0($t1)\n'
+                    self.code += f'beq $t2, $t3, {eq}\n'
+                    self.code += f'j {failed}\n'
+                    self.code += f'{eq}:\n'
+                    self.code += f'beqz $t2, {done}\n'
+                    self.code += 'add $t0, $t0, 1\n'
+                    self.code += 'add $t1, $t1, 1\n'
+                    self.code += f'j {start_loop}\n'
+                    self.code += f'{done}:\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'li $t5, 1\n'
+                    self.code += 'sw $t5, 0($sp)\n'
+                    self.code += f'j {finished}\n'
+                    self.code += f'{failed}:\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'li $t5, 0\n'
+                    self.code += 'sw $t5, 0($sp)\n'
+                    self.code += f'{finished}:\n'
                 elif operator == '!=':
-                    pass
+                    check_string = get_label("check_strings")
+                    start_loop = get_label("start_loop")
+                    eq = get_label("eq")
+                    failed = get_label("failed")
+                    done = get_label("done")
+                    finished = get_label("finished")
+                    self.code += f'{check_string}:\n'
+                    self.code += 'lw $t0, 4($sp)\n'
+                    self.code += 'lw $t1, 0($sp)\n'
+                    self.code += f'{start_loop}:\n'
+                    self.code += 'lb $t2, 0($t0)\n'
+                    self.code += 'lb $t3, 0($t1)\n'
+                    self.code += f'beq $t2, $t3, {eq}\n'
+                    self.code += f'j {failed}\n'
+                    self.code += f'{eq}:\n'
+                    self.code += f'beqz $t2, {done}\n'
+                    self.code += 'add $t0, $t0, 1\n'
+                    self.code += 'add $t1, $t1, 1\n'
+                    self.code += f'j {start_loop}\n'
+                    self.code += f'{done}:\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'li $t5, 0\n'
+                    self.code += 'sw $t5, 0($sp)\n'
+                    self.code += f'j {finished}\n'
+                    self.code += f'{failed}:\n'
+                    self.code += 'add $sp,$sp,4\n'
+                    self.code += 'li $t5, 1\n'
+                    self.code += 'sw $t5, 0($sp)\n'
+                    self.code += f'{finished}:\n'
                 else:
                     assert 1 == 2
             else:
